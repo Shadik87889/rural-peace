@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Update Donor</title>
+    <link rel="stylesheet" href="update_donor.css" />
+    <link rel="shortcut icon" href="/images/logo.png" type="image/x-icon" />
+    <style>
+      .update-info {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Update Donor Information</h1>
+
+    <div class="retrive-info">
+      <h2>Retrieve Your Information</h2>
+      <input type="text" id="email" placeholder="Email" autocomplete="off" />
+      <input
+        type="text"
+        id="secretCode"
+        placeholder="Secret code (remember the code)"
+        autocomplete="off"
+      />
+      <button id="retrieveButton">Retrieve Information</button>
+    </div>
+
+    <div class="update-info">
+      <h2>Update Information</h2>
+      <input
+        type="text"
+        id="name"
+        placeholder="Name"
+        autocomplete="off"
+        oninput="toggleUpdateButton()"
+      />
+      <input
+        type="text"
+        id="phone"
+        placeholder="Phone"
+        autocomplete="off"
+        oninput="toggleUpdateButton()"
+      />
+      <input
+        type="text"
+        id="address"
+        placeholder="Address"
+        autocomplete="off"
+        oninput="toggleUpdateButton()"
+      />
+      <select id="bloodGroup" name="bloodGroup" required>
+        <option value="">Select Blood Group</option>
+        <option value="A+">A+</option>
+        <option value="A-">A-</option>
+        <option value="B+">B+</option>
+        <option value="B-">B-</option>
+        <option value="AB+">AB+</option>
+        <option value="AB-">AB-</option>
+        <option value="O+">O+</option>
+        <option value="O-">O-</option>
+      </select>
+      <input type="number" id="age" placeholder="Age" autocomplete="off" />
+      <select id="gender" onchange="toggleUpdateButton()">
+        <option value="male">Male</option>
+        <option value="female">Female</option>
+      </select>
+      <button id="updateButton" disabled>Update Information</button>
+      <div id="message" style="margin-top: 10px;"></div>
+    </div>
+    <script src="update-donor-account.js"></script>
+  </body>
+</html>

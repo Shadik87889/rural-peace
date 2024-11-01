@@ -1,0 +1,90 @@
+/* Reset default styles */
+body,
+h1,
+form {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Body styles */
+.container {
+  font-family: "Arial", sans-serif;
+  background: linear-gradient(135deg, #2b2b4d, #121212);
+  color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+/* Header styles */
+h1 {
+  font-size: 2.5rem; /* Adjusted for impact */
+  margin-bottom: 10px;
+  text-align: center;
+  color: #ffdd57;
+  font-family: cursive;
+  text-transform: uppercase;
+  text-shadow: 3px 3px 8px rgba(0, 0, 0, 0.7);
+}
+
+/* Form styles */
+#unsubscribeForm {
+  background: rgba(50, 50, 50, 0.9);
+  border-radius: 25px;
+  box-shadow: 0 16px 60px rgba(0, 0, 0, 0.9);
+  padding: 40px;
+  width: 90%;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  backdrop-filter: blur(12px);
+}
+
+/* Input field styles */
+input[type="email"] {
+  border: 2px solid #777;
+  border-radius: 15px;
+  padding: 16px;
+  margin-bottom: 20px;
+  font-size: 1.2rem;
+  color: #ffffff;
+  background: #353840;
+  transition: border-color 0.3s, box-shadow 0.3s, transform 0.2s;
+}
+
+input[type="email"]:focus {
+  border-color: #ffdd57;
+  box-shadow: 0 0 10px #ffdd57;
+  outline: none;
+  transform: scale(1.03);
+}
+
+/* Button styles */
+button {
+  background: linear-gradient(135deg, #ffdd57, #ffbd45);
+  color: white;
+  border: none;
+  border-radius: 15px;
+  padding: 16px;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s, box-shadow 0.3s;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+}
+
+button:hover {
+  background: linear-gradient(135deg, #ffbd45, #ffdd57);
+  transform: translateY(-5px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+}
+
+/* Response message styles */
+#message {
+  margin-top: 20px;
+  font-size: 1.2rem;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.95);
+}

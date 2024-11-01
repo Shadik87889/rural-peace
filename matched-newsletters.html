@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Matched Newsletters</title>
+    <link
+      rel="shortcut icon"
+      href="images/logo with backgournd.jpg"
+      type="image/x-icon"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+      integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="newsletter-content.css" />
+    <link rel="stylesheet" href="matched-newsletter-content.css" />
+  </head>
+  <body>
+    <nav class="nav-bar details">
+      <div class="logo-name-motto d">
+        <div class="logo">
+          <a href="home"><img src="images/logo.png" alt="" /></a>
+        </div>
+        <p class="name">
+          RURAL <br />
+          PEACE
+        </p>
+        <a class="log-in-btn" id="auth-link" href="/auth/google">Log In</a>
+        <div id="profile-pic-container"></div>
+        <i class="fa-solid fa-magnifying-glass find"></i>
+      </div>
+      <div class="menu">
+        <i class="fa fa-bars menuBtn"></i>
+      </div>
+      <div class="mobile-menu-bar">
+        <a class="donateBtn" href="donate">DONATE</a>
+        <i class="fa-solid fa-xmark closeBtn"></i>
+        <div class="explore">
+          <a href="home">Home</a>
+          <a href="programs">Programs</a>
+          <div class="sub">
+            <a href="blood-donation">blood donation</a>
+            <a href="social-issues">social issues</a>
+            <a href="help-people">Assistance</a>
+            <a href="sound-environment">sound environment</a>
+          </div>
+          <a href="newsletters.html">blog</a>
+          <a href="about">About</a>
+          <a href="contact">Contact</a>
+        </div>
+        <div class="org-name">
+          <div class="r">Rural</div>
+          <div class="p">Peace</div>
+          <img src="images/logo.png" alt="" />
+        </div>
+        <div class="menu-video">
+          <video
+            loop
+            muted
+            autoplay
+            src="videos/menu-page-animated-video.mp4"
+          ></video>
+        </div>
+      </div>
+    </nav>
+    <main class="container">
+      <section id="matchedNewslettersContent" class="matched-newsletters">
+        <!-- Matched newsletters will be populated here -->
+      </section>
+
+      <div class="sidebar">
+        <div class="common-content">
+          <h2>Recent Articles</h2>
+          <ul id="recentArticlesList">
+            <!-- Recent Articles will be inserted here -->
+          </ul>
+          <h2>Popular Topics</h2>
+          <ul id="popularTopicsList">
+            <!-- Popular Topics will be inserted here -->
+          </ul>
+          <h2>Search</h2>
+          <input
+            type="text"
+            id="searchInput"
+            placeholder="Search articles..."
+          />
+          <button id="searchButton">Search</button>
+          <p class="to-sub-rec">
+            For more insights, check out our latest articles!
+          </p>
+          <a href="Newsletter-subscription">
+            <button class="subscribe">SUBSCRIBE</button>
+          </a>
+        </div>
+      </div>
+    </main>
+
+    <footer class="footer">
+      <p>&copy; 2024 Matched Newsletters. All rights reserved.</p>
+    </footer>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"
+      integrity="sha512-16esztaSRplJROstbIIdwX3N97V1+pZvV33ABoG1H2OyTttBxEGkTsoIVsiP1iaTtM8b3+hu2kB6pQ4Clr5yug=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"
+      integrity="sha512-Ic9xkERjyZ1xgJ5svx3y0u3xrvfT/uPkV99LBwe68xjy/mGtO+4eURHZBW2xW4SZbFrF1Tf090XqB+EVgXnVjw=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+    <script src="matched-newsletters.js"></script>
+  </body>
+</html>

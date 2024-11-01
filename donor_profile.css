@@ -1,0 +1,193 @@
+.donor_profile {
+  height: 100vh;
+  width: 100%;
+  padding: 2vw 5vw;
+  /* padding-top: 8vw; */
+}
+.profile_dashboard {
+  background-color: #423939;
+  min-height: 100%;
+  width: 100%;
+  box-shadow: 0 1px 10px #00000058;
+}
+.up_side {
+  background-color: #1e1d1d;
+  display: flex;
+  align-items: center;
+  padding: 1vw 3vw;
+  justify-content: space-between;
+  padding-right: 4vw;
+}
+.donor_pic_name {
+  display: flex;
+  align-items: center;
+  gap: 4vw;
+}
+.donor_pic {
+  height: 10vw;
+  width: 10vw;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 5px solid rgba(255, 255, 255, 0.763);
+}
+.donor_pic img {
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+}
+.donor_name {
+  font-family: "Impact";
+  font-size: 6vw;
+  color: #fff;
+  text-transform: uppercase;
+}
+.blood-type {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  background-color: transparent;
+
+  font-family: "Impact";
+  color: #f93434;
+  border: 3px solid red;
+  height: 12vw;
+  min-width: 12vw;
+  margin-left: 5vw;
+}
+.blood-type h1 {
+  font-size: 9vw;
+}
+.bottom_side {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 3vw;
+}
+.donor_details_box {
+  height: 25vw;
+  width: 20vw;
+  background-color: #2b2626;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4vw;
+  box-shadow: 0 1px 10px #00000058;
+}
+.donor_details_box :nth-child(1) {
+  color: #f93434;
+  color: #fff;
+  font-family: "Impact";
+  text-transform: uppercase;
+  font-size: 5vw;
+}
+.donor_details_box .address {
+  font-size: 4.5vw;
+}
+.donor_details_box .size_small {
+  font-size: 4.5vw;
+  letter-spacing: 0.1vw;
+}
+.donor_details_box :nth-child(2) {
+  color: #f93434;
+  font-family: "Futura";
+  font-size: 1.5vw;
+  text-transform: uppercase;
+}
+.gmail_logo {
+  height: 5vw;
+}
+
+@media (max-width: 768px) {
+  .donor_profile {
+    height: 100vh;
+    width: 100%;
+    padding: 2vw 5vw;
+    /* padding-top: 8vw; */
+  }
+  .profile_dashboard {
+    background-color: #423939;
+    height: 87%;
+    width: 100%;
+    box-shadow: 0 1px 10px #00000058;
+  }
+  .up_side {
+    background-color: #1e1d1d;
+    align-items: center;
+    flex-direction: column;
+    padding: 5vw 3vw;
+    justify-content: space-between;
+    padding-right: 4vw;
+  }
+  .donor_pic_name {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 4vw;
+  }
+  .donor_pic {
+    height: 30vw;
+    width: 30vw;
+  }
+  .donor_pic img {
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+  }
+  .donor_name {
+    font-family: "Bebas Neue";
+    font-size: 12vw;
+    color: #fff;
+    text-transform: uppercase;
+    margin-top: 2vw;
+  }
+  .blood-type {
+    font-family: "Bebas Neue";
+    height: 0;
+    width: 0;
+    padding: 5.5vw;
+    margin-left: 0;
+  }
+  .blood-type h1 {
+    font-size: 10vw;
+    margin-top: 9vw;
+  }
+  .bottom_side {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    padding: 3vw;
+    gap: 4vw;
+  }
+  .donor_details_box {
+    height: 46vw;
+    width: 40vw;
+    background-color: #2b2626;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    padding: 7vw 4vw;
+    box-shadow: 0 1px 10px #00000058;
+  }
+  .donor_details_box :nth-child(1) {
+    color: #fff;
+    font-family: "Bebas Neue";
+    font-size: 11vw;
+    font-weight: 900;
+  }
+  .donor_details_box .size_small {
+    font-size: 7.8vw;
+  }
+  .donor_details_box :nth-child(2) {
+    color: #d4cece;
+    font-family: "Bebas Neue";
+    font-size: 6vw;
+  }
+  .gmail_logo {
+    height: 9vw;
+  }
+}

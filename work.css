@@ -1,0 +1,264 @@
+#page1 {
+  background-color: #131212;
+  border-bottom: 0.5px solid rgb(207, 205, 205);
+}
+.title-sentence {
+  padding: 3vw 5vw;
+  margin-top: -10vw;
+}
+.title-sentence .first {
+  font-family: "Impact";
+  color: #ffff;
+  font-size: 22vw;
+  margin-bottom: 0;
+  letter-spacing: -0.6vw;
+}
+.title-sentence .second {
+  font-size: 23vw;
+  font-family: "Impact";
+  margin-top: -6vw;
+  color: #f93434;
+  margin-bottom: 0;
+  letter-spacing: -0.7vw;
+}
+.some-text {
+  color: #ffffff;
+  text-transform: uppercase;
+  font-family: "Futura";
+  width: 35vw;
+  position: relative;
+  left: 50vw;
+}
+#sect-two {
+  min-height: 100vh;
+  width: 100%;
+  background-color: #131212;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 4vw;
+  border-bottom: 0.5px solid rgb(207, 205, 205);
+}
+.img-sect {
+  height: 95vh;
+  width: 40vw;
+  overflow: hidden;
+}
+.img-sect img {
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+}
+.text {
+  display: flex;
+  flex-direction: column;
+  margin-top: 4vw;
+}
+.text .one {
+  color: #ffff;
+  font-family: "Impact";
+  font-size: 19vw;
+  margin-bottom: 0;
+  letter-spacing: -0.1vw;
+}
+.text .two {
+  color: #f93434;
+  font-size: 27vw;
+  font-family: "Impact";
+  margin-top: -7vw;
+  margin-left: -0.4vw;
+  letter-spacing: -0.9vw;
+}
+#sect-three {
+  min-height: 100vh;
+  background-color: #131212;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.all-blood-group {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 3vw;
+}
+.all-blood-group a {
+  text-decoration: none;
+}
+.blood-group {
+  font-family: "Impact";
+  font-size: 12vw;
+  color: #f93434;
+  background-color: #1e1d1d;
+  height: 20vw;
+  width: 20vw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  transition: 0.5s;
+  cursor: pointer;
+  box-shadow: 0 1px 5px #00000099;
+}
+.blood-group.ab {
+  font-size: 10.5vw;
+}
+.blood-group:hover {
+  background-color: #302c2c;
+}
+.blood-group:active {
+  background-color: #433b3b;
+}
+
+/* Mobile Responsive Styles */
+@media (max-width: 768px) {
+  /* Page Container */
+  #page1 {
+    background-color: #131212;
+    border-bottom: 0.5px solid rgb(207, 205, 205);
+  }
+
+  /* Title Section */
+  .title-sentence {
+    padding: 5vw 5vw;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    margin-top: 0;
+  }
+
+  .title-sentence .first {
+    font-family: "Bebas Neue", sans-serif;
+    color: #ffffff;
+    font-size: 25vw;
+    font-weight: 900;
+    letter-spacing: 0;
+  }
+
+  .title-sentence .second {
+    font-family: "Bebas Neue", sans-serif;
+    color: #f93434;
+    font-size: 27vw;
+    font-weight: 900;
+    margin-top: -5vw;
+    letter-spacing: 0;
+  }
+
+  .some-text {
+    color: #ffffff;
+    font-family: "Bebas Neue", sans-serif;
+    font-size: 6vw;
+    width: 90vw;
+    text-align: center;
+    margin: 5vw 0;
+    position: relative;
+    left: 0;
+    padding: 3vw;
+    height: 40vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #e1b544;
+    background-color: transparent;
+  }
+
+  /* Section Two: Image & Text */
+  #sect-two {
+    min-height: 100vh;
+    background-color: #131212;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    padding: 5vw 0;
+    padding-top: 0;
+    border-bottom: 0.5px solid rgb(207, 205, 205);
+  }
+
+  .img-sect {
+    height: 70%;
+    width: 100%;
+    overflow: hidden;
+    margin-bottom: 5vw;
+  }
+
+  .img-sect img {
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+  }
+
+  .text {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .text .one {
+    font-family: "Bebas Neue", sans-serif;
+    color: #ffffff;
+    font-size: 35vw;
+    font-weight: 900;
+    letter-spacing: 0;
+  }
+
+  .text .two {
+    font-family: "Bebas Neue", sans-serif;
+    color: #f93434;
+    font-size: 60vw;
+    margin-top: -3vw;
+    font-weight: 900;
+    margin-bottom: 0;
+    margin-left: 0;
+    letter-spacing: 0;
+  }
+
+  /* Section Three: Blood Groups */
+  #sect-three {
+    min-height: 100vh;
+    background-color: #131212;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    padding: 5vw;
+  }
+
+  .all-blood-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4vw;
+  }
+
+  .blood-group {
+    font-family: "Bebas Neue", sans-serif;
+    font-size: 40vw;
+    color: #f93434;
+    background-color: #1e1d1d;
+    height: 60vw;
+    width: 90vw;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: 0.5s;
+    font-weight: 900;
+  }
+  .blood-group.ab {
+    font-size: 40vw;
+  }
+  .blood-group:hover {
+    background-color: #302c2c;
+  }
+
+  .blood-group:active {
+    background-color: #433b3b;
+  }
+}

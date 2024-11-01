@@ -1,0 +1,267 @@
+html,
+body {
+  width: 100%;
+  height: 100%;
+  scroll-behavior: smooth;
+  overflow: auto;
+  scrollbar-width: none;
+}
+body::-webkit-scrollbar {
+  display: none; /* For Chrome, Safari, and Edge */
+}
+
+#blogs-container {
+  min-height: 100vh;
+}
+.wall-image.blog-image {
+  height: 100vh;
+}
+.wall-image.blog-image video {
+  width: 100%;
+}
+.gradient.blog-gradient {
+  position: absolute;
+  height: 100vh;
+}
+.blog-text {
+  /* color: #f93434; */
+  -webkit-text-stroke: 2px white;
+  color: transparent;
+  font-family: "Impact";
+  text-transform: uppercase;
+  font-size: 35vw;
+  position: absolute;
+  margin-left: 13vw;
+  top: 7vw;
+}
+.add-post {
+  padding: 0.3vw 2vw;
+  font-size: 2vw;
+  border: 3px solid #f93434;
+  background-color: #ffe1968c;
+  background-color: transparent;
+  color: #fff;
+  font-family: "Impact", sans-serif;
+  text-align: center;
+  margin-left: 25vw;
+  text-decoration: none;
+  transition: 0.3s;
+}
+.all-blogs {
+  height: 100%;
+  width: 100%;
+  margin-top: 6vw;
+  padding: 1vw 8vw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 2vw;
+}
+.blog {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  flex-direction: column;
+  background-color: #1e1d1d;
+  height: 40vw;
+  width: 40vw;
+  padding: 1.2vw;
+  border-radius: 0.3vw;
+  margin-bottom: 2vw;
+  position: relative;
+}
+.delete-button {
+  position: absolute;
+  bottom: 3vw;
+  right: 3vw;
+  font-family: "Bebas Neue";
+  border: none;
+  background-color: transparent;
+  color: #b5b2b2;
+  cursor: pointer;
+  transition: all 0.4s;
+  z-index: 1000;
+}
+.delete-button:hover {
+  text-decoration: underline;
+}
+.delete-button:active {
+  color: #474747;
+}
+.blog-img {
+  height: 24vw;
+  width: 38vw;
+  border-radius: 0.3vw;
+  overflow: hidden;
+}
+.no-blog {
+  font-size: 5vw;
+  color: #c8c4c4;
+  font-family: "Bebas Neue";
+}
+.blog-img img {
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+.blog-title {
+  color: #fff;
+  font-family: "Impact", sans-serif;
+  font-size: 2vw;
+  text-transform: uppercase;
+  padding: 1vw 0;
+  line-height: 2.1vw;
+}
+
+.blogger-name-img {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1vw;
+  padding: 1vw 0;
+}
+.blogger-name-img img {
+  height: 3vw;
+  width: 3vw;
+  object-fit: cover;
+  border-radius: 50%;
+  object-position: -0.09px 0.009px;
+}
+
+.blogger-name {
+  color: #fff;
+  font-family: "Moderustic";
+  font-weight: 600;
+  font-size: 1.4vw;
+}
+.post-date {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #b5b2b2;
+  gap: 3vw;
+  font-family: "Moderustic";
+  font-weight: 600;
+  padding: 0.5vw 0;
+}
+.clicks {
+  position: relative;
+  bottom: 1.6vw;
+  color: #b5b2b2;
+  gap: 3vw;
+  font-family: "Moderustic";
+  font-weight: 600;
+  left: 8vw;
+}
+.drop-area {
+  border: 2px dashed #28a745; /* Dashed border */
+  border-radius: 8px; /* Rounded corners */
+  padding: 20px; /* Inner spacing */
+  text-align: center; /* Center text */
+  color: #aaa; /* Light text color */
+  cursor: pointer; /* Pointer cursor */
+  margin-bottom: 20px; /* Space below */
+}
+
+.drop-area.highlight {
+  border-color: #007bff; /* Change border color on highlight */
+  color: #007bff; /* Change text color on highlight */
+}
+
+.load-more-newsletters {
+  background: none;
+  border: 3px solid red;
+  background-color: transparent;
+  cursor: pointer;
+  margin-left: 43vw;
+  font-size: 3vw;
+  padding: 0.6vw;
+  font-family: "Impact";
+  color: #fff;
+  transition: 0.3s;
+}
+.load-more-newsletters:hover,
+.add-post:hover {
+  background-color: #1fbe44;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+  .wall-image.blog-image {
+    height: 70vh;
+  }
+  .gradient.blog-gradient {
+    position: absolute;
+    height: 70vh;
+  }
+  .blog-text {
+    font-size: 50vw;
+    margin-left: 10vw;
+    top: 50vw;
+    font-family: "Bebas Neue";
+  }
+
+  .all-blogs {
+    padding: 2vw 4vw;
+    flex-direction: column;
+    gap: 3vw;
+  }
+
+  .blog {
+    width: 90%;
+    height: auto;
+    padding: 3vw;
+    border-radius: 3px;
+  }
+
+  .blog-img {
+    height: 50vw;
+    width: 100%;
+  }
+
+  .blog-title {
+    font-size: 5vw;
+    line-height: 5vw;
+    padding: 2vw 0;
+    font-family: "Bebas Neue";
+  }
+
+  .blogger-name-img img {
+    height: 7vw;
+    width: 7vw;
+  }
+
+  .blogger-name {
+    font-size: 4.5vw;
+    margin-left: 1vw;
+  }
+
+  .post-date {
+    gap: 1.5vw;
+    font-size: 3.5vw;
+    padding: 1vw 0;
+    position: relative;
+    top: 3vw;
+  }
+
+  .clicks {
+    top: -2.2vw;
+    left: 29vw;
+    font-size: 3.5vw;
+  }
+
+  .add-post {
+    font-size: 4.5vw;
+    margin-left: 13vw;
+  }
+
+  .load-more-newsletters {
+    font-size: 5vw;
+    margin-left: 38vw;
+  }
+  .blog-text {
+    -webkit-text-stroke: 2px white;
+  }
+}

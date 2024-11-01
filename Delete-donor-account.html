@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Withdraw donor account</title>
+    <link rel="shortcut icon" href="/images/logo.png" type="image/x-icon" />
+    <link rel="stylesheet" href="withdraw_donor.css" />
+  </head>
+  <body>
+    <h1>Delete Donor Account</h1>
+    <form id="deleteDonorForm">
+      <input
+        type="email"
+        id="email"
+        placeholder="Email"
+        required
+        autocomplete="off"
+      />
+
+      <input type="text" id="secretCode" placeholder="Secret code" required
+      autocomplete="off"/ >
+
+      <button type="submit">Delete Account</button>
+    </form>
+
+    <div id="responseMessage"></div>
+  </body>
+  <script src="withdraw_donor.js"></script>
+</html>

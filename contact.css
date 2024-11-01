@@ -1,0 +1,556 @@
+#page1 {
+  position: relative;
+  padding: 0;
+  margin: 0;
+  overflow: hidden;
+}
+
+.home-page-img {
+  height: 100vh;
+  width: 100%;
+  overflow: hidden;
+}
+.home-page-img img {
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+}
+.contact-title {
+  font-family: "Impact";
+
+  font-size: 28vw;
+  letter-spacing: -0.8vw;
+  color: #f93434;
+  position: absolute;
+  bottom: -3vw;
+  left: 1vw;
+}
+.page2 {
+  min-height: 100vh;
+  width: 100%;
+  background-color: #131212;
+  padding: 3vw;
+}
+.mail {
+  color: #f93434;
+  font-size: 4vw;
+  font-family: "Impact";
+}
+.method-box {
+  display: flex;
+  align-items: center;
+  margin-top: 2vw;
+  gap: 2vw;
+}
+.method-one {
+  height: 37vw;
+  width: 30vw;
+  background-color: #1e1d1d;
+  display: flex;
+  flex-direction: column;
+  padding: 4vw;
+  box-shadow: 0 1px 5px #00000099;
+}
+.method-one h1 {
+  font-family: "Impact";
+  font-size: 8vw;
+  margin: 0;
+  color: #f93434;
+}
+.method-box p {
+  color: #fff;
+  font-family: "Futura";
+  font-size: 3vw;
+}
+.method-box a {
+  text-decoration: none;
+  color: #c7c3c3;
+  font-family: "Fellix";
+  font-weight: 900;
+  font-size: 1.35vw;
+  margin-top: 4vw;
+}
+.method-box .two {
+  margin-top: 1vw;
+  /* letter-spacing: 0.9px; */
+}
+.method-box .ad {
+  font-size: 5vw;
+  margin-top: 1vw;
+  margin-bottom: 2.3vw;
+}
+.page3 {
+  min-height: 100vh;
+  width: 100%;
+  background-color: #131212;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 5vw;
+  position: relative;
+  gap: 27vw;
+}
+.page3 .left-part h1 {
+  color: #fff;
+  font-family: "Impact";
+  font-size: 5vw;
+  margin: 0;
+}
+.color-red {
+  color: #f93434;
+}
+.page3 .left-part p {
+  color: #fff;
+  font-family: "Futura";
+  width: 25vw;
+  margin-top: -3vw;
+  line-height: 1.5vw;
+  font-size: 1.2vw;
+}
+.right-part {
+  display: flex;
+  flex-direction: column;
+  background-color: #1e1d1d;
+  color: #fff;
+  min-height: 37vw;
+  padding: 3vw;
+  gap: 3vw;
+  border-radius: 4px;
+  box-shadow: 0 1px 10px #0000009f;
+}
+.one {
+  display: flex;
+  gap: 2vw;
+}
+.right-part .title {
+  color: #fff;
+  font-family: "Impact";
+  font-size: 3vw;
+}
+.right-part input {
+  border: none;
+  background-color: transparent;
+  border-bottom: 2px solid rgb(177, 177, 177);
+  height: 3vw;
+  color: #fff;
+  outline: none;
+  font-family: "Futura";
+  font-size: 1vw;
+}
+.right-part input::placeholder {
+  font-family: "Fellix";
+}
+.what_to_fill_in {
+  font-family: "Futura";
+  text-transform: uppercase;
+  font-size: 1.2vw;
+}
+
+.iti__country {
+  color: black;
+  font-family: "Fellix";
+}
+.cmn-btn.submit-btn {
+  cursor: pointer;
+  padding: 0.7vw 3vw;
+  background-color: rgb(255, 255, 255);
+  box-shadow: 0 1px 10px #0000009f;
+  border-radius: 2.2vw;
+  border: none;
+  font-size: 1.1vw;
+  font-family: "Futura";
+  transition: 0.5s;
+  text-transform: uppercase;
+}
+.page4 {
+  min-height: 50vh;
+  width: 100%;
+  background-color: #131212;
+  border-top: 2px solid rgb(100, 100, 100);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4vw;
+}
+.page4 a {
+  text-decoration: none;
+}
+.social-media {
+  display: flex;
+  align-items: center;
+  gap: 3vw;
+}
+.social-media a {
+  text-decoration: none;
+  background-color: #2b2929;
+  height: 10vw;
+  width: 10vw;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+.social-media a i {
+  color: #fff;
+  font-size: 2vw;
+  z-index: 10;
+}
+.hover-box {
+  height: 10vw;
+  width: 10vw;
+  background-color: #f93434;
+  border-radius: 50%;
+  position: absolute;
+  bottom: -10vw;
+  transition: 0.5s;
+}
+.hover-done {
+  bottom: 0;
+  transition: 0.5s;
+}
+.right-side-menu {
+  display: flex;
+  flex-direction: column;
+  text-transform: uppercase;
+}
+.right-side-menu .menu-button {
+  display: flex;
+  align-items: center;
+  gap: 3vw;
+  margin-left: 1vw;
+}
+.right-side-menu .menu-button a {
+  text-decoration: none;
+  color: #fff;
+  font-size: 2vw;
+  margin-bottom: 2vw;
+  font-family: "Bebas neue";
+  transition: 0.4s;
+}
+.right-side-menu .menu-button a:hover {
+  color: #8eb434;
+}
+.get__in__touch {
+  color: #2b2929;
+  font-family: "Impact";
+  font-size: 10vw;
+  transition: 1s;
+  margin-bottom: 3vw;
+  letter-spacing: -0.1vw;
+  word-spacing: -0.3vw;
+}
+.get__in__touch:hover {
+  color: #ffffff;
+}
+.message-box {
+  background-color: #2b2929;
+  border: none;
+  height: 10vw;
+  width: 32vw;
+  color: #fff;
+  outline: none;
+  font-family: "Futura";
+  font-size: 1vw;
+  padding: 1vw;
+  margin-top: 1vw;
+  resize: none;
+  border-radius: 3px;
+  animation: blink 1s step-end infinite;
+}
+
+@keyframes blink {
+  from,
+  to {
+    caret-color: transparent;
+  }
+  50% {
+    caret-color: rgb(255, 255, 255);
+  }
+}
+
+.popup {
+  transform: translate(-50%, -50%);
+  background-color: #2b2929;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.9);
+  font-family: "Futura";
+  width: 25vw;
+  padding: 2vw 2vw;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 100;
+  opacity: 0;
+  display: none;
+}
+
+.popup-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.popup-header span {
+  font-size: 18px;
+  font-weight: bold;
+}
+hr {
+  margin-top: 2vw;
+}
+.popup-content {
+  font-family: "Fellix";
+}
+.close-button {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  position: relative;
+  z-index: 100;
+}
+
+.popup-content,
+.popup-header,
+.close-button {
+  margin: 0;
+  color: #fff;
+}
+
+.popup-buttons {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 20px;
+}
+
+.page-3-shadow {
+  height: 100%;
+  width: 100%;
+  background-color: #00000092;
+  position: absolute;
+  left: 0;
+  transition: 0.5s;
+  display: block;
+}
+.popup-appear {
+  opacity: 1;
+  transition: 0.5s;
+  display: block;
+}
+.page3-disappear {
+  opacity: 0;
+  transition: 0.5s;
+  display: none;
+}
+.popup-close {
+  opacity: 0;
+  transition: 0.5s;
+  display: none;
+}
+.title-sentence {
+  display: none;
+}
+/* Responsive for mobile devices */
+/* Responsive for mobile devices */
+@media screen and (max-width: 767px) {
+  html,
+  body {
+    overflow-x: hidden;
+  }
+  .home-page-img {
+    height: 93vh; /* Make the image cover the full page */
+    position: relative;
+  }
+
+  .contact-title {
+    font-family: "Bebas Neue", sans-serif;
+    font-size: 32vw;
+    bottom: 15vw; /* Adjust this as needed to keep "contact" visible on the image */
+    left: 2vw;
+    position: absolute;
+    font-weight: 900;
+    display: none;
+  }
+  .title-sentence {
+    position: absolute;
+    top: 0;
+  }
+  .page2 {
+    padding: 6vw;
+  }
+
+  .mail {
+    font-family: "Bebas Neue", sans-serif;
+    font-size: 8vw;
+  }
+
+  .method-box {
+    flex-direction: column;
+    gap: 4vw;
+  }
+
+  .method-one {
+    height: auto;
+    width: 100%;
+    padding: 6vw;
+  }
+
+  .method-one h1 {
+    font-family: "Bebas Neue", sans-serif;
+    font-size: 16vw;
+  }
+
+  .method-box p {
+    font-family: "Futura";
+    font-size: 5vw;
+  }
+
+  .method-box a {
+    font-family: "Futura";
+    font-size: 3vw;
+  }
+
+  .page3 {
+    flex-direction: column;
+    padding: 8vw;
+    gap: 8vw;
+  }
+
+  .page3 .left-part h1 {
+    font-family: "Bebas Neue", sans-serif;
+    font-size: 12vw;
+  }
+
+  .page3 .left-part p {
+    font-family: "Futura";
+    width: 100%;
+    font-size: 4vw;
+    line-height: 5vw;
+    margin-top: 2vw;
+  }
+
+  .right-part {
+    width: 100%;
+    padding: 6vw;
+    gap: 6vw;
+  }
+  .one {
+    flex-direction: column;
+    gap: 5vw;
+  }
+  .right-part .title {
+    font-family: "Bebas Neue", sans-serif;
+    font-size: 6vw;
+  }
+
+  .right-part input {
+    height: 8vw;
+    font-family: "Moderustic";
+    font-size: 4vw;
+    width: 100%;
+    background-color: transparent;
+  }
+  .group input {
+    width: 100%;
+  }
+  .right-part input::placeholder {
+    font-family: "Moderustic";
+    font-size: 4vw;
+  }
+
+  .what_to_fill_in {
+    font-family: "Bebas Neue";
+    font-size: 4vw;
+  }
+  .cmn-btn.submit-btn {
+    padding: 2vw 8vw;
+    font-family: "Bebas Neue";
+    font-size: 4vw;
+    border-radius: 5vw;
+  }
+
+  .page4 {
+    flex-direction: column;
+    gap: 6vw;
+  }
+
+  .social-media {
+    gap: 6vw;
+    margin-top: 20vw;
+  }
+
+  .social-media a {
+    height: 25vw;
+    width: 25vw;
+  }
+
+  .social-media a i {
+    font-size: 5vw;
+  }
+
+  .hover-box {
+    height: 18vw;
+    width: 18vw;
+    display: none;
+  }
+
+  .right-side-menu {
+    gap: 4vw;
+  }
+  .right-side-menu .menu-button a {
+    text-decoration: none;
+    color: #fff;
+    font-size: 5vw;
+    font-family: "Bebas neue";
+  }
+  .get__in__touch {
+    font-family: "Bebas Neue", sans-serif;
+    font-size: 20vw;
+    font-weight: 900;
+  }
+
+  .menu {
+    gap: 20vw;
+  }
+  .message-box {
+    height: 25vw;
+    width: 72vw;
+    font-family: "Moderustic";
+    font-size: 4vw;
+    padding: 2vw;
+  }
+  .popup {
+    width: 80vw;
+    padding: 6vw;
+  }
+
+  .popup-header span {
+    font-family: "Bebas Neue", sans-serif;
+    font-size: 6vw;
+  }
+
+  .popup-buttons {
+    flex-direction: column;
+    gap: 3vw;
+    align-items: center;
+  }
+
+  .popup-buttons button {
+    width: 100%;
+    padding: 3vw;
+  }
+
+  .close-button {
+    font-family: "Bebas Neue", sans-serif;
+    font-size: 8vw;
+  }
+
+  .method-box .ad {
+    font-size: 16vw;
+  }
+  .page3 .left-part p {
+    font-size: 4.07vw;
+  }
+}

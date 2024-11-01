@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Rural Peace</title>
+    <link rel="shortcut icon" href="images/logo.png" type="image/x-icon" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.css"
+    />
+
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/locomotive-scroll@3.5.4/dist/locomotive-scroll.css"
+    />
+
+    <link rel="stylesheet" href="checkout.css" />
+    <link rel="stylesheet" href="contact.css" />
+    <link rel="stylesheet" href="work.css" />
+    <link rel="stylesheet" href="style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+      integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.css"
+    />
+  </head>
+  <body>
+    <div id="main">
+      <div id="page1">
+        <nav class="nav-bar">
+          <div class="logo-name-motto">
+            <div class="logo">
+              <a href="Home"><img src="images/logo.png" alt="" /></a>
+            </div>
+            <p class="name">
+              RURAL <br />
+              PEACE
+            </p>
+
+            <a class="log-in-btn" id="auth-link" href="/auth/google">Log In</a>
+            <div id="profile-pic-container"></div>
+          </div>
+
+          <div class="menu">
+            <i class="fa fa-bars menuBtn"></i>
+          </div>
+        </nav>
+        <div class="mobile-menu-bar">
+          <a class="donateBtn" href="donate">DONATE</a>
+          <i class="fa-solid fa-xmark closeBtn"></i>
+          <div class="explore">
+            <a href="Home">Home</a>
+            <a href="Programs">Programs</a>
+            <div class="sub">
+              <a href="Blood-donation">blood donation</a>
+              <a href="Social-issues">social issues</a>
+              <a href="Help-people">Assistance</a>
+              <a href="Sound-environment">sound environment</a>
+            </div>
+            <a href="newsletters.html">blog</a>
+            <a href="about">About</a>
+            <a href="contact">Contact</a>
+          </div>
+          <div class="org-name">
+            <div class="r">Rural</div>
+            <div class="p">Peace</div>
+            <img src="images/logo.png" alt="" />
+          </div>
+          <div class="menu-video">
+            <video
+              loop
+              muted
+              autoplay
+              src="videos/menu-page-animated-video.mp4"
+            ></video>
+          </div>
+        </div>
+        <div class="home-page-img">
+          <img src="art_imgs/kir-ufod2uFjkTI-unsplash.jpg" alt="" />
+        </div>
+        <div class="contact-title">
+          CONTACT
+        </div>
+        <div class="title-sentence">
+          <h1 class="first">STAY IN</h1>
+          <h1 class="second">CONTACT</h1>
+          <p class="some-text">
+            When we donate blood, we offer hope to others. It’s a small act with
+            a huge impact, helping those in urgent need. We also take care of
+            our own health and feel good knowing we’ve made a difference.
+            Together, we build a stronger, more compassionate community through
+            our generosity.
+          </p>
+        </div>
+      </div>
+      <div class="page2">
+        <div class="mail">KNOCK US</div>
+        <div class="method-box">
+          <div class="method-one">
+            <h1>EMAIL</h1>
+            <p>SHARE YOUR THOUGHT</p>
+            <a href="mailto:org.ruralpeace@gmail.com" class="email-address"
+              >ORG.RURALPEACE@GMAIL.COM</a
+            >
+          </div>
+          <div class="method-one">
+            <h1>PHONE</h1>
+            <p>SHARE YOUR THOUGHT</p>
+            <a>+88 01750-087889</a>
+            <a class="two">+88 01966-785176</a>
+          </div>
+          <div class="method-one">
+            <h1 class="ad">ADDRESS</h1>
+            <p>SHARE YOUR THOUGHT</p>
+            <a>NL 24°47'5" EL 87°16'32"</a>
+            <a class="two">KAHALU || BOGURA</a>
+          </div>
+        </div>
+      </div>
+      <div class="page3">
+        <div class="left-part">
+          <h1>
+            <span class="color-red">ASK ANYTHING </span><br />
+            YOU WANT
+          </h1>
+          <p>
+            WE RESPECT YOUR IDEA, COMMENT AND FEEDBACK. WE ARE ALWAYS READY TO
+            PROTECT YOUR PRIORITY. WE KNOW HOW TO ASSIST YOU AND YOUR COMMUNITY.
+          </p>
+        </div>
+        <form
+          class="right-part"
+          id="contactForm"
+          action="/submit-form"
+          method="post"
+        >
+          <div class="title">DROP A MESSAGE</div>
+          <div class="one">
+            <div class="group">
+              <div class="what_to_fill_in">Name</div>
+              <input
+                type="text"
+                placeholder="Your Full Name"
+                name="name"
+                required
+              />
+            </div>
+            <div class="group">
+              <div class="what_to_fill_in">Email</div>
+              <input
+                type="text"
+                placeholder="Your Email"
+                name="email"
+                required
+              />
+            </div>
+          </div>
+          <div class="one">
+            <div class="group">
+              <div class="what_to_fill_in">Phone</div>
+              <input
+                id="phone"
+                placeholder="Your Number"
+                type="tel"
+                name="phone"
+              />
+            </div>
+            <div class="group">
+              <div class="what_to_fill_in">Address</div>
+              <input type="text" placeholder="Your Address" name="address" />
+            </div>
+          </div>
+          <div class="one">
+            <div class="group">
+              <div class="what_to_fill_in">Write your thought</div>
+              <textarea
+                class="message-box"
+                placeholder="Drop your message here"
+                name="text"
+                required
+              ></textarea>
+            </div>
+          </div>
+          <button class="cmn-btn submit-btn" type="submit">Submit</button>
+        </form>
+        <div class="popup">
+          <div class="popup-header">
+            <span>MESSAGE SENT</span>
+            <button class="close-button">x</button>
+          </div>
+          <hr />
+          <div class="popup-content">
+            <p>Thank you for staying with us.</p>
+          </div>
+        </div>
+        <div class="page3-shadow"></div>
+      </div>
+      <div class="page4">
+        <div class="social-media">
+          <a href="https://www.facebook.com/profile.php?id=61564819259663">
+            <i class="fa-brands fa-facebook-f"></i>
+            <div class="hover-box"></div>
+          </a>
+          <a href="#">
+            <i class="fa-brands fa-x-twitter"></i>
+            <div class="hover-box"></div>
+          </a>
+          <a href="#">
+            <i class="fa-brands fa-instagram"></i>
+            <div class="hover-box"></div>
+          </a>
+        </div>
+        <div class="right-side-menu">
+          <div class="menu-button">
+            <a href="Home">Home</a>
+            <a href="Programs">programs</a>
+            <a href="About">about</a>
+          </div>
+          <a href="Contact" class="get__in__touch">
+            Get in touch
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/locomotive-scroll@3.5.4/dist/locomotive-scroll.js"></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"
+      integrity="sha512-16esztaSRplJROstbIIdwX3N97V1+pZvV33ABoG1H2OyTttBxEGkTsoIVsiP1iaTtM8b3+hu2kB6pQ4Clr5yug=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"
+      integrity="sha512-Ic9xkERjyZ1xgJ5svx3y0u3xrvfT/uPkV99LBwe68xjy/mGtO+4eURHZBW2xW4SZbFrF1Tf090XqB+EVgXnVjw=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
+
+    <script src="contact.js"></script>
+    <script src="work.js"></script>
+    <script src="script.js"></script>
+  </body>
+</html>

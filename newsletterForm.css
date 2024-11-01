@@ -1,0 +1,135 @@
+#main {
+  min-height: 100vh;
+  width: 100%;
+  overflow: hidden;
+}
+.form-container {
+  min-height: 110vh;
+  margin: auto;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background: #f9f9f9;
+  position: relative;
+}
+
+h2 {
+  text-align: center;
+}
+
+input,
+textarea,
+button {
+  width: 97.8%;
+  padding: 10px;
+  margin: 10px 0;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+input {
+  padding: 1vw;
+  font-family: "Futura";
+  position: relative;
+}
+button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  font-family: "Futura";
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+/*froala*/
+/* Froala Editor specific styles */
+.fr-btn-grp.fr-float-left {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap; /* Allow buttons to wrap */
+  align-items: center; /* Center align items */
+  gap: 1vw; /* Space between buttons */
+}
+/* Adjust height and view */
+.fr-element.fr-view {
+  height: 65vh; /* Increase the minimum height for better visibility */
+}
+.thum_post {
+  position: absolute;
+  z-index: 10;
+  bottom: 1vw;
+  width: 97.3%;
+}
+.fr-buttons {
+  display: flex;
+  position: relative;
+  top: -1px;
+}
+.fr-quick-insert {
+  margin-top: 28vw;
+  margin-left: -2vw; /* Adjust margins for better fit */
+}
+.fr-btn-grp .fr-btn {
+  flex: 0;
+  min-width: 45px;
+  max-width: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+div.fr-btn-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.fr-command.fr-btn.fr-options {
+  width: 16px;
+  margin-left: -40px;
+}
+.fr-command.fr-btn.fr-options:hover {
+  background-color: transparent;
+}
+.popup {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.popup-content {
+  background-color: white;
+  padding: 20px;
+  border-radius: 5px;
+  text-align: center;
+  font-family: Roboto;
+}
+
+.close {
+  cursor: pointer;
+  float: right;
+}
+
+/* .fr-logo {
+  display: none !important;
+} */
+@media (max-width: 786px) {
+  .form-container {
+    height: 140vh;
+    padding: 0.5vw;
+    background-color: transparent;
+    border: none;
+  }
+  #title {
+    padding: 3vw;
+    width: 93%;
+  }
+}

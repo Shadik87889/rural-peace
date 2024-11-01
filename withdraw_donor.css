@@ -1,0 +1,142 @@
+@import url("https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap");
+
+/* Reset default styles */
+body,
+h1,
+form {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Body styles */
+body {
+  font-family: "Arial", sans-serif;
+  background: linear-gradient(135deg, #2b2b4d, #121212);
+  color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 2vw;
+  /* overflow: hidden; */
+}
+
+/* Header styles */
+h1 {
+  font-size: 3.5rem; /* Increased for more impact */
+  margin-bottom: 20px;
+  text-align: center;
+  color: #ffdd57; /* Changed color for contrast */
+  font-family: "Bebas Neue", cursive;
+  text-transform: uppercase;
+  text-shadow: 3px 3px 8px rgba(0, 0, 0, 0.7);
+  animation: fadeIn 1s ease-in-out;
+}
+
+/* Keyframes for animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+/* Reset default styles */
+form {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Form styles */
+#deleteDonorForm {
+  background: rgba(50, 50, 50, 0.9);
+  border-radius: 25px;
+  box-shadow: 0 16px 60px rgba(0, 0, 0, 0.9);
+  padding: 40px;
+  width: 90%;
+  max-width: 500px;
+  display: flex;
+  flex-direction: column;
+  backdrop-filter: blur(12px);
+  animation: slideIn 0.5s ease-in;
+}
+
+/* Label styles */
+label {
+  margin-bottom: 8px;
+  font-weight: bold;
+  color: #ffdd57;
+  font-size: 1.2rem;
+}
+
+/* Input field styles */
+input {
+  border: 2px solid #777;
+  border-radius: 15px;
+  padding: 16px;
+  margin-bottom: 20px;
+  font-size: 1.2rem;
+  color: #ffffff;
+  background: #353840;
+  transition: border-color 0.3s, box-shadow 0.3s, transform 0.2s;
+}
+
+input:focus {
+  border-color: #ffdd57;
+  box-shadow: 0 0 10px #ffdd57;
+  outline: none;
+  transform: scale(1.03);
+}
+
+/* Button styles */
+button {
+  background: linear-gradient(135deg, #ffdd57, #ffbd45);
+  color: white;
+  border: none;
+  border-radius: 15px;
+  padding: 16px;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s, box-shadow 0.3s;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+}
+
+button:hover {
+  background: linear-gradient(135deg, #ffbd45, #ffdd57);
+  transform: translateY(-5px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+}
+
+/* Response message styles */
+#responseMessage {
+  margin-top: 20px;
+  font-size: 1.2rem;
+  text-align: center;
+}
+
+/* Responsive styles */
+@media (max-width: 500px) {
+  #deleteDonorForm {
+    width: 90%;
+    margin-bottom: 20vw;
+  }
+  button {
+    font-size: 1.1rem;
+  }
+}

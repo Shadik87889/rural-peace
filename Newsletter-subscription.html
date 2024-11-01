@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Subscribe to Our Newsletter</title>
+    <link rel="shortcut icon" href="images/logo.png" type="image/x-icon" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="newsletter-container">
+      <form id="newsletterForm">
+        <h2>Subscribe to Our Newsletter</h2>
+        <p>
+          Stay updated with the latest newsletter content delivered right to
+          your inbox.
+        </p>
+        <input
+          type="email"
+          id="email"
+          placeholder="Enter your email"
+          required
+        />
+        <button type="submit">Subscribe Now</button>
+      </form>
+    </div>
+
+    <!-- Modal Popup -->
+    <div id="modal" class="modal">
+      <div class="modal-content">
+        <span class="close">&times;</span>
+        <p id="modal-message"></p>
+      </div>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>

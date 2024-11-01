@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Newsletter Details</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+      integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <link rel="shortcut icon" href="images/logo.png" type="image/x-icon" />
+
+    <link rel="stylesheet" href="contact.css" />
+
+    <link rel="stylesheet" href="style.css" />
+
+    <link rel="stylesheet" href="newsletter-content.css" />
+    <link rel="stylesheet" href="details.css" />
+  </head>
+  <body>
+    <div id="main">
+      <div id="page-1">
+        <nav class="nav-bar details">
+          <div class="logo-name-motto d">
+            <div class="logo">
+              <a href="Home"><img src="images/logo.png" alt="" /></a>
+            </div>
+            <p class="name">
+              RURAL <br />
+              PEACE
+            </p>
+            <a class="log-in-btn" id="auth-link" href="/auth/google">Log In</a>
+            <div id="profile-pic-container"></div>
+            <i class="fa-solid fa-magnifying-glass find"></i>
+          </div>
+          <div class="menu">
+            <i class="fa fa-bars menuBtn"></i>
+          </div>
+        </nav>
+        <div id="newsletterContent" class="all-blogs"></div>
+      </div>
+      <div class="react-cmnt-click-box">
+        <div class="react-and-comment-count">
+          <span class="react-count" id="reactCountDisplay">❤️ 0</span>
+          <span class="cmnt-count"><i class="fa-solid fa-comment"></i> 0</span>
+        </div>
+        <div class="react-comment-section">
+          <div class="react-section">
+            <!-- Display total reactions -->
+            <button class="react-btn" id="reactBtn">
+              <span><i class="fa-regular fa-heart"></i></span>React
+            </button>
+          </div>
+          <div class="comment-box-click">
+            <button>
+              <span><i class="fa-regular fa-comment"></i></span>Comment
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="interaction-section">
+        <div class="comment-section">
+          <div class="comments">
+            <!-- Comments will be appended dynamically here -->
+          </div>
+          <div class="loading-comment"></div>
+          <div class="add-comment">
+            <img src="" alt="Profile Pic" class="profile-pic" />
+            <input
+              type="text"
+              class="comment-input"
+              placeholder="Write a comment..."
+            />
+            <button class="submit-comment">Comment</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="page4">
+        <div class="social-media">
+          <a href="https://www.facebook.com/profile.php?id=61564819259663">
+            <i class="fa-brands fa-facebook-f"></i>
+            <div class="hover-box"></div>
+          </a>
+          <a href="#">
+            <i class="fa-brands fa-x-twitter"></i>
+            <div class="hover-box"></div>
+          </a>
+          <a href="#">
+            <i class="fa-brands fa-instagram"></i>
+            <div class="hover-box"></div>
+          </a>
+        </div>
+        <div class="right-side-menu">
+          <div class="menu-button">
+            <a href="Home">Home</a>
+            <a href="Programs">programs</a>
+            <a href="About">about</a>
+            <a href="Contact">contact</a>
+          </div>
+          <a href="Contact" class="get__in__touch">
+            Get in touch
+          </a>
+        </div>
+      </div>
+
+      <div class="mobile-menu-bar">
+        <a class="donateBtn" href="donate">DONATE</a>
+        <i class="fa-solid fa-xmark closeBtn"></i>
+        <div class="explore">
+          <a href="Home">Home</a>
+          <a href="Programs">Programs</a>
+          <div class="sub">
+            <a href="Blood-donation">blood donation</a>
+            <a href="Social-issues">social issues</a>
+            <a href="Help-people">Assistance</a>
+            <a href="Sound-environment">sound environment</a>
+          </div>
+          <a href="newsletters.html">blog</a>
+          <a href="about">About</a>
+          <a href="contact">Contact</a>
+        </div>
+        <div class="org-name">
+          <div class="r">Rural</div>
+          <div class="p">Peace</div>
+          <img src="images/logo.png" alt="" />
+        </div>
+        <div class="menu-video">
+          <video
+            loop
+            muted
+            autoplay
+            src="videos/menu-page-animated-video.mp4"
+          ></video>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/locomotive-scroll@3.5.4/dist/locomotive-scroll.js"></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"
+      integrity="sha512-16esztaSRplJROstbIIdwX3N97V1+pZvV33ABoG1H2OyTttBxEGkTsoIVsiP1iaTtM8b3+hu2kB6pQ4Clr5yug=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"
+      integrity="sha512-Ic9xkERjyZ1xgJ5svx3y0u3xrvfT/uPkV99LBwe68xjy/mGtO+4eURHZBW2xW4SZbFrF1Tf090XqB+EVgXnVjw=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+    <script src="detailsLogIn.js"></script>
+    <script type="module" src="details.js"></script>
+    <script src="newsLetterMenu.js"></script>
+    <script src="details_rendering.js"></script>
+  </body>
+</html>
