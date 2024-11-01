@@ -71,11 +71,11 @@ const editor = new FroalaEditor("#editor-container", {
           if (data.url) {
             // Insert the uploaded image into the editor
             this.image.insert(data.url, true);
-            // Use setTimeout to ensure the image is fully inserted before applying styles
             setTimeout(() => {
               const imgElement = this.$el.find('img[src="' + data.url + '"]');
               imgElement.css({
-                width: "100%", // Set width to 100% to make it responsive
+                "min-width": "338px", // Set min-width to 338px
+                width: "auto", // Allow width to be responsive
                 height: "auto", // Maintain aspect ratio
               });
             }, 0); // Delay to allow for DOM updates
