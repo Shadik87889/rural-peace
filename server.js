@@ -700,19 +700,29 @@ app.post("/upload-endpoint", upload.single("image"), (req, res) => {
   }
 });
 
-// Endpoint to upload a thumbnail image
+// Thumbnail upload endpoint
 app.post(
   "/upload-thumbnail-endpoint",
   upload.single("thumbnail"),
   (req, res) => {
-    if (req.file) {
-      // Return the direct URL from Cloudinary
-      res.json({ url: req.file.path });
+    if (req.file && req.file.path) {
+      res.json({ url: req.file.path }); // Return the uploaded thumbnail URL
     } else {
-      res.status(400).json({ message: "No thumbnail uploaded" });
+      console.error("Thumbnail upload failed: No file path returned");
+      res
+        .status(400)
+        .json({ error: "Thumbnail upload failed. No file path returned." });
     }
   }
 );
+
+// Error handling middleware for upload errors
+app.use((err, req, res, next) => {
+  console.error("Upload Error:", err);
+  res
+    .status(500)
+    .json({ error: "An error occurred while uploading the file." });
+});
 // app.post("/upload-endpoint", upload.single("file"), async (req, res) => {
 //   if (!req.file) {
 //     return res.status(400).json({ error: "No file uploaded" });

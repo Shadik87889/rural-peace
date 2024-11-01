@@ -136,7 +136,6 @@ document
     }
   });
 
-// Upload thumbnail with detailed error handling for JSON response
 async function uploadThumbnail(file) {
   const formData = new FormData();
   formData.append("thumbnail", file);
@@ -148,23 +147,19 @@ async function uploadThumbnail(file) {
     });
 
     const text = await response.text(); // Capture raw response text for debugging
-    let data;
+    console.log("Thumbnail Upload Response:", text); // Log raw response
 
+    let data;
     try {
       data = JSON.parse(text);
     } catch (error) {
-      console.error("Failed to parse JSON:", text); // Log raw response
-      throw new Error(
-        "Invalid JSON response from server. Check server logs for details."
-      );
+      console.error("JSON Parsing Error:", text);
+      throw new Error("Invalid JSON response from server.");
     }
 
     if (!data.url) {
-      console.error(
-        "Thumbnail upload failed:",
-        data.error || "No URL returned"
-      );
-      throw new Error(data.error || "Thumbnail upload failed");
+      console.error("Thumbnail URL missing in response:", data);
+      throw new Error("Thumbnail upload failed, no URL returned.");
     }
 
     return data.url;
