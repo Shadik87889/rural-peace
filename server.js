@@ -16,7 +16,21 @@ const FileStore = require("session-file-store")(session);
 const { v4: uuidv4 } = require("uuid");
 const axios = require("axios");
 const app = express();
-const upload = multer({ dest: "uploads/" });
+// Set up storage for uploaded files
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    const dir = "uploads/";
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir);
+    }
+    cb(null, dir);
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + path.extname(file.originalname)); // Append timestamp to file name
+  },
+});
+
+const upload = multer({ storage });
 const PORT = process.env.PORT || 3003; // or another port
 // Enable CORS and JSON parsing
 app.use(cors());
