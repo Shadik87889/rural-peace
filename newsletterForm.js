@@ -2,12 +2,10 @@
 const editor = new FroalaEditor("#editor-container", {
   placeholderText: "Write your newsletter content here...",
   toolbarButtons: [
-    // Editing
     "undo",
     "redo",
     "clearFormatting",
     "selectAll",
-    // Text Formatting
     "bold",
     "italic",
     "underline",
@@ -21,15 +19,12 @@ const editor = new FroalaEditor("#editor-container", {
     "lineHeight",
     "superscript",
     "subscript",
-    // Alignment and Indentation
     "align",
     "paragraphFormat",
     "indent",
     "outdent",
-    // Lists
     "formatOL",
     "formatUL",
-    // Insert Elements
     "insertHR",
     "insertLink",
     "insertImage",
@@ -40,47 +35,52 @@ const editor = new FroalaEditor("#editor-container", {
     "insertEmoji",
     "insertPageBreak",
     "quote",
-    "insertMargin",
-    // Code and HTML
     "html",
     "markdown",
     "codeBeautifier",
     "embedly",
-    // Special Features
     "fullscreen",
-    "emoticons",
     "print",
     "entities",
-    "draggable",
     "fontAwesome",
-    // Help and Support
     "help",
   ],
   events: {
-    "image.beforeUpload": function (files) {
-      const formData = new FormData();
-      formData.append("file", files[0]); // Append the file
+    "image.beforeUpload": async function (files) {
+      if (files.length) {
+        const formData = new FormData();
+        formData.append("file", files[0]);
 
-      // Send the file to the server
-      fetch("/upload-endpoint", {
-        method: "POST",
-        body: formData,
-      })
-        .then((response) => response.json())
-        .then((data) => {
+        try {
+          const response = await fetch("/upload-endpoint", {
+            method: "POST",
+            body: formData,
+          });
+
+          // Check if the response is JSON
+          const text = await response.text();
+          let data;
+          try {
+            data = JSON.parse(text);
+          } catch (error) {
+            console.error("Failed to parse JSON:", text);
+            throw new Error("Invalid JSON response from server");
+          }
+
           if (data.url) {
-            // Insert the uploaded image into the editor
             this.image.insert(data.url, true);
           } else {
-            console.error("Image upload failed:", data.error);
+            console.error(
+              "Image upload failed:",
+              data.error || "Unknown error"
+            );
           }
-        })
-        .catch((error) => {
+        } catch (error) {
           console.error("Error uploading image:", error);
-        });
+        }
 
-      // Prevent Froala from uploading the image itself
-      return false;
+        return false;
+      }
     },
   },
 });
@@ -89,7 +89,7 @@ const editor = new FroalaEditor("#editor-container", {
 document
   .getElementById("newsletterForm")
   .addEventListener("submit", async (e) => {
-    e.preventDefault(); // Prevent default form submission
+    e.preventDefault();
 
     const title = document.getElementById("title").value;
     const content = editor.html.get();
@@ -98,21 +98,22 @@ document
     const thumbnailFile = thumbnailInput.files[0];
 
     let thumbnailUrl = "";
-    try {
-      thumbnailUrl = await uploadThumbnail(thumbnailFile);
-    } catch (error) {
-      alert("Error uploading thumbnail.");
-      return;
+    if (thumbnailFile) {
+      try {
+        thumbnailUrl = await uploadThumbnail(thumbnailFile);
+      } catch (error) {
+        alert("Error uploading thumbnail.");
+        console.error("Thumbnail upload error:", error);
+        return;
+      }
     }
 
-    // Prepare newsletter data
     const newsletterData = {
       title,
       content,
       thumbnail: thumbnailUrl,
     };
 
-    // Send data to server
     try {
       const response = await fetch("/create-newsletter", {
         method: "POST",
@@ -127,19 +128,16 @@ document
       }
 
       alert("Newsletter created successfully!");
-      // Optionally, reset the form
       document.getElementById("newsletterForm").reset();
-      editor.html.set(""); // Clear the editor
+      editor.html.set("");
     } catch (error) {
       console.error("Error creating newsletter:", error);
       alert("Error creating newsletter.");
     }
   });
 
-// Upload thumbnail
+// Upload thumbnail with error handling for JSON response
 async function uploadThumbnail(file) {
-  if (!file) return ""; // No file selected
-
   const formData = new FormData();
   formData.append("thumbnail", file);
 
@@ -148,10 +146,19 @@ async function uploadThumbnail(file) {
     body: formData,
   });
 
-  if (!response.ok) {
-    throw new Error("Failed to upload thumbnail");
+  // Check if response is JSON
+  const text = await response.text();
+  let data;
+  try {
+    data = JSON.parse(text);
+  } catch (error) {
+    console.error("Failed to parse JSON:", text);
+    throw new Error("Invalid JSON response from server");
   }
 
-  const data = await response.json();
-  return data.url; // Assuming your server returns the URL of the uploaded thumbnail
+  if (!data.url) {
+    throw new Error("Thumbnail upload failed, URL not returned");
+  }
+
+  return data.url;
 }
