@@ -56,9 +56,6 @@ const editor = new FroalaEditor("#editor-container", {
     // Help and Support
     "help",
   ],
-  fontSize: {
-    options: Array.from({ length: 100 }, (_, i) => i + 1),
-  },
   events: {
     "image.beforeUpload": function (files) {
       const formData = new FormData();
@@ -74,12 +71,14 @@ const editor = new FroalaEditor("#editor-container", {
           if (data.url) {
             // Insert the uploaded image into the editor
             this.image.insert(data.url, true);
-            // Add responsive styles to the inserted image
-            const imgElement = this.$el.find('img[src="' + data.url + '"]');
-            imgElement.css({
-              maxWidth: "100%",
-              height: "auto",
-            });
+            // Use setTimeout to ensure the image is fully inserted before applying styles
+            setTimeout(() => {
+              const imgElement = this.$el.find('img[src="' + data.url + '"]');
+              imgElement.css({
+                width: "100%", // Set width to 100% to make it responsive
+                height: "auto", // Maintain aspect ratio
+              });
+            }, 0); // Delay to allow for DOM updates
           } else {
             console.error("Image upload failed:", data.error);
           }
