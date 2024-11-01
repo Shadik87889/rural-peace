@@ -12,23 +12,9 @@ const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const cloudinary = require("cloudinary").v2;
 const { CloudinaryStorage } = require("multer-storage-cloudinary");
 const session = require("express-session");
-// const FileStore = require("session-file-store")(session);
 const { v4: uuidv4 } = require("uuid");
 const axios = require("axios");
 const app = express();
-// Set up storage for uploaded files
-// const storage = multer.diskStorage({
-//   destination: (req, file, cb) => {
-//     const dir = "uploads/";
-//     if (!fs.existsSync(dir)) {
-//       fs.mkdirSync(dir);
-//     }
-//     cb(null, dir);
-//   },
-//   filename: (req, file, cb) => {
-//     cb(null, Date.now() + path.extname(file.originalname)); // Append timestamp to file name
-//   },
-// });
 
 // const upload = multer({ storage });
 const PORT = process.env.PORT || 3003; // or another port
@@ -710,6 +696,7 @@ app.post("/upload-endpoint", upload.single("file"), (req, res) => {
     res.status(500).json({ error: "Error processing file" });
   }
 });
+//thumbnail handling
 app.post(
   "/upload-thumbnail-endpoint",
   upload.single("thumbnail"),
@@ -727,53 +714,6 @@ app.post(
     }
   }
 );
-
-// app.post("/upload-endpoint", upload.single("file"), async (req, res) => {
-//   if (!req.file) {
-//     return res.status(400).json({ error: "No file uploaded" });
-//   }
-
-//   const outputPath = `uploads/resized-${req.file.filename}`; // Resized image path
-
-//   try {
-//     // Resize the image to desired dimensions (e.g., 1200x900)
-//     await sharp(req.file.path)
-//       .resize(1200, 900) // Adjust the dimensions as needed
-//       .toFile(outputPath);
-
-//     const fileUrl = `https://rural-peace.onrender.com/${outputPath}`; // Adjust the domain as necessary
-//     res.json({ url: fileUrl });
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({ error: "Error processing file" });
-//   }
-// });
-// // Endpoint to upload and resize thumbnails
-// app.post(
-//   "/upload-thumbnail-endpoint",
-//   upload.single("thumbnail"),
-//   async (req, res) => {
-//     if (!req.file) {
-//       return res.status(400).json({ error: "No thumbnail uploaded" });
-//     }
-
-//     const outputPath = `uploads/resized-${req.file.filename}`;
-
-//     try {
-//       // Resize the image to 1200x900
-//       await sharp(req.file.path)
-//         .resize(1200, 900) // Resize dimensions
-//         .toFile(outputPath);
-
-//       // Generate the URL for the resized image
-//       const thumbnailUrl = `https://rural-peace.onrender.com/${outputPath}`;
-//       res.json({ url: thumbnailUrl });
-//     } catch (error) {
-//       console.error(error);
-//       res.status(500).json({ error: "Error processing image" });
-//     }
-//   }
-// );
 // Endpoint to create a newsletter
 app.post("/create-newsletter", async (req, res) => {
   const { title, content, thumbnail } = req.body;
