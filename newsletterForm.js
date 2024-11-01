@@ -69,8 +69,6 @@ const editor = new FroalaEditor("#editor-container", {
         .then((response) => response.json())
         .then((data) => {
           if (data.url) {
-            // Insert the uploaded image into the editor
-            this.image.insert(data.url, true);
             setTimeout(() => {
               const imgElement = this.$el.find('img[src="' + data.url + '"]');
               imgElement.css({
@@ -78,7 +76,9 @@ const editor = new FroalaEditor("#editor-container", {
                 width: "auto", // Allow width to be responsive
                 height: "auto", // Maintain aspect ratio
               });
-            }, 0); // Delay to allow for DOM updates
+            }, 0);
+            // Insert the uploaded image into the editor
+            this.image.insert(data.url, true);
           } else {
             console.error("Image upload failed:", data.error);
           }
