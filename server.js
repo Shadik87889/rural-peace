@@ -3,8 +3,8 @@ const express = require("express");
 const cors = require("cors");
 const nodemailer = require("nodemailer");
 const bodyParser = require("body-parser");
-const { CloudinaryStorage } = require("multer-storage-cloudinary");
-const cloudinary = require("cloudinary").v2;
+// const { CloudinaryStorage } = require("multer-storage-cloudinary");
+// const cloudinary = require("cloudinary").v2;
 const fs = require("fs");
 const path = require("path");
 const multer = require("multer");
@@ -16,7 +16,7 @@ const FileStore = require("session-file-store")(session);
 const { v4: uuidv4 } = require("uuid");
 const axios = require("axios");
 const app = express();
-// const upload = multer({ dest: 'uploads/' });
+const upload = multer({ dest: "uploads/" });
 const PORT = process.env.PORT || 3003; // or another port
 // Enable CORS and JSON parsing
 app.use(cors());
@@ -663,45 +663,91 @@ app.post("/unsubscribe", async (req, res) => {
       .json({ message: "You have been unsubscribed successfully!" });
   });
 });
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
-});
-// Configure multer storage with Cloudinary
-const storage = new CloudinaryStorage({
-  cloudinary: cloudinary,
-  params: {
-    folder: "uploads", // The folder in your Cloudinary account
-    allowed_formats: ["jpg", "png", "gif", "jpeg"], // Allowed file formats
-  },
-});
+// cloudinary.config({
+//   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+//   api_key: process.env.CLOUDINARY_API_KEY,
+//   api_secret: process.env.CLOUDINARY_API_SECRET,
+// });
+// // Configure multer storage with Cloudinary
+// const storage = new CloudinaryStorage({
+//   cloudinary: cloudinary,
+//   params: {
+//     folder: "uploads", // The folder in your Cloudinary account
+//     allowed_formats: ["jpg", "png", "gif", "jpeg"], // Allowed file formats
+//   },
+// });
 
 // Set up multer with Cloudinary storage
-const upload = multer({ storage: storage });
 
 // Image upload endpoint
-app.post("/upload-endpoint", upload.single("image"), (req, res) => {
-  if (req.file) {
-    res.json({ url: req.file.path }); // Return the image URL from Cloudinary
-  } else {
-    res.status(400).json({ message: "No image uploaded" });
+// app.post("/upload-endpoint", upload.single("image"), (req, res) => {
+//   if (req.file) {
+//     res.json({ url: req.file.path }); // Return the image URL from Cloudinary
+//   } else {
+//     res.status(400).json({ message: "No image uploaded" });
+//   }
+// });
+
+// // Thumbnail upload endpoint
+// app.post(
+//   "/upload-thumbnail-endpoint",
+//   upload.single("thumbnail"),
+//   (req, res) => {
+//     if (req.file) {
+//       res.json({ url: req.file.path }); // Return the thumbnail URL from Cloudinary
+//     } else {
+//       res.status(400).json({ message: "No thumbnail uploaded" });
+//     }
+//   }
+// );
+//only resizing
+//image and thumbnail handaling
+app.post("/upload-endpoint", upload.single("file"), async (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ error: "No file uploaded" });
+  }
+
+  const outputPath = `uploads/resized-${req.file.filename}`; // Resized image path
+
+  try {
+    // Resize the image to desired dimensions (e.g., 1200x900)
+    await sharp(req.file.path)
+      .resize(1200, 900) // Adjust the dimensions as needed
+      .toFile(outputPath);
+
+    const fileUrl = `https://rural-peace.onrender.com/${outputPath}`; // Adjust the domain as necessary
+    res.json({ url: fileUrl });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error processing file" });
   }
 });
-
-// Thumbnail upload endpoint
+// Endpoint to upload and resize thumbnails
 app.post(
   "/upload-thumbnail-endpoint",
   upload.single("thumbnail"),
-  (req, res) => {
-    if (req.file) {
-      res.json({ url: req.file.path }); // Return the thumbnail URL from Cloudinary
-    } else {
-      res.status(400).json({ message: "No thumbnail uploaded" });
+  async (req, res) => {
+    if (!req.file) {
+      return res.status(400).json({ error: "No thumbnail uploaded" });
+    }
+
+    const outputPath = `uploads/resized-${req.file.filename}`;
+
+    try {
+      // Resize the image to 1200x900
+      await sharp(req.file.path)
+        .resize(1200, 900) // Resize dimensions
+        .toFile(outputPath);
+
+      // Generate the URL for the resized image
+      const thumbnailUrl = `https://rural-peace.onrender.com/${outputPath}`;
+      res.json({ url: thumbnailUrl });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: "Error processing image" });
     }
   }
 );
-
 // Endpoint to create a newsletter
 app.post("/create-newsletter", async (req, res) => {
   const { title, content, thumbnail } = req.body;
