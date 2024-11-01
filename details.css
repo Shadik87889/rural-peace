@@ -14,6 +14,7 @@
 }
 .log-in-btn {
   color: #3b3b3b;
+  margin-left: 1vw;
 }
 .nav-bar .name {
   margin-bottom: 1.3vw;
@@ -369,8 +370,8 @@ blockquote {
   }
   .nav-bar {
     height: 12vw;
-    width: 90%;
-    margin-left: 0;
+    width: 95%;
+    margin-left: -3vw;
   }
   .nav-bar .name {
     font-size: 3vw;
@@ -428,7 +429,7 @@ blockquote {
     font-size: 4vw;
   }
   .reply-submit {
-    font-size: 4vw;
+    font-size: 8vw;
   }
   [data-f-id="pbf"] {
     display: none;
@@ -495,5 +496,8 @@ blockquote {
 
   #profile-pic-container {
     margin-bottom: 2vw;
+  }
+  .fa-magnifying-glass {
+    margin-right: 3vw;
   }
 }

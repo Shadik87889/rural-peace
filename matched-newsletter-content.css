@@ -21,13 +21,22 @@ body {
   padding: 20px;
   transition: background 0.5s ease;
 }
-
+.log-in-btn {
+  color: #3b3b3b;
+}
+.nav-bar .name {
+  margin-top: 0.2vw;
+  color: #000;
+  font-size: 1vw;
+}
 /* Header */
 .nav-bar {
   position: relative;
   top: 0;
   margin-bottom: 2vw;
   left: 0;
+  width: 87.5%;
+  margin-left: 1vw;
 }
 .blog-title {
   font-size: 3.5em;
@@ -268,6 +277,9 @@ body {
 .find {
   margin-top: 1.3vw;
 }
+.menu .menuBtn {
+  color: #3b3b3b;
+}
 /* Responsive Design */
 @media (max-width: 768px) {
   .container {
@@ -311,8 +323,17 @@ body {
   }
   .nav-bar {
     height: 12vw;
+    width: 95vw;
+    margin-right: 2vw;
   }
   .find {
     margin-top: 1.5vw;
+  }
+  .fa-magnifying-glass {
+    margin-right: 3vw;
+  }
+  .nav-bar .name {
+    font-size: 3vw;
+    margin-right: 2vw;
   }
 }
