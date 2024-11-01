@@ -4,7 +4,7 @@
   overflow: hidden;
 }
 .form-container {
-  min-height: 120vh;
+  min-height: 125vh;
   margin: auto;
   padding: 2vw 23vw;
   border: 1px solid #ccc;
@@ -125,7 +125,7 @@ div.fr-btn-wrap {
 } */
 @media (max-width: 786px) {
   .form-container {
-    height: 140vh;
+    height: 130vh;
     padding: 0.5vw;
     background-color: transparent;
     border: none;
@@ -133,5 +133,13 @@ div.fr-btn-wrap {
   #title {
     padding: 3vw;
     width: 93%;
+  }
+  input,
+  textarea,
+  button {
+    width: 100%;
+  }
+  input {
+    width: 97%;
   }
 }

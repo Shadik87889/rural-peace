@@ -414,12 +414,6 @@ if (fs.existsSync(dataFilePath)) {
   newsletters = parsedData.newsletters || [];
 }
 
-// Save data to file
-const saveDataToFile = () => {
-  const dataToSave = { subscribers, newsletters };
-  fs.writeFileSync(dataFilePath, JSON.stringify(dataToSave, null, 2));
-};
-
 // Function to send notification email to all subscribers
 const notifySubscribers = (newsletter) => {
   const transporter = nodemailer.createTransport({
