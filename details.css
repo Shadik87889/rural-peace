@@ -361,6 +361,9 @@ blockquote {
   border-left: 4px solid #93e52e;
   padding-left: 2vw;
 }
+.fr-fic.fr-dib.fr-rounded {
+  border-radius: 6px;
+}
 @media (max-width: 768px) {
   .cmnt-time {
     font-size: 3.8vw;
@@ -428,8 +431,8 @@ blockquote {
   .react-reply-btn {
     font-size: 4vw;
   }
-  .reply-submit {
-    font-size: 8vw;
+  .reply-container .reply-submit {
+    font-size: 4vw;
   }
   [data-f-id="pbf"] {
     display: none;

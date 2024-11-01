@@ -4,9 +4,9 @@
   overflow: hidden;
 }
 .form-container {
-  min-height: 110vh;
+  min-height: 120vh;
   margin: auto;
-  padding: 20px;
+  padding: 2vw 23vw;
   border: 1px solid #ccc;
   border-radius: 5px;
   background: #f9f9f9;
@@ -16,11 +16,13 @@
 h2 {
   text-align: center;
 }
-
+#title {
+  width: 96%;
+}
 input,
 textarea,
 button {
-  width: 97.8%;
+  width: 52.2%;
   padding: 10px;
   margin: 10px 0;
   border: 1px solid #ccc;
@@ -36,7 +38,7 @@ button {
   color: white;
   border: none;
   cursor: pointer;
-  width: 100%;
+  width: 54.5%;
   font-family: "Futura";
 }
 
