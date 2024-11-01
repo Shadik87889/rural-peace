@@ -56,37 +56,35 @@ const editor = new FroalaEditor("#editor-container", {
     // Help and Support
     "help",
   ],
-  imageUploadURL: "/upload-endpoint", // Your upload endpoint
-  imageUploadMethod: "POST",
   events: {
-    "image.uploaded": function (response) {
-      let jsonResponse;
+    "image.beforeUpload": function (files) {
+      const formData = new FormData();
+      formData.append("file", files[0]); // Append the file
 
-      try {
-        jsonResponse =
-          typeof response === "string" ? JSON.parse(response) : response;
-      } catch (error) {
-        console.error("Error parsing response:", error);
-        return; // Exit if parsing fails
-      }
+      // Send the file to the server
+      fetch("/upload-endpoint", {
+        method: "POST",
+        body: formData,
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.url) {
+            // Insert the uploaded image into the editor
+            this.image.insert(data.url, true);
+          } else {
+            console.error("Image upload failed:", data.error);
+          }
+        })
+        .catch((error) => {
+          console.error("Error uploading image:", error);
+        });
 
-      // Ensure response has the expected format
-      if (jsonResponse && jsonResponse.url) {
-        this.image.insert(jsonResponse.url);
-      } else {
-        console.error("Invalid upload response:", jsonResponse);
-        alert("Error uploading image: No link in upload response");
-      }
-    },
-    "image.error": function (error) {
-      console.error("Image upload error:", error);
-      alert(
-        "Error uploading image: " +
-          (error && error.message ? error.message : "An unknown error occurred")
-      );
+      // Prevent Froala from uploading the image itself
+      return false;
     },
   },
 });
+
 // Submit newsletter form
 document
   .getElementById("newsletterForm")

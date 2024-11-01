@@ -710,6 +710,24 @@ app.post("/upload-endpoint", upload.single("file"), (req, res) => {
     res.status(500).json({ error: "Error processing file" });
   }
 });
+app.post(
+  "/upload-thumbnail-endpoint",
+  upload.single("thumbnail"),
+  (req, res) => {
+    if (!req.file) {
+      return res.status(400).json({ error: "No thumbnail uploaded" });
+    }
+
+    try {
+      const thumbnailUrl = req.file.path;
+      res.json({ url: thumbnailUrl });
+    } catch (error) {
+      console.error("Cloudinary upload error:", error); // Log full error details
+      res.status(500).json({ error: "Error uploading thumbnail" });
+    }
+  }
+);
+
 // app.post("/upload-endpoint", upload.single("file"), async (req, res) => {
 //   if (!req.file) {
 //     return res.status(400).json({ error: "No file uploaded" });
