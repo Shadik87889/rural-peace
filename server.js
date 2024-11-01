@@ -3,16 +3,16 @@ const express = require("express");
 const cors = require("cors");
 const nodemailer = require("nodemailer");
 const bodyParser = require("body-parser");
-const { CloudinaryStorage } = require("multer-storage-cloudinary");
-const cloudinary = require("cloudinary").v2;
 const fs = require("fs");
 const path = require("path");
 const multer = require("multer");
-// const sharp = require("sharp");
+const sharp = require("sharp");
 const passport = require("passport");
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
+const cloudinary = require("cloudinary").v2;
+const { CloudinaryStorage } = require("multer-storage-cloudinary");
 const session = require("express-session");
-const FileStore = require("session-file-store")(session);
+// const FileStore = require("session-file-store")(session);
 const { v4: uuidv4 } = require("uuid");
 const axios = require("axios");
 const app = express();
@@ -677,51 +677,38 @@ app.post("/unsubscribe", async (req, res) => {
       .json({ message: "You have been unsubscribed successfully!" });
   });
 });
-// Configure Cloudinary storage with multer
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
+
+// Configure Multer to use Cloudinary for storage
 const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
-    folder: "uploads", // The folder in your Cloudinary account
-    allowed_formats: ["jpg", "png", "gif", "jpeg"], // Allowed file formats
-    transformation: [{ quality: "auto" }], // Optional: adjust image quality
+    folder: "uploads",
+    format: async (req, file) => "jpg", // Save images as JPG format
+    public_id: (req, file) => `resized-${uuidv4()}`, // Generate unique ID for each file
+    transformation: [{ width: 1200, height: 900, crop: "limit" }],
   },
 });
 
-// Initialize multer with the configured Cloudinary storage
-const upload = multer({ storage });
+const upload = multer({ storage: storage });
 
-// Endpoint to upload a general image
-app.post("/upload-endpoint", upload.single("image"), (req, res) => {
-  if (req.file) {
-    // Return the direct URL from Cloudinary
-    res.json({ url: req.file.path });
-  } else {
-    res.status(400).json({ message: "No image uploaded" });
+// Endpoint for uploading and resizing images
+app.post("/upload-endpoint", upload.single("file"), (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ error: "No file uploaded" });
   }
-});
 
-// Thumbnail upload endpoint
-app.post(
-  "/upload-thumbnail-endpoint",
-  upload.single("thumbnail"),
-  (req, res) => {
-    if (req.file && req.file.path) {
-      res.json({ url: req.file.path }); // Return the uploaded thumbnail URL
-    } else {
-      console.error("Thumbnail upload failed: No file path returned");
-      res
-        .status(400)
-        .json({ error: "Thumbnail upload failed. No file path returned." });
-    }
+  try {
+    const fileUrl = req.file.path; // Cloudinary URL for the resized image
+    res.json({ url: fileUrl });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error processing file" });
   }
-);
-
-// Error handling middleware for upload errors
-app.use((err, req, res, next) => {
-  console.error("Upload Error:", err);
-  res
-    .status(500)
-    .json({ error: "An error occurred while uploading the file." });
 });
 // app.post("/upload-endpoint", upload.single("file"), async (req, res) => {
 //   if (!req.file) {

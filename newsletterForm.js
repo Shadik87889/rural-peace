@@ -2,10 +2,12 @@
 const editor = new FroalaEditor("#editor-container", {
   placeholderText: "Write your newsletter content here...",
   toolbarButtons: [
+    // Editing
     "undo",
     "redo",
     "clearFormatting",
     "selectAll",
+    // Text Formatting
     "bold",
     "italic",
     "underline",
@@ -19,12 +21,15 @@ const editor = new FroalaEditor("#editor-container", {
     "lineHeight",
     "superscript",
     "subscript",
+    // Alignment and Indentation
     "align",
     "paragraphFormat",
     "indent",
     "outdent",
+    // Lists
     "formatOL",
     "formatUL",
+    // Insert Elements
     "insertHR",
     "insertLink",
     "insertImage",
@@ -35,61 +40,58 @@ const editor = new FroalaEditor("#editor-container", {
     "insertEmoji",
     "insertPageBreak",
     "quote",
+    "insertMargin",
+    // Code and HTML
     "html",
     "markdown",
     "codeBeautifier",
     "embedly",
+    // Special Features
     "fullscreen",
+    "emoticons",
     "print",
     "entities",
+    "draggable",
     "fontAwesome",
+    // Help and Support
     "help",
   ],
+  imageUploadURL: "/upload-endpoint", // Your upload endpoint
+  imageUploadMethod: "POST",
   events: {
-    "image.beforeUpload": async function (files) {
-      if (files.length) {
-        const formData = new FormData();
-        formData.append("file", files[0]);
+    "image.uploaded": function (response) {
+      let jsonResponse;
 
-        try {
-          const response = await fetch("/upload-endpoint", {
-            method: "POST",
-            body: formData,
-          });
-
-          // Check if the response is JSON
-          const text = await response.text();
-          let data;
-          try {
-            data = JSON.parse(text);
-          } catch (error) {
-            console.error("Failed to parse JSON:", text);
-            throw new Error("Invalid JSON response from server");
-          }
-
-          if (data.url) {
-            this.image.insert(data.url, true);
-          } else {
-            console.error(
-              "Image upload failed:",
-              data.error || "Unknown error"
-            );
-          }
-        } catch (error) {
-          console.error("Error uploading image:", error);
-        }
-
-        return false;
+      try {
+        jsonResponse =
+          typeof response === "string" ? JSON.parse(response) : response;
+      } catch (error) {
+        console.error("Error parsing response:", error);
+        return; // Exit if parsing fails
       }
+
+      // Ensure response has the expected format
+      if (jsonResponse && jsonResponse.url) {
+        this.image.insert(jsonResponse.url);
+      } else {
+        console.error("Invalid upload response:", jsonResponse);
+        alert("Error uploading image: No link in upload response");
+      }
+    },
+    "image.error": function (error) {
+      console.error("Image upload error:", error);
+      alert(
+        "Error uploading image: " +
+          (error && error.message ? error.message : "An unknown error occurred")
+      );
     },
   },
 });
-
 // Submit newsletter form
 document
   .getElementById("newsletterForm")
   .addEventListener("submit", async (e) => {
-    e.preventDefault();
+    e.preventDefault(); // Prevent default form submission
 
     const title = document.getElementById("title").value;
     const content = editor.html.get();
@@ -98,22 +100,21 @@ document
     const thumbnailFile = thumbnailInput.files[0];
 
     let thumbnailUrl = "";
-    if (thumbnailFile) {
-      try {
-        thumbnailUrl = await uploadThumbnail(thumbnailFile);
-      } catch (error) {
-        alert("Error uploading thumbnail.");
-        console.error("Thumbnail upload error:", error);
-        return;
-      }
+    try {
+      thumbnailUrl = await uploadThumbnail(thumbnailFile);
+    } catch (error) {
+      alert("Error uploading thumbnail.");
+      return;
     }
 
+    // Prepare newsletter data
     const newsletterData = {
       title,
       content,
       thumbnail: thumbnailUrl,
     };
 
+    // Send data to server
     try {
       const response = await fetch("/create-newsletter", {
         method: "POST",
@@ -128,45 +129,31 @@ document
       }
 
       alert("Newsletter created successfully!");
+      // Optionally, reset the form
       document.getElementById("newsletterForm").reset();
-      editor.html.set("");
+      editor.html.set(""); // Clear the editor
     } catch (error) {
       console.error("Error creating newsletter:", error);
       alert("Error creating newsletter.");
     }
   });
 
+// Upload thumbnail
 async function uploadThumbnail(file) {
+  if (!file) return ""; // No file selected
+
   const formData = new FormData();
   formData.append("thumbnail", file);
 
-  try {
-    const response = await fetch("/upload-thumbnail-endpoint", {
-      method: "POST",
-      body: formData,
-    });
+  const response = await fetch("/upload-thumbnail-endpoint", {
+    method: "POST",
+    body: formData,
+  });
 
-    const text = await response.text(); // Capture raw response text for debugging
-    console.log("Thumbnail Upload Response:", text); // Log raw response
-
-    let data;
-    try {
-      data = JSON.parse(text);
-    } catch (error) {
-      console.error("JSON Parsing Error:", text);
-      throw new Error("Invalid JSON response from server.");
-    }
-
-    if (!data.url) {
-      console.error("Thumbnail URL missing in response:", data);
-      throw new Error("Thumbnail upload failed, no URL returned.");
-    }
-
-    return data.url;
-  } catch (error) {
-    console.error("Error in uploadThumbnail function:", error);
-    throw new Error(
-      "Failed to upload thumbnail. Check server configuration and logs."
-    );
+  if (!response.ok) {
+    throw new Error("Failed to upload thumbnail");
   }
+
+  const data = await response.json();
+  return data.url; // Assuming your server returns the URL of the uploaded thumbnail
 }
