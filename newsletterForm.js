@@ -136,29 +136,42 @@ document
     }
   });
 
-// Upload thumbnail with error handling for JSON response
+// Upload thumbnail with detailed error handling for JSON response
 async function uploadThumbnail(file) {
   const formData = new FormData();
   formData.append("thumbnail", file);
 
-  const response = await fetch("/upload-thumbnail-endpoint", {
-    method: "POST",
-    body: formData,
-  });
-
-  // Check if response is JSON
-  const text = await response.text();
-  let data;
   try {
-    data = JSON.parse(text);
+    const response = await fetch("/upload-thumbnail-endpoint", {
+      method: "POST",
+      body: formData,
+    });
+
+    const text = await response.text(); // Capture raw response text for debugging
+    let data;
+
+    try {
+      data = JSON.parse(text);
+    } catch (error) {
+      console.error("Failed to parse JSON:", text); // Log raw response
+      throw new Error(
+        "Invalid JSON response from server. Check server logs for details."
+      );
+    }
+
+    if (!data.url) {
+      console.error(
+        "Thumbnail upload failed:",
+        data.error || "No URL returned"
+      );
+      throw new Error(data.error || "Thumbnail upload failed");
+    }
+
+    return data.url;
   } catch (error) {
-    console.error("Failed to parse JSON:", text);
-    throw new Error("Invalid JSON response from server");
+    console.error("Error in uploadThumbnail function:", error);
+    throw new Error(
+      "Failed to upload thumbnail. Check server configuration and logs."
+    );
   }
-
-  if (!data.url) {
-    throw new Error("Thumbnail upload failed, URL not returned");
-  }
-
-  return data.url;
 }
