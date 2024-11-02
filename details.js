@@ -101,9 +101,10 @@ fetch("/api/user")
     } else {
       // If no user is logged in, just show the react count
       reactCountDisplay.textContent = `❤️ ${reactCount}`;
-      reactBtn.disabled = true;
-      reactBtn.style.color = "#505050";
-      reactBtn.style.textDecoration = "line-through";
+      // reactBtn.disabled = true;
+      // reactBtn.style.color = "#505050";
+      // reactBtn.style.textDecoration = "line-through";
+      window.location.href = "/auth/google";
     }
 
     // Fetch comments and replies after user data is fetched

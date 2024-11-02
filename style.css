@@ -1015,18 +1015,18 @@
   background-color: #ffeec24c;
 }
 #footer .right-part h1 {
-  font-family: "Futura";
+  font-family: "Impact";
   text-align: center;
-  line-height: 2.4vw;
-  font-size: 2.1vw;
+  line-height: 2.6vw;
+  font-size: 2.6vw;
+  font-weight: bold;
 }
 #footer .membership-dev {
-  height: 8svw;
+  height: 10svw;
   width: 90%;
   display: flex;
   align-items: center;
   justify-content: center;
-
   background-color: rgba(49, 49, 35, 0.662);
 }
 #footer .right-part {
@@ -1345,6 +1345,7 @@
   margin-left: 25vw;
   text-decoration: none;
   transition: 0.3s;
+  border-radius: 2.2vw;
 }
 .add-post:hover {
   background-color: #1fbe44;
@@ -2359,7 +2360,7 @@
     align-items: center;
     gap: 2vw;
     height: auto;
-    width: 100%;
+    width: 95%;
     padding: 10vw 2vw;
     border: 2px solid #e1b544;
     background-color: transparent;
@@ -2404,6 +2405,7 @@
   .add-post {
     margin-left: 5vw;
     font-size: 3vw;
+    padding: 1vw 2vw;
   }
 
   .settings,
