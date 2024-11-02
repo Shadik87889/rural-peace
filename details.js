@@ -82,7 +82,10 @@ fetch("/api/user")
 
       // Add click event listener to the react button
       reactBtn.addEventListener("click", async () => {
-        // Toggle the user's reaction
+        if (!userIsLoggedIn) {
+          window.location.href = "/auth/google";
+          return;
+        }
         hasReacted = !hasReacted;
 
         // Update server with the new reaction state
@@ -102,9 +105,8 @@ fetch("/api/user")
       // If no user is logged in, just show the react count
       reactCountDisplay.textContent = `❤️ ${reactCount}`;
       // reactBtn.disabled = true;
-      // reactBtn.style.color = "#505050";
+      reactBtn.style.color = "#505050";
       // reactBtn.style.textDecoration = "line-through";
-      window.location.href = "/auth/google";
     }
 
     // Fetch comments and replies after user data is fetched
