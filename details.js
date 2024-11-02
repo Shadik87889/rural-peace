@@ -82,9 +82,6 @@ fetch("/api/user")
 
       // Add click event listener to the react button
       reactBtn.addEventListener("click", async () => {
-        if (!data.loggedIn) {
-          alert("hey");
-        }
         hasReacted = !hasReacted;
 
         // Update server with the new reaction state
@@ -103,9 +100,9 @@ fetch("/api/user")
     } else {
       // If no user is logged in, just show the react count
       reactCountDisplay.textContent = `❤️ ${reactCount}`;
-      // reactBtn.disabled = true;
+      reactBtn.disabled = true;
       reactBtn.style.color = "#505050";
-      // reactBtn.style.textDecoration = "line-through";
+      reactBtn.style.textDecoration = "line-through";
     }
 
     // Fetch comments and replies after user data is fetched
