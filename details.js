@@ -82,7 +82,7 @@ fetch("/api/user")
 
       // Add click event listener to the react button
       reactBtn.addEventListener("click", async () => {
-        if (!userIsLoggedIn) {
+        if (!data.loggedIn) {
           window.location.href = "/auth/google";
           return;
         }
