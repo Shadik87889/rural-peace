@@ -1090,6 +1090,8 @@
   border: 1px solid #ccc;
   padding: 10px;
   z-index: 100;
+  top: 35vw;
+  left: 5vw;
   border-radius: 4px;
 }
 
@@ -1935,6 +1937,12 @@
   .mouseIcon {
     display: none;
   }
+  .L1.L {
+    z-index: 3;
+  }
+  .L1.L button {
+    background-color: #1c2a4582;
+  }
   .L1 {
     position: absolute;
     top: -300vw;
@@ -1996,8 +2004,8 @@
     border: 1px solid #ccc;
     padding: 10px;
     border-radius: 4px;
-    left: 0;
-    top: 0;
+    left: 10vw;
+    top: 50vw;
     background-color: #fff;
   }
 
