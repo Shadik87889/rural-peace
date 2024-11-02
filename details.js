@@ -82,6 +82,7 @@ fetch("/api/user")
 
       // Add click event listener to the react button
       reactBtn.addEventListener("click", async () => {
+        // Toggle the user's reaction
         hasReacted = !hasReacted;
 
         // Update server with the new reaction state

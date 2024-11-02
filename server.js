@@ -338,7 +338,7 @@ passport.use(
     {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET, // Use your actual secret
-      callbackURL: "https://rural-peace.onrender.com/auth/google/callback",
+      callbackURL: "https://rural-peace.vercel.app/auth/google/callback",
     },
     (accessToken, refreshToken, profile, done) => {
       return done(null, profile);
