@@ -581,7 +581,9 @@ app.post("/subscribe", async (req, res) => {
 
       console.log("Email sent: " + info.response);
 
-      res.status(200).json({ message: "Subscription successful!" });
+      res
+        .status(200)
+        .json({ message: "Subscription successful! Please Check your email" });
     });
   });
 });
@@ -627,7 +629,7 @@ app.post("/unsubscribe", async (req, res) => {
         <p style="color: #555; margin-top: 40px;">Best regards,<br>Rural Peace ORG.</p>
         
         <footer style="text-align: center; margin-top: 20px; font-size: 12px; color: #aaa;">
-          <p>© ${new Date().getFullYear()} Your Company Name. All rights reserved.</p>
+          <p>© ${new Date().getFullYear()} Rural Peace ORG. All rights reserved.</p>
         </footer>
       </div>
     `,
