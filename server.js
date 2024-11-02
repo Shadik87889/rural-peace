@@ -447,18 +447,16 @@ const notifySubscribers = (newsletter) => {
         </div>
   
         <hr style="width: 70%; border: 1px solid #e0e0e0; margin: 20px auto;">
-  
-        <!-- Content -->
-        <p style="font-size: 16px; line-height: 1.6; color: #666666; margin-bottom: 30px; text-align: center; padding: 0 30px;">
-          ${newsletter.content}
-        </p>
-  
-        <!-- Thumbnail Image -->
+       <!-- Thumbnail Image -->
         <div style="text-align: center; margin-bottom: 30px;">
           <img src="${
             newsletter.thumbnail
           }" alt="Newsletter Thumbnail" style="width: 100%; max-width: 600px; height: auto; border-radius: 12px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);">
         </div>
+        <!-- Content -->
+        <p style="font-size: 16px; line-height: 1.6; color: #666666; margin-bottom: 30px; text-align: center; padding: 0 30px;">
+          ${newsletter.content}
+        </p>
   
         <!-- Call-to-Action Button -->
         <div style="text-align: center; margin: 40px 0;">
