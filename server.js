@@ -496,6 +496,13 @@ const notifySubscribers = (newsletter) => {
   
       <!-- Mobile Responsiveness -->
       <style>
+      img.CToWUd.a6T {
+        border-radius: 6px;
+        max-width: 90%;
+        position: relative;
+        left: 50%;
+        transform: translate(-50%);
+      }
         @media only screen and (max-width: 600px) {
           div {
             padding: 0 15px !important;
