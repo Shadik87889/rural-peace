@@ -357,6 +357,9 @@ th {
   transform: translate(-10%);
   max-width: 100%;
 }
+.fr-bordered {
+  border: 5px solid #c2c2c2;
+}
 blockquote {
   border-left: 4px solid #93e52e;
   padding-left: 2vw;
