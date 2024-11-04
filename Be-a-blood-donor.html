@@ -60,6 +60,7 @@
           placeholder="mm/dd/yyyy"
           autocomplete="off"
         />
+        <span class="dob-tooltip">Put your birthday</span>
         <input
           type="email"
           id="email"
@@ -68,6 +69,7 @@
           required
           autocomplete="off"
         />
+
         <input
           type="text"
           id="secretCode"
@@ -75,7 +77,14 @@
           name="secretCode"
           required
           autocomplete="off"
+          onclick="showTooltip()"
+          onblur="hideTooltip()"
         />
+        <span class="tooltip"
+          >Choose a code you won’t forget; it’s your key for any future changes
+          to your account.</span
+        >
+
         <button type="submit">Register as Donor</button>
       </form>
       <div id="overlay"></div>

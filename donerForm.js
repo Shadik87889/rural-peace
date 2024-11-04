@@ -3,6 +3,13 @@ const confirmationPopup = document.getElementById("confirmationPopup");
 const confirmationMessage = document.getElementById("confirmationMessage");
 const overlay = document.getElementById("overlay");
 const loadingSpinner = document.getElementById("loadingSpinner");
+function showTooltip() {
+  document.querySelector(".tooltip").style.visibility = "visible";
+}
+
+function hideTooltip() {
+  document.querySelector(".tooltip").style.visibility = "hidden";
+}
 form.addEventListener("submit", async (event) => {
   event.preventDefault(); // Prevent the default form submission
 

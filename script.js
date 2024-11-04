@@ -445,7 +445,7 @@ ss.add("(min-width: 768px)", () => {
     });
   }
 
-  // page1Anim();
+  page1Anim();
   function secondPageAnim() {
     let secondPageTrigger = gsap.timeline({
       scrollTrigger: {

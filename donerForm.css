@@ -152,10 +152,10 @@ button:hover {
 
 /* Loading Spinner Style */
 #loadingSpinner {
-  display: none;
+  display: block;
   position: fixed;
   top: 50%;
-  left: 50%;
+  left: 47%;
   transform: translate(-50%, -50%);
   border: 10px solid transparent; /* Make border transparent */
   border-top: 10px solid #3498db; /* Blue */
@@ -190,10 +190,42 @@ button:hover {
   animation: fadeIn 0.5s ease-in;
 }
 
+.tooltip,
+.dob-tooltip {
+  visibility: hidden;
+  width: 220px;
+  background-color: #333;
+  color: #fff;
+  text-align: center;
+  padding: 8px;
+  border-radius: 4px;
+  position: absolute;
+  top: -45px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1;
+  font-size: 14px;
+  line-height: 1.4;
+  top: 65%;
+}
+.dob-tooltip {
+  display: none;
+}
+.tooltip-container input:focus + .tooltip {
+  visibility: visible;
+}
+#age:focus + .dob-tooltip {
+  visibility: visible;
+}
+
 /* Responsive styles */
-@media (max-width: 500px) {
+@media (max-width: 786px) {
+  #loadingSpinner {
+    left: 38%;
+  }
   form {
     width: 95%;
+    margin-left: 1vw;
   }
 
   h1 {
@@ -209,5 +241,10 @@ button:hover {
   }
   #age {
     width: 88%;
+  }
+  .dob-tooltip {
+    display: block;
+    font-size: 4vw;
+    top: 0;
   }
 }
