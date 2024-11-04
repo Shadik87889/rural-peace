@@ -142,4 +142,8 @@ div.fr-btn-wrap {
   input {
     width: 97%;
   }
+  .fr-btn-grp.fr-float-left {
+    position: sticky;
+    top: 0;
+  }
 }

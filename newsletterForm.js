@@ -84,7 +84,30 @@ const editor = new FroalaEditor("#editor-container", {
     },
   },
 });
+// Load draft from localStorage on page load
+document.addEventListener("DOMContentLoaded", () => {
+  const savedTitle = localStorage.getItem("newsletterTitle");
+  const savedContent = localStorage.getItem("newsletterContent");
 
+  if (savedTitle) {
+    document.getElementById("title").value = savedTitle;
+  }
+  if (savedContent) {
+    editor.html.set(savedContent);
+  }
+});
+
+// Save draft to localStorage
+function saveDraft() {
+  const title = document.getElementById("title").value;
+  const content = editor.html.get();
+
+  localStorage.setItem("newsletterTitle", title);
+  localStorage.setItem("newsletterContent", content);
+}
+
+// Periodically save draft every few seconds
+setInterval(saveDraft, 5000); // Save every 5 seconds
 // Submit newsletter form
 document
   .getElementById("newsletterForm")
