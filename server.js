@@ -473,13 +473,13 @@ const notifySubscribers = (newsletter) => {
   
         <!-- Social Media Links -->
         <div style="text-align: center; margin: 40px 0;">
-          <a href="https://facebook.com/yourpage" style="margin-right: 15px;">
+          <a href="https://www.facebook.com/profile.php?id=61564819259663" style="margin-right: 15px;">
             <img src="https://upload.wikimedia.org/wikipedia/commons/c/cd/Facebook_logo_%28square%29.png" alt="Facebook" style="width: 36px;">
           </a>
-          <a href="https://twitter.com/yourpage" style="margin-right: 15px;">
+          <a href="https://www.x.com" style="margin-right: 15px;">
             <img src="https://img.freepik.com/free-vector/new-2023-twitter-logo-x-icon-design_1017-45418.jpg?size=338&ext=jpg&ga=GA1.1.1819120589.1728604800&semt=ais_hybrid-rr-similar" alt="Twitter" style="width: 36px;">
           </a>
-          <a href="https://linkedin.com/yourpage">
+          <a href="https://linkedin.com">
             <img src="https://upload.wikimedia.org/wikipedia/commons/c/ca/LinkedIn_logo_initials.png" alt="LinkedIn" style="width: 36px;">
           </a>
         </div>

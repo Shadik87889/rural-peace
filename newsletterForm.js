@@ -105,9 +105,8 @@ function saveDraft() {
   localStorage.setItem("newsletterTitle", title);
   localStorage.setItem("newsletterContent", content);
 }
-
 // Periodically save draft every few seconds
-setInterval(saveDraft, 5000); // Save every 5 seconds
+setInterval(saveDraft, 1000); // Save every 1 second
 // Submit newsletter form
 document
   .getElementById("newsletterForm")
