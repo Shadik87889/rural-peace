@@ -152,7 +152,7 @@ button:hover {
 
 /* Loading Spinner Style */
 #loadingSpinner {
-  display: block;
+  display: none;
   position: fixed;
   top: 50%;
   left: 47%;
