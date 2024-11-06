@@ -25,6 +25,12 @@ app.use(express.static("uploads"));
 app.use(express.static(__dirname));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use((req, res, next) => {
+  if (req.headers["x-forwarded-proto"] !== "https") {
+    return res.redirect("https://" + req.headers.host + req.url);
+  }
+  next();
+});
 
 // Redirect to home
 app.get("/", (req, res) => {
