@@ -69,7 +69,7 @@ function renderNewsletters(newsletters, userEmail) {
         console.log("Selected newsletter:", newsletter);
         await updateClicks(newsletter.id);
         localStorage.setItem("selectedNewsletter", JSON.stringify(newsletter));
-        window.location.href = `Newsletter-details?id=${newsletter.id}`; // Ensure this path is correct
+        window.location.href = `Newsletter-details/${newsletter.id}`; // Ensure this path is correct
       });
 
       blogImg.appendChild(thumbnail);
