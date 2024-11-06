@@ -645,7 +645,9 @@
   cursor: pointer;
   position: absolute;
 }
-.L1 {
+.L1,
+.L2,
+.L3 {
   position: absolute;
   bottom: 4vw;
   color: white;
@@ -656,7 +658,9 @@
   gap: 1vw;
   left: 6vw;
 }
-.L1 h1 {
+.L1 h1,
+.L2 h1,
+.L3 h1 {
   font-family: "Josefin Slab", serif;
   font-optical-sizing: auto;
   font-weight: 100;
@@ -664,14 +668,18 @@
   position: relative;
   z-index: 2;
 }
-.L1 p {
+.L1 p,
+.L2 p,
+.L3 p {
   text-align: center;
   font-size: 2vw;
   font-family: "Fellix";
   position: relative;
   z-index: 2;
 }
-.L1 button {
+.L1 button,
+.L2 button,
+.L3 button {
   height: 10vw;
   width: 10vw;
   border: none;
@@ -689,7 +697,9 @@
 .L1 button:active {
   background-color: #1f1d1d37;
 }
-.L1 button i {
+.L1 button i,
+.L2 button i,
+.L3 button i {
   font-size: 2.5vw;
   color: white;
 }
