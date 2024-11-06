@@ -1938,15 +1938,11 @@
   .mouseIcon {
     display: none;
   }
-  .L1.L {
-    z-index: 3;
-  }
-  .L1.L button {
-    background-color: #1c2a4582;
-  }
-  .L1 {
+
+  .L1,
+  .L2,
+  .L3 {
     position: absolute;
-    top: -300vw;
     color: white;
     display: flex;
     align-items: center;
@@ -1957,7 +1953,9 @@
     top: -330vw;
     z-index: 2;
   }
-  .L1 h1 {
+  .L1 h1,
+  .L2 h1,
+  .L3 h1 {
     font-family: "Josefin Slab", serif;
     font-optical-sizing: auto;
     font-weight: 100;
@@ -1966,14 +1964,18 @@
     z-index: 2;
     top: 4vw;
   }
-  .L1 p {
+  .L1 p,
+  .L2 p,
+  .L3 p {
     text-align: center;
     font-size: 5vw;
     font-family: "Bebas Neue";
     position: relative;
     z-index: 2;
   }
-  .L1 button {
+  .L1 button,
+  .L2 button,
+  .L3 button {
     height: 30vw;
     width: 30vw;
     border: none;
@@ -1985,16 +1987,18 @@
     justify-content: center;
     transition: all 0.5s;
   }
-  .L1 button i {
+  .L1 button i,
+  .L2 button i,
+  .L3 button i {
     font-size: 11vw;
     color: white;
   }
   .L2 {
-    top: -16vw;
+    top: 160vw;
     left: 16vw;
   }
   .L3 {
-    top: 270vw;
+    top: 300vw;
     left: 30vw;
   }
 
