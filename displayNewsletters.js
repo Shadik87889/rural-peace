@@ -23,7 +23,24 @@ async function fetchNewsletters() {
     const userData = await userResponse.json();
     const userEmail = userData?.user?._json?.email;
 
-    renderNewsletters(newsletters, userEmail); // Render the newsletters
+    // Check for URL parameter
+    const urlParams = new URLSearchParams(window.location.search);
+    const newsletterId = urlParams.get("id");
+
+    if (newsletterId) {
+      // If an id is specified in the URL, render the specific newsletter
+      const selectedNewsletter = newsletters.find(
+        (news) => news.id === parseInt(newsletterId)
+      );
+      if (selectedNewsletter) {
+        renderNewsletterDetails(selectedNewsletter); // Render the specific newsletter
+      } else {
+        console.error("Newsletter not found");
+      }
+    } else {
+      // Render the list of all newsletters if no id is specified
+      renderNewsletters(newsletters, userEmail);
+    }
   } catch (error) {
     console.error("Error fetching newsletters or user data:", error);
   }
