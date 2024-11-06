@@ -12,7 +12,7 @@ function displayDonorList() {
 
   donorListContainer.innerHTML = ""; // Clear existing list
 
-  fetch("https://rural-peace.onrender.com/donors")
+  fetch("https://ruralpeace.org/donors")
     .then((response) => {
       if (!response.ok) {
         throw new Error("Network response was not ok");

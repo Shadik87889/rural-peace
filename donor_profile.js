@@ -30,7 +30,7 @@ function newOne() {
   const urlParams = new URLSearchParams(window.location.search);
   const donorId = urlParams.get("id");
   console.log(donorId);
-  fetch("https://rural-peace.onrender.com/donors")
+  fetch("https://ruralpeace.org/donors")
     .then((response) => {
       if (!response.ok) {
         throw new Error("Network response was not ok");
