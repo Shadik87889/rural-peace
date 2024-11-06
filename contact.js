@@ -531,7 +531,7 @@ document
     const formData = new FormData(this);
     const data = Object.fromEntries(formData.entries());
     data.submissionTime = formatDateTime(new Date());
-    fetch("https://ruralpeace.org/submit", {
+    fetch("https://www.ruralpeace.org/submit", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

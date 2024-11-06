@@ -28,7 +28,7 @@ form.addEventListener("submit", async (e) => {
   const email = document.getElementById("email").value;
 
   try {
-    const response = await fetch("https://ruralpeace.org/subscribe", {
+    const response = await fetch("https://www.ruralpeace.org/subscribe", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -50,7 +50,7 @@ unsubscribeForm.addEventListener("submit", async (e) => {
   const email = document.getElementById("unsubscribeEmail").value;
 
   try {
-    const response = await fetch("https://ruralpeace.org/unsubscribe", {
+    const response = await fetch("https://www.ruralpeace.org/unsubscribe", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

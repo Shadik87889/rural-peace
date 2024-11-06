@@ -4,7 +4,7 @@ let newsletters = [];
 // Fetch newsletters from the server or localStorage
 async function fetchNewsletters() {
   try {
-    const response = await fetch("https://ruralpeace.org/newsletters");
+    const response = await fetch("https://www.ruralpeace.org/newsletters");
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
@@ -213,9 +213,12 @@ function renderNewsletterDetails(newsletter) {
 async function deleteNewsletter(id) {
   try {
     console.log(`Deleting newsletter with ID: ${id}`);
-    const response = await fetch(`https://ruralpeace.org/newsletters/${id}`, {
-      method: "DELETE",
-    });
+    const response = await fetch(
+      `https://www.ruralpeace.org/newsletters/${id}`,
+      {
+        method: "DELETE",
+      }
+    );
 
     if (!response.ok) {
       throw new Error(`Failed to delete newsletter: ${response.statusText}`);
@@ -257,13 +260,16 @@ async function updateClicks(id) {
 // Function to update clicks in the database
 async function updateClicksInDB(id, clicks) {
   try {
-    const response = await fetch(`https://ruralpeace.org/newsletters/${id}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ clicks }),
-    });
+    const response = await fetch(
+      `https://www.ruralpeace.org/newsletters/${id}`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ clicks }),
+      }
+    );
     if (!response.ok) {
       throw new Error("Failed to update clicks");
     }

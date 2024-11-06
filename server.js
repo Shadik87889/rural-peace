@@ -338,7 +338,7 @@ passport.use(
     {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET, // Use your actual secret
-      callbackURL: "https://ruralpeace.org/auth/google/callback",
+      callbackURL: "https://www.ruralpeace.org/auth/google/callback",
     },
     (accessToken, refreshToken, profile, done) => {
       return done(null, profile);
@@ -460,7 +460,7 @@ const notifySubscribers = (newsletter) => {
   
         <!-- Call-to-Action Button -->
         <div style="text-align: center; margin: 40px 0;">
-          <a href="https://ruralpeace.org/newsletters.html?utm_source=newsletter&utm_medium=email&utm_campaign=october_newsletter" 
+          <a href="https://www.ruralpeace.org/newsletters.html?utm_source=newsletter&utm_medium=email&utm_campaign=october_newsletter" 
              style="background-color: #4CAF50; color: white; padding: 12px 30px; border-radius: 30px; font-size: 18px; text-decoration: none; display: inline-block; transition: background 0.3s ease;">
              Read More
           </a>
@@ -488,7 +488,7 @@ const notifySubscribers = (newsletter) => {
         <footer style="font-size: 12px; color: #888888; text-align: center; padding: 20px 0; background-color: #ffffff; border-top: 1px solid #e0e0e0; border-radius: 0 0 12px 12px;">
           <p style="margin-bottom: 5px;">You are receiving this email because you subscribed to our newsletter</p>
           <p>Contact us: <a href="mailto:org.ruralpeace@gmail.com" style="color: #4CAF50; text-decoration: none;">org.ruralpleace@gmail.com</a></p>
-          <a href="https://ruralpeace.org/Newsletter-unsubscription">Unsubscribe</a>
+          <a href="https://www.ruralpeace.org/Newsletter-unsubscription">Unsubscribe</a>
           <p>&copy; ${new Date().getFullYear()} Rural Peace. All rights reserved.</p>
         </footer>
   
@@ -629,7 +629,7 @@ app.post("/unsubscribe", async (req, res) => {
         
         <p style="color: #555;">If you have any feedback or suggestions, please don't hesitate to reach out. Your input is invaluable to us!</p>
         
-        <p style="color: #555;">If this was a mistake and you'd like to rejoin our community, you can easily <a href="https://ruralpeace.org/Newsletter-subscription" style="color: #1a73e8; text-decoration: none; font-weight: bold;">resubscribe here</a>.</p>
+        <p style="color: #555;">If this was a mistake and you'd like to rejoin our community, you can easily <a href="https://www.ruralpeace.org/Newsletter-subscription" style="color: #1a73e8; text-decoration: none; font-weight: bold;">resubscribe here</a>.</p>
         
         <p style="color: #555;">Thank you for your time and support!</p>
         
@@ -984,7 +984,7 @@ app.post("/donerForm", async (req, res) => {
 
       <!-- Call to Action Button -->
       <div style="text-align: center; margin-top: 30px;">
-        <a href="https://ruralpeace.org/Home" style="text-decoration: none; background-color: #ff4757; color: white; padding: 15px 30px; font-size: 18px; border-radius: 50px; box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);">
+        <a href="https://www.ruralpeace.org/Home" style="text-decoration: none; background-color: #ff4757; color: white; padding: 15px 30px; font-size: 18px; border-radius: 50px; box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);">
           Visit Our Website
         </a>
       </div>
