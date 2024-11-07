@@ -53,13 +53,13 @@ body {
 
 /* Content Styles */
 .blog-content {
-  font-size: 1.1em;
+  /* font-size: 1.1em; */
   margin-bottom: 30px;
   padding: 20px;
   background: #f7f9fc;
   border-left: 8px solid #2980b9;
   border-radius: 12px;
-  line-height: 1.8;
+  /* line-height: 1.8; */
   position: relative;
   z-index: 1;
 }
@@ -128,7 +128,7 @@ a:hover {
   }
 
   .blog-content {
-    font-size: 1em;
+    /* font-size: 1em; */
   }
 
   .subscribe {
