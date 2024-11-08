@@ -588,11 +588,9 @@ app.post("/subscribe", async (req, res) => {
 
       console.log("Email sent: " + info.response);
 
-      res
-        .status(200)
-        .json({
-          message: `Subscription successful! Please Check clicking <a href="https://mail.google.com/mail/u/0/#inbox">here</a>`,
-        });
+      res.status(200).json({
+        message: `Subscription successful! Please check your email`,
+      });
     });
   });
 });
