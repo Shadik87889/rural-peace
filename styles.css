@@ -134,7 +134,7 @@ button:hover {
   color: #000;
   text-shadow: 0px 0px 0px rgba(0, 0, 0, 0.7);
   font-family: cursive;
-  font-size: 3vw;
+  /* font-size: 2vw; */
 }
 .close {
   color: #aaa;
@@ -166,7 +166,7 @@ button:hover {
     height: 50%;
   }
   .modal-content p {
-    font-size: 15vw;
+    font-size: 7vw;
   }
 }
 

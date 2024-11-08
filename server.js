@@ -590,7 +590,9 @@ app.post("/subscribe", async (req, res) => {
 
       res
         .status(200)
-        .json({ message: "Subscription successful! Please Check your email" });
+        .json({
+          message: `Subscription successful! Please Check clicking <a href="https://mail.google.com/mail/u/0/#inbox">here</a>`,
+        });
     });
   });
 });
