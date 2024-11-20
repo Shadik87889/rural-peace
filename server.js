@@ -39,6 +39,7 @@ const pages = [
   "Programs",
   "NewsletterForm",
   "Donate",
+  "Recent-work",
   "Blood-donation",
   "Social-issues",
   "Help-people",
