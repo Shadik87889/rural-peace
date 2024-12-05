@@ -52,6 +52,8 @@ const pages = [
   "Blood-donor-profile",
   "Newsletter-details",
   "Be-a-blood-donor",
+  "bookstore",
+  "book-details",
 ];
 
 pages.forEach((page) => {
