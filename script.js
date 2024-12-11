@@ -1213,144 +1213,144 @@ ss.add("(max-width: 768px)", () => {
     function page1A() {
       gsap.registerPlugin(ScrollTrigger);
 
-      // Main timeline for animations
-      const page1Atl = gsap.timeline({
-        scrollTrigger: {
-          trigger: ".kpt-one",
-          start: "top 80%", // Adjust start point for smooth triggering
-          end: "bottom top", // Adjust end point for the desired scroll effect
-          scrub: true,
-          markers: false, // Remove markers in production
-        },
-      });
-
-      // Animation for .kpt-one
-      page1Atl.fromTo(
+      // Animate .kpt-one with fade-in, upward movement, and slight scaling
+      gsap.fromTo(
         ".kpt-one",
         {
-          scale: 0.5,
-          rotateY: 90,
           opacity: 0,
-          transformPerspective: 1200,
           y: 50,
+          scale: 1.2, // Slightly larger scale at the start
         },
         {
-          scale: 1,
-          rotateY: 0,
           opacity: 1,
-          transformPerspective: 1200,
           y: 0,
-          duration: 2,
-          ease: "power3.out",
-          transformOrigin: "center center",
+          scale: 1, // Back to normal scale
+          duration: 1.5,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: ".kpt-one",
+            start: "top 90%", // Trigger when element is almost visible
+            end: "top 50%",
+            toggleActions: "play none none none",
+            markers: false, // Remove markers in production
+          },
         }
       );
-      // Animation for .kpt-two
-      page1Atl.fromTo(
-        ".kpt-two",
-        {
-          scale: 0.5,
-          rotateY: -90,
-          opacity: 0,
-          transformPerspective: 1200,
-          y: -50,
-        },
-        {
-          scale: 1,
-          rotateY: 0,
-          opacity: 1,
-          transformPerspective: 1200,
-          y: 0,
-          duration: 2,
-          ease: "power3.out",
-          transformOrigin: "center center",
-          stagger: 0.5, // Staggered effect for more dynamic entrance
-        },
-        "-=1" // Overlap with previous animation
-      );
+
+      // Animate .kpt-two with advanced 3D effects
+      gsap.utils.toArray(".kpt-two").forEach((item, index) => {
+        gsap.fromTo(
+          item,
+          {
+            opacity: 0,
+            scale: 0.8, // Start smaller for a smoother entry
+            y: 50, // Start below the viewport
+            rotateX: 20, // Add some initial rotation on X-axis for 3D effect
+            rotateY: 20, // Add some initial rotation on Y-axis for dynamic effect
+            transformPerspective: 1200, // Add perspective for depth
+          },
+          {
+            opacity: 1,
+            scale: 1,
+            y: 0, // End at the natural position
+            rotateX: 0, // Rotate back to normal
+            rotateY: 0, // Rotate back to normal
+            duration: 1.5,
+            delay: index * 0.2, // Staggered effect for a smooth entry
+            ease: "expo.out", // Smooth and dramatic easing
+            scrollTrigger: {
+              trigger: item,
+              start: "top 80%", // Start when element is near the viewport
+              end: "top 30%",
+              toggleActions: "play none none none",
+              markers: false,
+            },
+          }
+        );
+      });
     }
 
     page1A();
-    // function animateTextWithPin() {
-    //   gsap.registerPlugin(ScrollTrigger);
+    function animateTextWithPin() {
+      gsap.registerPlugin(ScrollTrigger);
 
-    //   // Create a timeline for the animation
-    //   const tl = gsap.timeline({
-    //     scrollTrigger: {
-    //       trigger: "#page2",
-    //       start: "top top",
-    //       end: "bottom top",
-    //       scrub: true,
-    //       pin: true,
-    //       markers: false, // Remove markers for production
-    //     },
-    //   });
+      // Create a timeline for the animation
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: "#page2",
+          start: "top top",
+          end: "bottom top",
+          scrub: true,
+          pin: true,
+          markers: false, // Remove markers for production
+        },
+      });
 
-    //   // Initial animation: text enters with 3D effects
-    //   tl.fromTo(
-    //     ".word",
-    //     {
-    //       opacity: 0,
-    //       y: 150,
-    //       scale: 0.5,
-    //       rotateX: 90,
-    //       rotateY: 90,
-    //       transformPerspective: 1500,
-    //       zIndex: 1,
-    //     },
-    //     {
-    //       opacity: 1,
-    //       y: 0,
-    //       scale: 1,
-    //       rotateX: 0,
-    //       rotateY: 0,
-    //       transformPerspective: 1500,
-    //       stagger: {
-    //         amount: 1,
-    //         from: "random",
-    //         ease: "power4.out",
-    //       },
-    //       duration: 2,
-    //     }
-    //   )
+      // Initial animation: text enters with 3D effects
+      tl.fromTo(
+        ".word",
+        {
+          opacity: 0,
+          y: 150,
+          scale: 0.5,
+          rotateX: 90,
+          rotateY: 90,
+          transformPerspective: 1500,
+          zIndex: 1,
+        },
+        {
+          opacity: 1,
+          y: 0,
+          scale: 1,
+          rotateX: 0,
+          rotateY: 0,
+          transformPerspective: 1500,
+          stagger: {
+            amount: 1,
+            from: "random",
+            ease: "power4.out",
+          },
+          duration: 2,
+        }
+      )
 
-    //     // Transform Phase: Rotate and scale up for a dynamic effect
-    //     .to(
-    //       ".word",
-    //       {
-    //         scale: 1.2,
-    //         rotateX: 360,
-    //         rotateY: 360,
-    //         ease: "power2.inOut",
-    //         duration: 2,
-    //         stagger: {
-    //           amount: 0.5,
-    //           from: "start",
-    //         },
-    //       },
-    //       "-=1.5"
-    //     )
+        // Transform Phase: Rotate and scale up for a dynamic effect
+        .to(
+          ".word",
+          {
+            scale: 1.2,
+            rotateX: 360,
+            rotateY: 360,
+            ease: "power2.inOut",
+            duration: 2,
+            stagger: {
+              amount: 0.5,
+              from: "start",
+            },
+          },
+          "-=1.5"
+        )
 
-    //     // Return to Default Position: Scale down and opacity adjustment
-    //     .to(
-    //       ".word",
-    //       {
-    //         scale: 1,
-    //         rotationX: 0,
-    //         rotationY: 0,
-    //         y: 0,
-    //         opacity: 1,
-    //         ease: "power2.out",
-    //         duration: 2,
-    //         stagger: {
-    //           amount: 0.5,
-    //           from: "start",
-    //         },
-    //       },
-    //       "-=1.5"
-    //     );
-    // }
-    // animateTextWithPin();
+        // Return to Default Position: Scale down and opacity adjustment
+        .to(
+          ".word",
+          {
+            scale: 1,
+            rotationX: 0,
+            rotationY: 0,
+            y: 0,
+            opacity: 1,
+            ease: "power2.out",
+            duration: 2,
+            stagger: {
+              amount: 0.5,
+              from: "start",
+            },
+          },
+          "-=1.5"
+        );
+    }
+    animateTextWithPin();
     function advanced4DAnimation() {
       gsap.registerPlugin(ScrollTrigger);
 
@@ -1457,7 +1457,7 @@ ss.add("(max-width: 768px)", () => {
     }
 
     // Call the function to start the animation
-    advanced4DAnimation();
+    // advanced4DAnimation();
 
     function thirdPageAnim() {
       let thirdPageTrigger = gsap.timeline({
@@ -1490,43 +1490,91 @@ ss.add("(max-width: 768px)", () => {
     // thirdPageAnim();
     function fifthAnim() {
       let page_4_all = document.querySelectorAll(".page-1");
+
       page_4_all.forEach((pages) => {
         let text_part = pages.querySelector(".text-part");
         let card_img = pages.querySelector(".card");
+
+        // Initial state: set elements off-screen with subtle scaling and blur
         gsap.set(text_part, {
-          xPercent: -200,
           opacity: 0,
+          scale: 0.8,
+          zIndex: 1,
+          rotation: -30,
+          filter: "blur(10px)",
         });
+
         gsap.set(card_img, {
-          xPercent: 100,
           opacity: 0,
+          scale: 0.8,
+          zIndex: 0,
+          rotation: 20,
+          filter: "blur(10px)",
         });
+
         let tl = gsap.timeline({
           scrollTrigger: {
             trigger: pages,
             start: "top bottom",
             end: "bottom 90%",
-            scrub: 0.2,
+            scrub: 0.5,
+            markers: false,
           },
         });
+
+        // Animation for text part - Pop into view with rotation and scale
         tl.to(
           text_part,
           {
-            xPercent: 0,
             opacity: 1,
+            scale: 1,
+            rotation: 0,
+            filter: "blur(0px)", // Remove blur as it enters
+            ease: "power3.out",
+            duration: 1.4,
           },
           "<"
         );
+
+        // Animation for card image - Zoom in and rotate
         tl.to(
           card_img,
           {
-            xPercent: 0,
             opacity: 1,
+            scale: 1,
+            rotation: 0,
+            filter: "blur(0px)",
+            ease: "power3.out",
+            duration: 1.6,
           },
-          "<"
+          "<+0.1"
+        );
+
+        // Optional: Add a slight floating effect (z-axis movement)
+        tl.to(
+          text_part,
+          {
+            zIndex: 2,
+            y: -15, // Floating effect in the Y axis
+            ease: "power2.inOut",
+            duration: 0.4,
+          },
+          "+=0.2"
+        );
+
+        tl.to(
+          card_img,
+          {
+            zIndex: 1,
+            y: -15, // Floating effect for the card
+            ease: "power2.inOut",
+            duration: 0.4,
+          },
+          "+=0.2"
         );
       });
     }
+
     fifthAnim();
     function sixAnim() {
       const imgSect = document.querySelector(".part-2 img");
