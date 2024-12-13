@@ -1,4 +1,3 @@
-@import url("https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,100..700;1,100..700&display=swap");
 * {
   box-sizing: border-box;
   margin: 0;
@@ -10,9 +9,8 @@ body {
   overflow-x: hidden;
 }
 body {
-  font-family: "Josefin Sans", sans-serif;
+  font-family: "Roboto", sans-serif;
   background: linear-gradient(135deg, #e0f7fa, #b2ebf2);
-  font-weight: bold;
   color: #333;
   display: flex;
   justify-content: center;
