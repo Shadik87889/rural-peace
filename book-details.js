@@ -9,7 +9,7 @@ const books = [
     price: 0.0,
     cover: "images/The Experience.jpg",
     pdf:
-      "https://drive.google.com/file/d/1HD9B5s8y5M6h4Mub5lJWkOOw39e66ImG/view?usp=sharing",
+      "https://drive.google.com/file/d/1XZuzMG9U42-La2ghrwulbQX1QN2aXiAL/view?usp=sharing",
   },
   {
     id: 2,
