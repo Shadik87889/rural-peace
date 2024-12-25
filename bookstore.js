@@ -4,13 +4,13 @@ const books = [
     id: 1,
     title: "The Experience",
     author: "Shadik Hossain",
-    cover: "images/The Experience.jpg",
+    cover: "images/The Experience Book Cover.png",
   },
   {
     id: 2,
     title: "The Incidents I Faced",
     author: "Shadik Hossain",
-    cover: "images/Some Incidents I Face.jpg",
+    cover: "images/The incidents I faced book cover.png",
   },
 ];
 

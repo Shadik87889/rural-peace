@@ -7,7 +7,7 @@ const books = [
     description: `Life experience is just as important, if not more, than formal education. It gives you confidence in tough situations and helps you stay calm even after setbacks, like losing a job. While school confines you within four walls, traveling and real-life experiences teach you independence, problem-solving, and resilience. A person with a college degree may lack the practical wisdom of someone like a farmer, who, through hard work and life challenges, develops the strength to handle adversity. I recently explored Dhaka City, one of the busiest places in the world, and through my journey, I gained valuable experiences. These experiences inspired me to write a book, The Experience, where I share some of my most memorable and life-changing moments. In this book, you'll learn the real importance of experience and how it shapes your ability to tackle life's challenges.
 `,
     price: 0.0,
-    cover: "images/The Experience.jpg",
+    cover: "images/The Experience Book Cover.png",
     pdf:
       "https://drive.google.com/file/d/1XZuzMG9U42-La2ghrwulbQX1QN2aXiAL/view?usp=sharing",
   },
@@ -21,7 +21,7 @@ The author shares personal stories with honesty and humor, showing how a failed 
 
 This book is a relatable story of growing up, overcoming challenges, and turning setbacks into something creative. 'The Incidents I Faced' will make you laugh, reflect, and remind you of the strength we all have to move forward, no matter the obstacles.`,
     price: "0.0",
-    cover: "images/Some Incidents I Face.jpg",
+    cover: "images/The incidents I faced book cover.png",
     pdf:
       "https://drive.google.com/file/d/1esJJqyLAyZI7afHGsdhPU25j7xG9UkTr/view?usp=sharing",
   },
