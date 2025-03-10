@@ -69,6 +69,7 @@ let users = [];
 let posts = {}; // postId -> { globalReactCount, reactions, comments }
 let loggedInEmails = [];
 let donors = [];
+// let sessions = [];
 let submissions = [];
 async function loadNewslettersFromGist() {
   try {
@@ -774,30 +775,6 @@ app.delete("/newsletters/:id", async (req, res) => {
     });
   } else {
     res.status(404).json({ message: "Newsletter not found." });
-  }
-});
-app.post("/api/newsletter/edit/:id", async (req, res) => {
-  const newsletterId = req.params.id;
-  const updatedData = req.body;
-
-  // Find the newsletter by ID
-  const newsletterIndex = newsletters.findIndex(
-    (newsletter) => newsletter.id === newsletterId
-  );
-
-  if (newsletterIndex !== -1) {
-    // Update the newsletter
-    newsletters[newsletterIndex] = {
-      ...newsletters[newsletterIndex],
-      ...updatedData,
-    };
-
-    // Save updated newsletters to the Gist
-    await saveDataToGist();
-
-    res.status(200).json({ message: "Newsletter updated successfully" });
-  } else {
-    res.status(404).json({ message: "Newsletter not found" });
   }
 });
 

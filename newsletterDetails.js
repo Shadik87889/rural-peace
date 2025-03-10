@@ -1,3 +1,5 @@
+// newsletterDetails.js
+
 // Retrieve the selected newsletter from localStorage
 const selectedNewsletter = JSON.parse(
   localStorage.getItem("selectedNewsletter")
@@ -15,14 +17,12 @@ if (selectedNewsletter) {
   document.getElementById("newsletterContent").textContent =
     "No newsletter content to display.";
 }
-
 window.onload = function () {
   fetch("/api/user")
     .then((response) => response.json())
     .then((data) => {
       if (data.loggedIn) {
         const user = data.user;
-
         // Display profile picture
         const profilePic = document.createElement("img");
         // profilePic.src = user._json.picture;
@@ -61,56 +61,8 @@ window.onload = function () {
         imgCon.addEventListener("click", () => {
           userProfileBox.classList.toggle("userBoxControl");
         });
-
-        // Create Edit button for logged-in users
-        const editButton = document.createElement("button");
-        editButton.innerText = "Edit";
-        editButton.classList.add("edit-btn");
-
-        // Append the edit button to the page (only visible to logged-in users)
-        document.getElementById("newsletterContent").appendChild(editButton);
-
-        // Add event listener to edit button
-        editButton.addEventListener("click", () => {
-          // Allow editing of the title and content fields
-          const titleField = document.getElementById("newsletterTitle");
-          const contentField = document.getElementById("newsletterContent");
-
-          // Change the elements to editable fields
-          titleField.setAttribute("contenteditable", true);
-          contentField.setAttribute("contenteditable", true);
-
-          // Change button text to "Save"
-          editButton.innerText = "Save";
-
-          // Update the newsletter data on save
-          editButton.removeEventListener("click", saveNewsletter); // Remove previous save listener (if exists)
-          editButton.addEventListener("click", saveNewsletter);
-
-          function saveNewsletter() {
-            // Get the updated content
-            const updatedTitle = titleField.textContent;
-            const updatedContent = contentField.innerHTML;
-
-            // Save the updated content to localStorage
-            const updatedNewsletter = {
-              title: updatedTitle,
-              content: updatedContent,
-            };
-            localStorage.setItem(
-              "selectedNewsletter",
-              JSON.stringify(updatedNewsletter)
-            );
-
-            // Make the fields non-editable again
-            titleField.setAttribute("contenteditable", false);
-            contentField.setAttribute("contenteditable", false);
-
-            // Change button text back to "Edit"
-            editButton.innerText = "Edit";
-          }
-        });
       }
     })
     .catch((error) => console.error("Error fetching user data:", error));
 };
+//okay
