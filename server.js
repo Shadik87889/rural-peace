@@ -1,8 +1,4 @@
-<<<<<<< HEAD
 //rural-peace-org
-=======
-//normal code
->>>>>>> 6005a87f (Resolved merge conflicts)
 const express = require("express");
 const cors = require("cors");
 const nodemailer = require("nodemailer");
@@ -16,7 +12,6 @@ const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const cloudinary = require("cloudinary").v2;
 const { CloudinaryStorage } = require("multer-storage-cloudinary");
 const session = require("express-session");
-const FileStore = require("session-file-store")(session);
 const { v4: uuidv4 } = require("uuid");
 const axios = require("axios");
 const app = express();
@@ -66,25 +61,15 @@ pages.forEach((page) => {
     res.sendFile(path.join(__dirname, `${page}.html`));
   });
 });
-<<<<<<< HEAD
 const GIST_ID = process.env.GIST_ID;
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
-=======
-const GIST_ID = "5caffc7ef8bbcefde7b245b445cc8868";
-const GITHUB_TOKEN =
-  "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";
->>>>>>> 6005a87f (Resolved merge conflicts)
 let subscribers = [];
 let newsletters = [];
 let users = [];
 let posts = {}; // postId -> { globalReactCount, reactions, comments }
 let loggedInEmails = [];
 let donors = [];
-<<<<<<< HEAD
 // let sessions = [];
-=======
-let sessions = [];
->>>>>>> 6005a87f (Resolved merge conflicts)
 let submissions = [];
 async function loadNewslettersFromGist() {
   try {
@@ -104,7 +89,6 @@ async function loadNewslettersFromGist() {
     console.error("Error loading newsletters from Gist:", error);
   }
 }
-<<<<<<< HEAD
 
 // Function to save newsletters to the Gist
 async function saveDataToGist() {
@@ -273,219 +257,13 @@ loadSubscribersFromGist();
 loadDonorsFromGist();
 loadNewslettersFromGist();
 loadPostsFromGist();
-=======
->>>>>>> 6005a87f (Resolved merge conflicts)
 
-// Function to save newsletters to the Gist
-async function saveDataToGist() {
-  const gistData = {
-    description: "Newsletter Data",
-    public: false, // Set to false for a secret Gist
-    files: {
-      "newsletterData.json": {
-        content: JSON.stringify(newsletters, null, 2),
-      },
-    },
-  };
-
-  try {
-    await axios.patch(`https://api.github.com/gists/${GIST_ID}`, gistData, {
-      headers: {
-        Authorization: `token ${GITHUB_TOKEN}`,
-      },
-    });
-  } catch (error) {
-    console.error("Error saving to Gist:", error);
-  }
-}
-// Function to load posts data from the Gist
-async function loadPostsFromGist() {
-  try {
-    const response = await axios.get(
-      `https://api.github.com/gists/${GIST_ID}`,
-      {
-        headers: {
-          Authorization: `token ${GITHUB_TOKEN}`,
-        },
-      }
-    );
-    const files = response.data.files;
-    if (files["posts.json"]) {
-      posts = JSON.parse(files["posts.json"].content);
-    }
-  } catch (error) {
-    console.error("Error loading posts from Gist:", error);
-  }
-}
-
-// Function to save posts data to the Gist
-async function savePostsToGist() {
-  const gistData = {
-    description: "Posts Data",
-    public: false, // Set to false for a secret Gist
-    files: {
-      "posts.json": {
-        content: JSON.stringify(posts, null, 2),
-      },
-    },
-  };
-
-  try {
-    await axios.patch(`https://api.github.com/gists/${GIST_ID}`, gistData, {
-      headers: {
-        Authorization: `token ${GITHUB_TOKEN}`,
-      },
-    });
-  } catch (error) {
-    console.error("Error saving posts to Gist:", error);
-  }
-}
-// Function to load donor data from the Gist
-async function loadDonorsFromGist() {
-  try {
-    const response = await axios.get(
-      `https://api.github.com/gists/${GIST_ID}`,
-      {
-        headers: {
-          Authorization: `token ${GITHUB_TOKEN}`,
-        },
-      }
-    );
-    const files = response.data.files;
-    if (files["donors.json"]) {
-      donors = JSON.parse(files["donors.json"].content);
-    }
-  } catch (error) {
-    console.error("Error loading donors from Gist:", error);
-  }
-}
-
-// Function to save donor data to the Gist
-async function saveDonorsToGist() {
-  const gistData = {
-    description: "Donor Data",
-    public: false, // Set to false for a secret Gist
-    files: {
-      "donors.json": {
-        content: JSON.stringify(donors, null, 2),
-      },
-    },
-  };
-
-  try {
-    await axios.patch(`https://api.github.com/gists/${GIST_ID}`, gistData, {
-      headers: {
-        Authorization: `token ${GITHUB_TOKEN}`,
-      },
-    });
-  } catch (error) {
-    console.error("Error saving donors to Gist:", error);
-  }
-}
-// Function to load subscribers from the Gist
-async function loadSubscribersFromGist() {
-  try {
-    const response = await axios.get(
-      `https://api.github.com/gists/${GIST_ID}`,
-      {
-        headers: {
-          Authorization: `token ${GITHUB_TOKEN}`,
-        },
-      }
-    );
-    const files = response.data.files;
-    if (files["subscribers.json"]) {
-      subscribers = JSON.parse(files["subscribers.json"].content);
-    }
-  } catch (error) {
-    console.error("Error loading subscribers from Gist:", error);
-  }
-}
-
-// Function to save subscribers to the Gist
-async function saveSubscribersToGist() {
-  const gistData = {
-    description: "Subscriber Data",
-    public: false, // Set to false for a secret Gist
-    files: {
-      "subscribers.json": {
-        content: JSON.stringify(subscribers, null, 2),
-      },
-    },
-  };
-
-  try {
-    await axios.patch(`https://api.github.com/gists/${GIST_ID}`, gistData, {
-      headers: {
-        Authorization: `token ${GITHUB_TOKEN}`,
-      },
-    });
-  } catch (error) {
-    console.error("Error saving subscribers to Gist:", error);
-  }
-}
-// Function to load sessions from the Gist
-async function loadSessionsFromGist() {
-  try {
-    const response = await axios.get(
-      `https://api.github.com/gists/${SESSIONS_GIST_ID}`,
-      {
-        headers: {
-          Authorization: `token ${GITHUB_TOKEN}`,
-        },
-      }
-    );
-    const files = response.data.files;
-    if (files["sessions.json"]) {
-      sessions = JSON.parse(files["sessions.json"].content);
-    }
-  } catch (error) {
-    console.error("Error loading sessions from Gist:", error);
-  }
-}
-
-// Function to save sessions to the Gist
-async function saveSessionsToGist() {
-  const gistData = {
-    description: "Session Data",
-    public: false, // Set to false for a secret Gist
-    files: {
-      "sessions.json": {
-        content: JSON.stringify(sessions, null, 2),
-      },
-    },
-  };
-
-  try {
-    await axios.patch(
-      `https://api.github.com/gists/${SESSIONS_GIST_ID}`,
-      gistData,
-      {
-        headers: {
-          Authorization: `token ${GITHUB_TOKEN}`,
-        },
-      }
-    );
-  } catch (error) {
-    console.error("Error saving sessions to Gist:", error);
-  }
-}
-
-loadSessionsFromGist();
-loadSubscribersFromGist();
-loadDonorsFromGist();
-loadNewslettersFromGist();
-loadPostsFromGist();
 // Session configuration
 app.use(
   session({
     secret: process.env.SESSION_SECRET || "your-session-secret-here",
     resave: false,
     saveUninitialized: false,
-    store: new FileStore({
-      path: path.join(__dirname, "sessions"), // Local path for FileStore
-      ttl: 24 * 60 * 60,
-    }),
     cookie: {
       maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
     },
@@ -496,25 +274,6 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-<<<<<<< HEAD
-=======
-// Middleware to sync sessions with the Gist
-app.use(async (req, res, next) => {
-  // Update sessions array with the current session
-  if (req.session) {
-    const existingSessionIndex = sessions.findIndex(
-      (session) => session.id === req.session.id
-    );
-    if (existingSessionIndex > -1) {
-      sessions[existingSessionIndex] = req.session; // Update existing session
-    } else {
-      sessions.push(req.session); // Add new session
-    }
-    await saveSessionsToGist(); // Save updated sessions to Gist
-  }
-  next();
-});
->>>>>>> 6005a87f (Resolved merge conflicts)
 // Configure Nodemailer
 const transporter = nodemailer.createTransport({
   service: "gmail",
@@ -646,8 +405,6 @@ app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).send("Something went wrong!");
 });
-
-// Load stored data from file (if it exists)
 
 // Load stored data from file (if it exists)
 
@@ -811,13 +568,8 @@ app.post("/subscribe", async (req, res) => {
     const transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
-<<<<<<< HEAD
         user: process.env.GMAIL_USER,
         pass: process.env.GMAIL_PASS,
-=======
-        user: "mdshadikhossain830@gmail.com",
-        pass: "sxpxqunxwwzbzufq",
->>>>>>> 6005a87f (Resolved merge conflicts)
       },
     });
 
@@ -839,13 +591,9 @@ app.post("/subscribe", async (req, res) => {
 
       console.log("Email sent: " + info.response);
 
-<<<<<<< HEAD
       res.status(200).json({
         message: `Subscription successful! Please check your email`,
       });
-=======
-      res.status(200).json({ message: "Subscription successful!" });
->>>>>>> 6005a87f (Resolved merge conflicts)
     });
   });
 });
@@ -873,11 +621,7 @@ app.post("/unsubscribe", async (req, res) => {
 
   // Send confirmation email (optional)
   const mailOptions = {
-<<<<<<< HEAD
     from: process.env.GMAIL_USER,
-=======
-    from: "mdshadikhossain830@gmail.com",
->>>>>>> 6005a87f (Resolved merge conflicts)
     to: email,
     subject: "Unsubscription Confirmation",
     html: `
@@ -888,22 +632,14 @@ app.post("/unsubscribe", async (req, res) => {
         
         <p style="color: #555;">If you have any feedback or suggestions, please don't hesitate to reach out. Your input is invaluable to us!</p>
         
-<<<<<<< HEAD
         <p style="color: #555;">If this was a mistake and you'd like to rejoin our community, you can easily <a href="https://www.ruralpeace.org/Newsletter-subscription" style="color: #1a73e8; text-decoration: none; font-weight: bold;">resubscribe here</a>.</p>
-=======
-        <p style="color: #555;">If this was a mistake and you'd like to rejoin our community, you can easily <a href="https://rural-peace.onrender.com/Newsletter-subscription" style="color: #1a73e8; text-decoration: none; font-weight: bold;">resubscribe here</a>.</p>
->>>>>>> 6005a87f (Resolved merge conflicts)
         
         <p style="color: #555;">Thank you for your time and support!</p>
         
         <p style="color: #555; margin-top: 40px;">Best regards,<br>Rural Peace ORG.</p>
         
         <footer style="text-align: center; margin-top: 20px; font-size: 12px; color: #aaa;">
-<<<<<<< HEAD
           <p>© ${new Date().getFullYear()} Rural Peace ORG. All rights reserved.</p>
-=======
-          <p>© ${new Date().getFullYear()} Your Company Name. All rights reserved.</p>
->>>>>>> 6005a87f (Resolved merge conflicts)
         </footer>
       </div>
     `,
@@ -912,13 +648,8 @@ app.post("/unsubscribe", async (req, res) => {
   const transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
-<<<<<<< HEAD
       user: process.env.GMAIL_USER,
       pass: process.env.GMAIL_PASS,
-=======
-      user: "mdshadikhossain830@gmail.com",
-      pass: "sxpxqunxwwzbzufq",
->>>>>>> 6005a87f (Resolved merge conflicts)
     },
   });
 
@@ -935,7 +666,6 @@ app.post("/unsubscribe", async (req, res) => {
       .status(200)
       .json({ message: "You have been unsubscribed successfully!" });
   });
-<<<<<<< HEAD
 });
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -957,11 +687,6 @@ const storage = new CloudinaryStorage({
 const upload = multer({ storage: storage });
 
 // Endpoint for uploading and resizing images
-=======
-});
-// POST route to create a new newsletter
-// Endpoint to upload images
->>>>>>> 6005a87f (Resolved merge conflicts)
 app.post("/upload-endpoint", upload.single("file"), (req, res) => {
   if (!req.file) {
     return res.status(400).json({ error: "No file uploaded" });
@@ -1008,11 +733,7 @@ app.post("/create-newsletter", async (req, res) => {
 
   newsletters.push(newNewsletter);
   await saveDataToGist(); // Save updated newsletters to Gist
-<<<<<<< HEAD
   notifySubscribers(newNewsletter);
-=======
-
->>>>>>> 6005a87f (Resolved merge conflicts)
   res
     .status(201)
     .json({ message: "Newsletter created successfully!", newNewsletter });
@@ -1258,11 +979,7 @@ app.post("/donerForm", async (req, res) => {
   donors.push(donor);
   await saveDonorsToGist();
   const mailOptions = {
-<<<<<<< HEAD
     from: process.env.GMAIL_USER,
-=======
-    from: "mdshadikhossain830@gmail.com",
->>>>>>> 6005a87f (Resolved merge conflicts)
     to: email,
     subject: "Thank You for Your Generous Donation!",
     html: `
