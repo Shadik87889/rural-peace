@@ -21,7 +21,6 @@ async function fetchNewsletter() {
     // Set the title and content in the HTML
     document.getElementById("newsletterTitle").textContent = newsletter.title;
     document.getElementById("newsletterContent").innerHTML = newsletter.content;
-
     // Store the newsletter in localStorage for later use (optional)
     localStorage.setItem("selectedNewsletter", JSON.stringify(newsletter));
   } catch (error) {
