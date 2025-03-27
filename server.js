@@ -744,6 +744,24 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.get("/newsletters", (req, res) => {
   res.status(200).json(newsletters);
 });
+// Fetch a newsletter by title slug
+app.get("/newsletters/:titleSlug", async (req, res) => {
+  const { titleSlug } = req.params;
+
+  // Convert the provided titleSlug back to matchable format
+  const formattedSlug = titleSlug.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+
+  // Find the newsletter with the matching slug
+  const newsletter = newsletters.find(
+    (n) => n.title.toLowerCase().replace(/[^a-z0-9]+/g, "-") === formattedSlug
+  );
+
+  if (newsletter) {
+    res.status(200).json(newsletter);
+  } else {
+    res.status(404).json({ message: "Newsletter not found" });
+  }
+});
 
 // PUT route to update clicks
 app.put("/newsletters/:id", async (req, res) => {
