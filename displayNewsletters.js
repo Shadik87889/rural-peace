@@ -69,15 +69,7 @@ function renderNewsletters(newsletters, userEmail) {
         console.log("Selected newsletter:", newsletter);
         await updateClicks(newsletter.id);
         localStorage.setItem("selectedNewsletter", JSON.stringify(newsletter));
-
-        // Convert title to a slug
-        const titleSlug = newsletter.title
-          .toLowerCase()
-          .replace(/[^a-z0-9]+/g, "-")
-          .replace(/^-+|-+$/g, ""); // Remove leading/trailing hyphens
-
-        // Navigate to the details page using titleSlug
-        window.location.href = `/Newsletter-details/${titleSlug}`;
+        window.location.href = `Newsletter-details?id=${newsletter.id}`; // Ensure this path is correct
       });
 
       blogImg.appendChild(thumbnail);

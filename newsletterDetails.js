@@ -1,48 +1,32 @@
-// Get the newsletter title slug from the URL
-const urlParams = new URLSearchParams(window.location.search);
-const titleSlug = urlParams.get("title");
+// newsletterDetails.js
 
-// Function to fetch and display the newsletter
-async function fetchNewsletter() {
-  if (!titleSlug) {
-    console.error("No newsletter slug provided.");
-    document.getElementById("newsletterContent").textContent =
-      "No newsletter content to display.";
-    return;
-  }
-  try {
-    const response = await fetch(`/newsletters/${titleSlug}`);
-    if (!response.ok) {
-      throw new Error("Newsletter not found.");
-    }
-    const newsletter = await response.json();
+// Retrieve the selected newsletter from localStorage
+const selectedNewsletter = JSON.parse(
+  localStorage.getItem("selectedNewsletter")
+);
 
-    // Set the title and content in the HTML
-    document.getElementById("newsletterTitle").textContent = newsletter.title;
-    document.getElementById("newsletterContent").innerHTML = newsletter.content;
-    // Store the newsletter in localStorage for later use (optional)
-    localStorage.setItem("selectedNewsletter", JSON.stringify(newsletter));
-  } catch (error) {
-    console.error("Error fetching newsletter:", error);
-    document.getElementById("newsletterContent").textContent =
-      "Failed to load newsletter content.";
-  }
+// Ensure the newsletter data exists before rendering
+if (selectedNewsletter) {
+  // Set the title and content in the HTML
+  document.getElementById("newsletterTitle").textContent =
+    selectedNewsletter.title;
+  document.getElementById("newsletterContent").innerHTML =
+    selectedNewsletter.content;
+} else {
+  console.error("No newsletter data found.");
+  document.getElementById("newsletterContent").textContent =
+    "No newsletter content to display.";
 }
-
-// Call fetch function on page load
-fetchNewsletter();
-
-// User authentication and profile display logic
 window.onload = function () {
   fetch("/api/user")
     .then((response) => response.json())
     .then((data) => {
       if (data.loggedIn) {
         const user = data.user;
-
         // Display profile picture
         const profilePic = document.createElement("img");
-        profilePic.src = "images/commentor.jpg"; // Default profile pic
+        // profilePic.src = user._json.picture;
+        profilePic.src = "images/commentor.jpg";
         profilePic.alt = "Profile Picture";
         profilePic.style.borderRadius = "50%"; // Make it round
         document
@@ -62,7 +46,7 @@ window.onload = function () {
 
         let log_out = document.getElementById("auth-link");
         log_out.innerText = "Log out";
-        log_out.href = "/logout"; // Update link to logout
+        document.getElementById("auth-link").href = "/logout"; // Update link to logout
 
         // Append the logout option
         logOut.appendChild(log_out);
@@ -81,3 +65,4 @@ window.onload = function () {
     })
     .catch((error) => console.error("Error fetching user data:", error));
 };
+//okay
