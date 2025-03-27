@@ -10,7 +10,6 @@ async function fetchNewsletter() {
       "No newsletter content to display.";
     return;
   }
-
   try {
     const response = await fetch(`/newsletters/${titleSlug}`);
     if (!response.ok) {
