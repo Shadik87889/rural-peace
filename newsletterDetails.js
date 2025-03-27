@@ -15,7 +15,6 @@ async function fetchNewsletter() {
     if (!response.ok) {
       throw new Error("Newsletter not found.");
     }
-
     const newsletter = await response.json();
 
     // Set the title and content in the HTML
