@@ -805,7 +805,6 @@ if (fs.existsSync(postsFilePath)) {
   posts = JSON.parse(rawData);
 }
 
-// Function to save posts to file
 const savePostsToFile = () => {
   fs.writeFileSync(postsFilePath, JSON.stringify(posts, null, 2));
 };
