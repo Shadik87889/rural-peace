@@ -39,7 +39,7 @@
   font-size: 23.5vw;
   text-transform: uppercase;
   font-family: "Antonio", sans-serif;
-  color: #523122;
+  color: #e2e2e2;
   letter-spacing: -1.1vw;
   font-weight: 700;
   line-height: 105%;
@@ -47,7 +47,7 @@
   padding-right: 10vw; /* Space between duplicates */
 }
 .tricker-zest {
-  color: #e3a458;
+  color: #b7ff3b;
 }
 .products-short-para {
   font-size: 1.04vw;
@@ -55,7 +55,7 @@
   line-height: 115%;
   text-align: center;
   font-family: "Nunito sans";
-  color: #523122;
+  color: #ffffff;
   width: 28vw;
   margin-top: -12vw;
 }
