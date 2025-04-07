@@ -9,7 +9,18 @@ body {
 body::-webkit-scrollbar {
   display: none; /* For Chrome, Safari, and Edge */
 }
-
+#page1 {
+  background-color: #fff;
+}
+.name {
+  color: #000;
+}
+.menu-bar i {
+  color: #000;
+}
+.log-in-btn {
+  color: #000;
+}
 #blogs-container {
   min-height: 100vh;
 }
