@@ -68,7 +68,7 @@
 }
 .g-pt {
   position: absolute;
-  top: 16vw;
+  top: 9.7vw;
   right: 0;
   z-index: 10;
 }
@@ -1485,10 +1485,10 @@
   }
   .g-pt {
     position: absolute;
-    top: 60.7vw;
-    right: -12vw;
+    top: 67vw;
+    right: -19vw;
     z-index: 10;
-    height: 95vw;
+    height: 93vw;
   }
   .typography-1 {
     position: absolute;
