@@ -1,0 +1,2810 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>IELTS Mahir Community Forum</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts - Montserrat removed, using system font stack for modern feel -->
+    <!-- Font Awesome for professional icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+    <style>
+      /* Changed to system font stack for a more "Apple app-like" and professional feel */
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji",
+          "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+      /* Specific font classes can be kept for titles if desired, but general body will use system font */
+      .font-anton {
+        font-family: "Anton", sans-serif; /* Kept for strong branding on title */
+      }
+      /* Montserrat class removed as per request */
+
+      /* Custom scrollbar for better aesthetics */
+      ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: var(--bg-scroll-track, #f1f1f1);
+        border-radius: 10px;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: var(--bg-scroll-thumb, #888);
+        border-radius: 10px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: var(--bg-scroll-thumb-hover, #555);
+      }
+
+      /* Theme-specific scrollbar colors */
+      .dark {
+        --bg-scroll-track: #374151; /* gray-700 */
+        --bg-scroll-thumb: #6b7280; /* gray-500 */
+        --bg-scroll-thumb-hover: #4b5563; /* gray-600 */
+      }
+      .light {
+        --bg-scroll-track: #f3f4f6; /* gray-100 */
+        --bg-scroll-thumb: #a0aec0; /* gray-400 */
+        --bg-scroll-thumb-hover: #718096; /* gray-500 */
+      }
+
+      /* Toast Notification Styling */
+      #toast-container {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 1000;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+      .toast {
+        padding: 12px 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        color: white;
+        opacity: 0;
+        transform: translateY(-20px);
+        transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+        min-width: 250px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .toast.show {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      .toast.success {
+        background-color: #28a745;
+      } /* Green */
+      .toast.error {
+        background-color: #dc3545;
+      } /* Red */
+      .toast.info {
+        background-color: #007bff;
+      } /* Blue */
+    </style>
+  </head>
+  <body class="light">
+    <div
+      id="app-root"
+      class="min-h-screen flex flex-col transition-colors duration-300"
+    >
+      <!-- Header will be injected here -->
+      <header
+        id="app-header"
+        class="py-4 px-6 md:px-8 flex items-center justify-between shadow-sm rounded-b-2xl transition-colors duration-300"
+      ></header>
+
+      <div class="flex flex-1 overflow-hidden">
+        <!-- Sidebar will be injected here -->
+        <aside
+          id="app-sidebar"
+          class="fixed inset-y-0 left-0 w-64 md:relative md:w-auto transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out p-6 shadow-xl rounded-r-2xl md:rounded-2xl md:shadow-none z-40"
+        ></aside>
+
+        <!-- Main content area -->
+        <main
+          id="main-content"
+          class="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8 flex"
+        ></main>
+      </div>
+    </div>
+
+    <!-- AI Response Modal -->
+    <div
+      id="ai-modal-overlay"
+      class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
+    >
+      <div
+        id="ai-modal-content"
+        class="relative rounded-2xl shadow-2xl p-6 md:p-8 max-w-lg w-full"
+      >
+        <button
+          id="ai-modal-close-btn"
+          class="absolute top-4 right-4 p-2 rounded-full transition-colors"
+        >
+          <i class="fas fa-times"></i>
+        </button>
+        <h3 id="ai-modal-title" class="text-2xl font-bold font-normal mb-4">
+          AI Response
+        </h3>
+        <div id="ai-modal-body">
+          <!-- AI content or loading spinner will be here -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toast-container"></div>
+
+    <!-- Firebase SDK (Version 11.6.1 used in React example, so maintaining for consistency) -->
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+      import {
+        getAuth,
+        signInAnonymously,
+        signInWithCustomToken,
+        onAuthStateChanged,
+      } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+      import {
+        getFirestore,
+        doc,
+        getDoc,
+        addDoc,
+        setDoc,
+        updateDoc,
+        deleteDoc,
+        onSnapshot,
+        collection,
+        query,
+        orderBy,
+        where,
+        arrayUnion,
+        arrayRemove,
+        serverTimestamp,
+        writeBatch,
+        getDocs,
+      } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+      // Removed Firebase Storage import as it won't be used for file uploads
+
+      // --- Global State ---
+      const appState = {
+        db: null,
+        auth: null,
+        // storage: null, // Removed storage from state
+        userId: null,
+        userProfile: null,
+        isAuthReady: false,
+        theme: "light", // 'light' or 'dark'
+        view: "home", // 'home', 'postDetail', 'createPost', 'profile'
+        selectedPost: null,
+        posts: [],
+        comments: {}, // Comments will now store nested structure if available
+        showSidebar: false,
+        // Track Firestore listeners to unsubscribe later if needed (though for a simple app, not not strictly necessary)
+        postsUnsubscribe: null,
+        commentsUnsubscribe: null,
+        activeCategory: null, // Track active category for filtering
+        activeSubCategory: null, // Track active subcategory for filtering
+        // State for "See More" comments/replies
+        visibleCommentsCount: 5, // Initial count for main post comments
+        visibleRepliesCount: {}, // Object to store visible count per parent comment ID
+        editingPostId: null, // Track which post is being edited
+        editingCommentId: null, // Track which comment is being edited
+        expandedReplies: {}, // New state to track which comment replies are expanded
+      };
+
+      // --- Constants ---
+      const MAX_VISIBLE_TOP_LEVEL_COMMENTS = 5;
+      const MAX_VISIBLE_NESTED_REPLIES = 3;
+
+      // --- DOM Elements Cache ---
+      const elements = {};
+
+      // --- Helper Icons (Font Awesome classes) ---
+      const Icons = {
+        Sun: `<i class="fas fa-sun"></i>`,
+        Moon: `<i class="fas fa-moon"></i>`,
+        Plus: `<i class="fas fa-plus"></i>`,
+        MessageCircleMore: `<i class="fas fa-comments"></i>`, // Changed to fa-comments
+        Search: `<i class="fas fa-search"></i>`,
+        ChevronDown: `<i class="fas fa-chevron-down"></i>`,
+        ChevronRight: `<i class="fas fa-chevron-right"></i>`, // Added for collapsed replies
+        User: `<i class="fas fa-user-circle"></i>`, // Changed to fa-user-circle for more realism
+        Award: `<i class="fas fa-award"></i>`,
+        Zap: `<i class="fas fa-bolt"></i>`, // Changed to fa-bolt for AI/power
+        CheckCircle: `<i class="fas fa-check-circle"></i>`,
+        ThumbsUp: `<i class="far fa-thumbs-up"></i>`, // Using 'far' for outlined icon
+        ThumbsUpSolid: `<i class="fas fa-thumbs-up"></i>`, // Using 'fas' for filled icon
+        ThumbsDown: `<i class="far fa-thumbs-down"></i>`, // Using 'far' for outlined icon
+        ThumbsDownSolid: `<i class="fas fa-thumbs-down"></i>`, // Using 'fas' for filled icon
+        ArrowLeft: `<i class="fas fa-arrow-left"></i>`,
+        Menu: `<i class="fas fa-bars"></i>`,
+        X: `<i class="fas fa-times"></i>`,
+        Target: `<i class="fas fa-bullseye"></i>`, // Changed to fa-bullseye for target
+        Activity: `<i class="fas fa-chart-line"></i>`, // Changed to fa-chart-line for activity/progress
+        Edit: `<i class="fas fa-edit"></i>`, // Edit icon
+        Save: `<i class="fas fa-save"></i>`, // Save icon
+        Cancel: `<i class="fas fa-times-circle"></i>`, // Cancel icon
+        Link: `<i class="fas fa-external-link-alt"></i>`, // Link icon
+        Trash: `<i class="fas fa-trash-alt"></i>`, // Trash/Delete icon
+        // Image and Video icons removed as upload functionality is removed
+      };
+
+      // --- Core Functions ---
+
+      /**
+       * Displays a transient toast notification to the user.
+       * @param {string} message The message to display.
+       * @param {'success'|'error'|'info'} type The type of notification (influences styling).
+       * @param {number} duration The duration in milliseconds before the toast disappears.
+       */
+      function showToast(message, type, duration = 3000) {
+        const toastContainer = document.getElementById("toast-container");
+        const toast = document.createElement("div");
+        toast.className = `toast ${type}`;
+        toast.innerHTML = `
+                ${
+                  type === "success"
+                    ? '<i class="fas fa-check-circle"></i>'
+                    : ""
+                }
+                ${
+                  type === "error"
+                    ? '<i class="fas fa-exclamation-triangle"></i>'
+                    : ""
+                }
+                ${type === "info" ? '<i class="fas fa-info-circle"></i>' : ""}
+                <span>${message}</span>
+            `;
+        toastContainer.appendChild(toast);
+
+        // Trigger reflow to ensure CSS transition plays
+        void toast.offsetWidth;
+
+        toast.classList.add("show");
+
+        setTimeout(() => {
+          toast.classList.remove("show");
+          toast.addEventListener("transitionend", () => toast.remove());
+        }, duration);
+      }
+
+      function updateThemeClasses() {
+        const body = document.body;
+        if (appState.theme === "dark") {
+          body.classList.remove("light");
+          body.classList.add("dark");
+          elements.header.classList.remove("bg-white", "text-gray-800");
+          elements.header.classList.add("bg-gray-800", "text-white");
+          elements.sidebar.classList.remove("bg-white", "text-gray-800");
+          elements.sidebar.classList.add("bg-gray-900", "text-white");
+        } else {
+          body.classList.remove("dark");
+          body.classList.add("light");
+          elements.header.classList.remove("bg-gray-800", "text-white");
+          elements.header.classList.add("bg-white", "text-gray-800");
+          elements.sidebar.classList.remove("bg-gray-900", "text-white");
+          elements.sidebar.classList.add("bg-white", "text-gray-800");
+        }
+
+        // Update modal theme
+        const modalContent = document.getElementById("ai-modal-content");
+        const modalCloseBtn = document.getElementById("ai-modal-close-btn");
+        const modalTitle = document.getElementById("ai-modal-title");
+        const modalBody = document.getElementById("ai-modal-body");
+
+        if (modalContent && modalTitle && modalBody && modalCloseBtn) {
+          if (appState.theme === "dark") {
+            modalContent.classList.remove("bg-white");
+            modalContent.classList.add("bg-gray-800");
+            modalTitle.classList.remove("text-gray-900");
+            modalTitle.classList.add("text-white");
+            modalBody.classList.remove("text-gray-700");
+            modalBody.classList.add("text-gray-300");
+            modalCloseBtn.classList.remove("hover:bg-gray-100");
+            modalCloseBtn.classList.add("hover:bg-gray-700");
+          } else {
+            modalContent.classList.remove("bg-gray-800");
+            modalContent.classList.add("bg-white");
+            modalTitle.classList.remove("text-white");
+            modalTitle.classList.add("text-gray-900");
+            modalBody.classList.remove("text-gray-300");
+            modalBody.classList.add("text-gray-700");
+            modalCloseBtn.classList.remove("hover:bg-gray-700");
+            modalCloseBtn.classList.add("hover:bg-gray-100");
+          }
+        }
+      }
+
+      function toggleTheme() {
+        appState.theme = appState.theme === "light" ? "dark" : "light";
+        updateThemeClasses();
+        renderApp(); // Re-render to apply theme to dynamic content
+      }
+
+      function navigateTo(newView, options = {}) {
+        appState.view = newView;
+        appState.selectedPost = options.post || null;
+        appState.activeCategory = options.category || null;
+        appState.activeSubCategory = options.subCategory || null;
+        appState.showSidebar = false; // Close sidebar on navigation
+
+        // Reset visible comment/reply counts and editing state when navigating away from post detail
+        if (newView !== "postDetail") {
+          appState.visibleCommentsCount = MAX_VISIBLE_TOP_LEVEL_COMMENTS;
+          appState.visibleRepliesCount = {};
+          appState.editingPostId = null;
+          appState.editingCommentId = null;
+          appState.expandedReplies = {}; // Reset expanded replies state
+        }
+
+        renderMainContent();
+        renderSidebar(); // Update sidebar visibility
+        // Ensure posts are re-fetched with new filters if navigating to home
+        if (newView === "home" && appState.isAuthReady) {
+          // No need to re-run setupFirestoreListeners for posts now, as filtering is client-side
+          // The onSnapshot listener for posts will automatically update appState.posts
+          // Then renderPostList will filter based on appState.activeCategory/SubCategory
+          // But we need to ensure comments listener is re-setup if postId changes
+          if (appState.commentsUnsubscribe) {
+            appState.commentsUnsubscribe(); // Unsubscribe old comments listener
+            setupFirestoreListeners(); // Re-subscribe with correct post ID if needed, though for ALL comments this is not necessary
+          }
+        }
+      }
+
+      async function addPost(newPostData) {
+        if (!appState.db || !appState.userId || !appState.userProfile) {
+          console.error("Database, user ID or user profile not ready.");
+          showToast(
+            "Error: User not authenticated or profile missing.",
+            "error"
+          );
+          return;
+        }
+
+        try {
+          const appId =
+            typeof __app_id !== "undefined" ? __app_id : "default-app-id";
+          await addDoc(
+            collection(appState.db, `artifacts/${appId}/public/data/posts`),
+            {
+              ...newPostData,
+              authorId: appState.userId,
+              authorName: appState.userProfile.name,
+              createdAt: serverTimestamp(),
+              upvotes: 0,
+              downvotes: 0,
+              upvotedBy: [],
+              downvotedBy: [],
+              isResolved: false,
+              tags: [],
+              imageUrl: null,
+              videoUrl: null,
+            }
+          );
+          console.log("Post added successfully!");
+          showToast("Post created successfully!", "success");
+          navigateTo("home");
+        } catch (e) {
+          console.error("Error adding post: ", e);
+          showToast("Error creating post. Check console.", "error");
+        }
+      }
+
+      async function updatePost(postId, updatedData) {
+        if (!appState.db) return;
+        try {
+          const appId =
+            typeof __app_id !== "undefined" ? __app_id : "default-app-id";
+          await updateDoc(
+            doc(appState.db, `artifacts/${appId}/public/data/posts`, postId),
+            updatedData
+          );
+          console.log("Post updated successfully!");
+          showToast("Post updated successfully!", "success");
+          appState.editingPostId = null; // Exit editing mode
+          renderPostDetail(); // Re-render to show updated post
+        } catch (e) {
+          console.error("Error updating post: ", e);
+          showToast("Error updating post. Check console.", "error");
+        }
+      }
+
+      async function deletePost(postId) {
+        if (!appState.db || !appState.userId) {
+          showToast("Error: User not authenticated.", "error");
+          return;
+        }
+
+        showConfirmationModal(
+          "Delete Post",
+          "Are you sure you want to delete this post and all its comments?",
+          async () => {
+            try {
+              const appId =
+                typeof __app_id !== "undefined" ? __app_id : "default-app-id";
+              const batch = writeBatch(appState.db);
+
+              // Delete the post document
+              const postRef = doc(
+                appState.db,
+                `artifacts/${appId}/public/data/posts`,
+                postId
+              );
+              batch.delete(postRef);
+
+              // Query and delete all comments associated with the post
+              const commentsQuery = query(
+                collection(
+                  appState.db,
+                  `artifacts/${appId}/public/data/comments`
+                ),
+                where("postId", "==", postId)
+              );
+              const commentsSnapshot = await getDocs(commentsQuery);
+              commentsSnapshot.forEach((commentDoc) => {
+                batch.delete(commentDoc.ref);
+              });
+
+              await batch.commit();
+              console.log("Post and associated comments deleted successfully!");
+              showToast("Post and comments deleted successfully!", "success");
+              navigateTo("home"); // Go back to home page after deletion
+            } catch (e) {
+              console.error("Error deleting post and comments: ", e);
+              showToast(
+                "Error deleting post. Check console for details (e.g., permissions).",
+                "error"
+              );
+            }
+          }
+        );
+      }
+
+      async function addComment(postId, content, parentId = null, depth = 0) {
+        if (
+          !appState.db ||
+          !appState.userId ||
+          !appState.userProfile ||
+          !content.trim()
+        ) {
+          console.error(
+            "Database, user ID, user profile, or comment content not ready."
+          );
+          showToast(
+            "Error: User not authenticated or comment content empty.",
+            "error"
+          );
+          return;
+        }
+        try {
+          const appId =
+            typeof __app_id !== "undefined" ? __app_id : "default-app-id";
+          await addDoc(
+            collection(appState.db, `artifacts/${appId}/public/data/comments`),
+            {
+              postId: postId,
+              authorId: appState.userId,
+              authorName: appState.userProfile.name,
+              content: content,
+              createdAt: serverTimestamp(),
+              parentId: parentId,
+              depth: depth, // Keep depth for potential future use or debugging, though not for direct rendering
+              upvotes: 0,
+              downvotes: 0,
+              upvotedBy: [],
+              downvotedBy: [],
+            }
+          );
+          console.log("Comment added successfully!");
+          showToast("Comment added successfully!", "success");
+        } catch (e) {
+          console.error("Error adding comment: ", e);
+          showToast("Error adding comment. Check console.", "error");
+        }
+      }
+
+      async function updateComment(commentId, updatedContent) {
+        if (!appState.db) return;
+        try {
+          const appId =
+            typeof __app_id !== "undefined" ? __app_id : "default-app-id";
+          await updateDoc(
+            doc(
+              appState.db,
+              `artifacts/${appId}/public/data/comments`,
+              commentId
+            ),
+            {
+              content: updatedContent,
+            }
+          );
+          console.log("Comment updated successfully!");
+          showToast("Comment updated successfully!", "success");
+          appState.editingCommentId = null; // Exit editing mode
+          renderComments(appState.selectedPost.id); // Re-render comments
+        } catch (e) {
+          console.error("Error updating comment: ", e);
+          showToast("Error updating comment. Check console.", "error");
+        }
+      }
+
+      async function deleteComment(commentId, postId) {
+        if (!appState.db || !appState.userId) {
+          showToast("Error: User not authenticated.", "error");
+          return;
+        }
+
+        showConfirmationModal(
+          "Delete Comment",
+          "Are you sure you want to delete this comment and its replies?",
+          async () => {
+            try {
+              const appId =
+                typeof __app_id !== "undefined" ? __app_id : "default-app-id";
+              const batch = writeBatch(appState.db);
+
+              // Delete the comment document itself
+              const commentRef = doc(
+                appState.db,
+                `artifacts/${appId}/public/data/comments`,
+                commentId
+              );
+              batch.delete(commentRef);
+
+              // Query and delete all replies to this comment (recursively not needed, just direct children)
+              // The Firestore listener for comments will re-evaluate and update the UI accordingly.
+              const nestedRepliesQuery = query(
+                collection(
+                  appState.db,
+                  `artifacts/${appId}/public/data/comments`
+                ),
+                where("parentId", "==", commentId)
+              );
+              const nestedRepliesSnapshot = await getDocs(nestedRepliesQuery);
+              nestedRepliesSnapshot.forEach((nestedReplyDoc) => {
+                batch.delete(nestedReplyDoc.ref);
+              });
+
+              await batch.commit();
+              console.log("Comment and nested replies deleted successfully!");
+              showToast("Comment deleted successfully!", "success");
+              // Re-render comments for the current post to reflect changes
+              renderComments(postId);
+            } catch (e) {
+              console.error("Error deleting comment and nested replies: ", e);
+              showToast(
+                "Error deleting comment. Check console for details (e.g., permissions).",
+                "error"
+              );
+            }
+          }
+        );
+      }
+
+      async function togglePostResolved(postId, isResolved) {
+        if (!appState.db) return;
+        try {
+          const appId =
+            typeof __app_id !== "undefined" ? __app_id : "default-app-id";
+          await updateDoc(
+            doc(appState.db, `artifacts/${appId}/public/data/posts`, postId),
+            {
+              isResolved: !isResolved,
+            }
+          );
+          console.log("Post resolved status updated.");
+          showToast("Post resolved status updated!", "info");
+        } catch (e) {
+          console.error("Error updating post resolved status: ", e);
+          showToast("Error updating resolved status. Check console.", "error");
+        }
+      }
+
+      async function updatePostVotes(postId, type) {
+        if (!appState.db || !appState.userId) return;
+        try {
+          const appId =
+            typeof __app_id !== "undefined" ? __app_id : "default-app-id";
+          const postRef = doc(
+            appState.db,
+            `artifacts/${appId}/public/data/posts`,
+            postId
+          );
+          const postSnap = await getDoc(postRef);
+          if (postSnap.exists()) {
+            const currentData = postSnap.data();
+            let newUpvotes = currentData.upvotes || 0;
+            let newDownvotes = currentData.downvotes || 0;
+            let upvotedBy = currentData.upvotedBy || [];
+            let downvotedBy = currentData.downvotedBy || [];
+
+            const userAlreadyUpvoted = upvotedBy.includes(appState.userId);
+            const userAlreadyDownvoted = downvotedBy.includes(appState.userId);
+
+            if (type === "up") {
+              if (userAlreadyUpvoted) {
+                // User clicked upvote again, so remove upvote
+                upvotedBy = upvotedBy.filter((id) => id !== appState.userId);
+                newUpvotes--;
+              } else {
+                // User upvoted
+                upvotedBy = [...upvotedBy, appState.userId];
+                newUpvotes++;
+                // If previously downvoted, remove downvote
+                if (userAlreadyDownvoted) {
+                  downvotedBy = downvotedBy.filter(
+                    (id) => id !== appState.userId
+                  );
+                  newDownvotes--;
+                }
+              }
+            } else if (type === "down") {
+              if (userAlreadyDownvoted) {
+                // User clicked downvote again, so remove downvote
+                downvotedBy = downvotedBy.filter(
+                  (id) => id !== appState.userId
+                );
+                newDownvotes--;
+              } else {
+                // User downvoted
+                downvotedBy = [...downvotedBy, appState.userId];
+                newDownvotes++;
+                // If previously upvoted, remove upvote
+                if (userAlreadyUpvoted) {
+                  upvotedBy = upvotedBy.filter((id) => id !== appState.userId);
+                  newUpvotes--;
+                }
+              }
+            }
+
+            await updateDoc(postRef, {
+              upvotes: newUpvotes,
+              downvotes: newDownvotes,
+              upvotedBy: upvotedBy,
+              downvotedBy: downvotedBy,
+            });
+            showToast("Vote updated!", "info");
+          }
+        } catch (e) {
+          console.error("Error updating post votes: ", e);
+          showToast("Error updating vote. Check console.", "error");
+        }
+      }
+
+      async function updateCommentVotes(commentId, type) {
+        if (!appState.db || !appState.userId) return;
+        try {
+          const appId =
+            typeof __app_id !== "undefined" ? __app_id : "default-app-id";
+          const commentRef = doc(
+            appState.db,
+            `artifacts/${appId}/public/data/comments`,
+            commentId
+          );
+          const commentSnap = await getDoc(commentRef);
+          if (commentSnap.exists()) {
+            const currentData = commentSnap.data();
+            let newUpvotes = currentData.upvotes || 0;
+            let newDownvotes = currentData.downvotes || 0;
+            let upvotedBy = currentData.upvotedBy || [];
+            let downvotedBy = currentData.downvotedBy || [];
+
+            const userAlreadyUpvoted = upvotedBy.includes(appState.userId);
+            const userAlreadyDownvoted = downvotedBy.includes(appState.userId);
+
+            if (type === "up") {
+              if (userAlreadyUpvoted) {
+                upvotedBy = upvotedBy.filter((id) => id !== appState.userId);
+                newUpvotes--;
+              } else {
+                upvotedBy = [...upvotedBy, appState.userId];
+                newUpvotes++;
+                if (userAlreadyDownvoted) {
+                  downvotedBy = downvotedBy.filter(
+                    (id) => id !== appState.userId
+                  );
+                  newDownvotes--;
+                }
+              }
+            } else if (type === "down") {
+              if (userAlreadyDownvoted) {
+                downvotedBy = downvotedBy.filter(
+                  (id) => id !== appState.userId
+                );
+                newDownvotes--;
+              } else {
+                downvotedBy = [...downvotedBy, appState.userId];
+                newDownvotes++;
+                if (userAlreadyUpvoted) {
+                  upvotedBy = upvotedBy.filter((id) => id !== appState.userId);
+                  newUpvotes--;
+                }
+              }
+            }
+
+            await updateDoc(commentRef, {
+              upvotes: newUpvotes,
+              downvotes: newDownvotes,
+              upvotedBy: upvotedBy,
+              downvotedBy: downvotedBy,
+            });
+            showToast("Comment vote updated!", "info");
+          }
+        } catch (e) {
+          console.error("Error updating comment votes: ", e);
+          showToast("Error updating comment vote. Check console.", "error");
+        }
+      }
+
+      async function callGeminiAI(prompt, targetElementId) {
+        const modalBody = document.getElementById("ai-modal-body");
+        modalBody.innerHTML = `<div class="flex flex-col justify-center items-center h-24">
+                <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-600"></div>
+                <p class="mt-3 ${
+                  appState.theme === "light" ? "text-gray-700" : "text-gray-300"
+                }">Generating AI response...</p>
+            </div>`;
+        document.getElementById("ai-modal-overlay").classList.remove("hidden");
+
+        try {
+          let chatHistory = [];
+          chatHistory.push({ role: "user", parts: [{ text: prompt }] });
+          const payload = { contents: chatHistory };
+          const apiKey = "AIzaSyCsdeFOJrU43BZmnRP5WD1pm80fZH1cxN4"; // User provided API Key
+          const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+          const response = await fetch(apiUrl, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+          });
+
+          const result = await response.json();
+          if (
+            result.candidates &&
+            result.candidates.length > 0 &&
+            result.candidates[0].content &&
+            result.candidates[0].content.parts &&
+            result.candidates[0].content.parts.length > 0
+          ) {
+            const text = result.candidates[0].content.parts[0].text;
+            modalBody.innerHTML = `<p class="font-normal whitespace-pre-wrap ${
+              appState.theme === "light" ? "text-gray-700" : "text-gray-300"
+            }">${text}</p>`;
+          } else {
+            modalBody.innerHTML = `<p class="font-normal ${
+              appState.theme === "light" ? "text-red-600" : "text-red-400"
+            }">Failed to get AI response: Unexpected structure.</p>`;
+            console.error(
+              "Gemini API: Unexpected response structure or content missing.",
+              result
+            );
+          }
+        } catch (error) {
+          modalBody.innerHTML = `<p class="font-normal ${
+            appState.theme === "light" ? "text-red-600" : "text-red-400"
+          }">Error calling AI. Please try again.</p>`;
+          console.error("Error calling Gemini API:", error);
+        }
+      }
+
+      // --- Custom Confirmation Modal ---
+      function showConfirmationModal(title, message, onConfirm) {
+        const modalOverlay = elements.aiModalOverlay; // Reusing AI modal for confirmation
+        const modalContent = document.getElementById("ai-modal-content");
+        const modalTitle = document.getElementById("ai-modal-title");
+        const modalBody = document.getElementById("ai-modal-body");
+
+        modalTitle.textContent = title;
+        modalBody.innerHTML = `
+                <p class="mb-4 ${
+                  appState.theme === "light" ? "text-gray-700" : "text-gray-300"
+                }">${message}</p>
+                <div class="flex justify-end gap-3">
+                    <button id="confirm-cancel-btn" class="px-4 py-2 rounded-xl text-sm font-semibold ${
+                      appState.theme === "light"
+                        ? "bg-gray-300 text-gray-800 hover:bg-gray-400"
+                        : "bg-gray-600 text-white hover:bg-gray-700"
+                    }">Cancel</button>
+                    <button id="confirm-ok-btn" class="px-4 py-2 rounded-xl text-sm font-semibold bg-red-600 text-white hover:bg-red-700">Delete</button>
+                </div>
+            `;
+        modalOverlay.classList.remove("hidden");
+
+        document.getElementById("confirm-ok-btn").onclick = () => {
+          modalOverlay.classList.add("hidden");
+          onConfirm();
+        };
+        document.getElementById("confirm-cancel-btn").onclick = () => {
+          modalOverlay.classList.add("hidden");
+        };
+        // Close button on modal header
+        elements.aiModalCloseBtn.onclick = () => {
+          modalOverlay.classList.add("hidden");
+        };
+      }
+
+      // --- Render Functions for Views ---
+
+      function renderHeader() {
+        const header = elements.header;
+        header.innerHTML = `
+                <div class="flex items-center gap-4">
+                    <button id="menu-toggle-btn" class="md:hidden p-2 rounded-xl ${
+                      appState.theme === "light"
+                        ? "hover:bg-gray-100"
+                        : "hover:bg-gray-700"
+                    } transition-colors" aria-label="Toggle sidebar">
+                        ${Icons.Menu}
+                    </button>
+                    <h1 id="app-title" class="font-anton text-3xl cursor-pointer text-blue-600 hover:text-blue-700 transition-colors">
+                        IELTS Mahir
+                    </h1>
+                </div>
+                <div class="flex items-center gap-4">
+                    ${
+                      appState.userId
+                        ? `<span class="text-sm font-medium hidden sm:block ${
+                            appState.theme === "light"
+                              ? "text-gray-600"
+                              : "text-gray-300"
+                          }">User ID: ${appState.userId.substring(
+                            0,
+                            8
+                          )}...</span>`
+                        : ""
+                    }
+                    <button id="create-post-btn" class="flex items-center gap-2 px-5 py-2.5 bg-blue-600 text-white rounded-xl shadow-md hover:bg-blue-700 transition-all text-sm font-semibold transform active:scale-95">
+                        ${
+                          Icons.Plus
+                        } <span class="hidden sm:inline">Create Post</span>
+                    </button>
+                    <button id="theme-toggle-btn" class="p-2.5 rounded-full shadow-sm ${
+                      appState.theme === "light"
+                        ? "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                        : "bg-gray-700 text-gray-200 hover:bg-gray-600"
+                    } transition-colors transform active:scale-95" aria-label="Toggle theme">
+                        ${appState.theme === "light" ? Icons.Moon : Icons.Sun}
+                    </button>
+                    <button id="profile-btn" class="p-2.5 rounded-full shadow-sm ${
+                      appState.theme === "light"
+                        ? "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                        : "bg-gray-700 text-gray-200 hover:bg-gray-600"
+                    } transition-colors transform active:scale-95" aria-label="User Profile">
+                        ${Icons.User}
+                    </button>
+                </div>
+            `;
+
+        document.getElementById("app-title").onclick = () => navigateTo("home");
+        document.getElementById("create-post-btn").onclick = () =>
+          navigateTo("createPost");
+        document.getElementById("theme-toggle-btn").onclick = toggleTheme;
+        document.getElementById("profile-btn").onclick = () =>
+          navigateTo("profile");
+        document.getElementById("menu-toggle-btn").onclick = () => {
+          appState.showSidebar = !appState.showSidebar;
+          renderSidebar();
+        };
+        updateThemeClasses(); // Ensure header has correct theme classes
+      }
+
+      function renderSidebar() {
+        const sidebar = elements.sidebar;
+        const categoriesData = [
+          {
+            name: "IELTS Speaking",
+            subcategories: ["Cue Cards", "Fluency", "Pronunciation"],
+          },
+          {
+            name: "IELTS Writing",
+            subcategories: [
+              "Writing Task 1",
+              "Writing Task 2",
+              "Grammar Help",
+              "Vocabulary",
+            ],
+          },
+          { name: "IELTS Listening" },
+          { name: "IELTS Reading" },
+          { name: "Tips & Strategies" },
+          { name: "Band 9 Answers" },
+          { name: "Motivation & Support" },
+        ];
+
+        sidebar.classList.toggle("-translate-x-full", !appState.showSidebar);
+        sidebar.classList.toggle("translate-x-0", appState.showSidebar);
+
+        sidebar.innerHTML = `
+                <div class="flex justify-between items-center mb-6 md:hidden">
+                    <h2 class="font-normal font-bold text-xl text-blue-600">Categories</h2>
+                    <button id="sidebar-close-btn" class="p-2 rounded-full ${
+                      appState.theme === "light"
+                        ? "hover:bg-gray-100"
+                        : "hover:bg-gray-700"
+                    } transition-colors">
+                        ${Icons.X}
+                    </button>
+                </div>
+                <nav id="sidebar-nav" class="space-y-3"></nav>
+            `;
+
+        document.getElementById("sidebar-close-btn").onclick = () => {
+          appState.showSidebar = false;
+          renderSidebar();
+        };
+
+        const sidebarNav = document.getElementById("sidebar-nav");
+        categoriesData.forEach((category) => {
+          const categoryDiv = document.createElement("div");
+          const isCategoryActive = appState.activeCategory === category.name;
+
+          categoryDiv.innerHTML = `
+                    <button id="category-btn-${category.name.replace(
+                      /\s/g,
+                      "-"
+                    )}" class="flex items-center justify-between w-full p-3 rounded-lg font-normal font-medium ${
+            isCategoryActive
+              ? appState.theme === "light"
+                ? "bg-blue-100 text-blue-700"
+                : "bg-blue-800 text-blue-100"
+              : appState.theme === "light"
+              ? "text-gray-700 hover:bg-blue-50 hover:text-blue-700"
+              : "text-gray-200 hover:bg-blue-900 hover:text-blue-100"
+          } transition-all">
+                        <span>${category.name}</span>
+                        ${
+                          category.subcategories
+                            ? `<span id="chevron-${category.name.replace(
+                                /\s/g,
+                                "-"
+                              )}" class="${
+                                appState.openCategories?.[category.name]
+                                  ? "rotate-180"
+                                  : ""
+                              } transition-transform duration-200">${
+                                Icons.ChevronDown
+                              }</span>`
+                            : ""
+                        }
+                    </button>
+                    ${
+                      category.subcategories
+                        ? `<ul id="subcategories-list-${category.name.replace(
+                            /\s/g,
+                            "-"
+                          )}" class="ml-4 mt-2 space-y-2 ${
+                            appState.openCategories?.[category.name]
+                              ? ""
+                              : "hidden"
+                          }"></ul>`
+                        : ""
+                    }
+                `;
+          sidebarNav.appendChild(categoryDiv);
+
+          document.getElementById(
+            `category-btn-${category.name.replace(/\s/g, "-")}`
+          ).onclick = () => {
+            if (category.subcategories) {
+              // Toggle subcategories display
+              appState.openCategories = {
+                ...appState.openCategories,
+                [category.name]: !appState.openCategories?.[category.name],
+              };
+              renderSidebar(); // Re-render sidebar to toggle submenu
+            }
+            // Navigate to filter by main category or subcategory
+            navigateTo("home", { category: category.name, subCategory: null }); // Always reset subCategory when main is clicked
+          };
+
+          if (category.subcategories) {
+            const subcategoriesList = document.getElementById(
+              `subcategories-list-${category.name.replace(/\s/g, "-")}`
+            );
+            subcategoriesList.className += ` ${
+              appState.theme === "light"
+                ? "border-l border-gray-200"
+                : "border-l border-gray-700"
+            }`; // Add border for visual separation
+            subcategoriesList.classList.add(
+              `${
+                appState.theme === "light" ? "text-gray-600" : "text-gray-300"
+              }`
+            ); // Set text color for subcategories
+            category.subcategories.forEach((sub) => {
+              const subLi = document.createElement("li");
+              const isSubCategoryActive =
+                appState.activeSubCategory === sub &&
+                appState.activeCategory === category.name;
+              subLi.innerHTML = `
+                            <button class="block w-full text-left p-2 rounded-lg font-normal text-sm ${
+                              isSubCategoryActive
+                                ? appState.theme === "light"
+                                  ? "bg-blue-50 text-blue-600"
+                                  : "bg-blue-700 text-blue-200"
+                                : appState.theme === "light"
+                                ? "text-gray-600 hover:bg-blue-50 hover:text-blue-600"
+                                : "text-gray-300 hover:bg-blue-800 hover:text-blue-200"
+                            } transition-colors">
+                                ${sub}
+                            </button>
+                        `;
+              subLi.querySelector("button").onclick = () =>
+                navigateTo("home", {
+                  category: category.name,
+                  subCategory: sub,
+                });
+              subcategoriesList.appendChild(subLi);
+            });
+          }
+        });
+        updateThemeClasses(); // Ensure sidebar has correct theme classes
+      }
+
+      function renderPostList() {
+        const mainContent = elements.mainContent;
+        mainContent.innerHTML = `
+                <div class="flex-1">
+                    <h2 class="text-3xl font-bold font-normal mb-8 ${
+                      appState.theme === "light"
+                        ? "text-gray-900"
+                        : "text-white"
+                    }">Latest Discussions
+                        ${
+                          appState.activeCategory
+                            ? `<span class="${
+                                appState.theme === "light"
+                                  ? "text-blue-600"
+                                  : "text-blue-400"
+                              }"> - ${appState.activeCategory}</span>`
+                            : ""
+                        }
+                        ${
+                          appState.activeSubCategory
+                            ? `<span class="${
+                                appState.theme === "light"
+                                  ? "text-indigo-600"
+                                  : "text-indigo-400"
+                              }"> (${appState.activeSubCategory})</span>`
+                            : ""
+                        }
+                    </h2>
+                    <div id="posts-container" class="space-y-6"></div>
+                </div>
+                <div id="right-sidebar" class="w-64 ml-8 p-6 hidden lg:block rounded-2xl shadow-lg ${
+                  appState.theme === "light" ? "bg-white" : "bg-gray-800"
+                }">
+                    <!-- Right sidebar content will be rendered here -->
+                </div>
+            `;
+
+        // Filter posts based on active category and subcategory (client-side filtering)
+        const filteredPosts = appState.posts.filter((post) => {
+          let matchesCategory = true;
+          let matchesSubCategory = true;
+
+          if (appState.activeCategory) {
+            matchesCategory = post.category === appState.activeCategory;
+          }
+          if (appState.activeSubCategory) {
+            matchesSubCategory =
+              post.subCategory === appState.activeSubCategory;
+          }
+          return matchesCategory && matchesSubCategory;
+        });
+
+        const postsContainer = document.getElementById("posts-container");
+        if (filteredPosts.length === 0) {
+          postsContainer.innerHTML = `<p class="text-lg ${
+            appState.theme === "light" ? "text-gray-600" : "text-gray-400"
+          }">No posts found for this selection. Be the first to create one!</p>`;
+        } else {
+          filteredPosts.forEach((post) => {
+            const postDiv = document.createElement("div");
+            postDiv.className = `p-6 rounded-2xl shadow-lg transition-all duration-200 hover:shadow-xl hover:scale-[1.01] cursor-pointer ${
+              appState.theme === "light" ? "bg-white" : "bg-gray-800"
+            }`;
+            postDiv.onclick = () => navigateTo("postDetail", { post: post });
+
+            const createdAtDate = post.createdAt
+              ? new Date(post.createdAt.toDate()).toLocaleString()
+              : "N/A";
+            const commentsCount = (appState.comments[post.id] || []).length;
+
+            postDiv.innerHTML = `
+                        <h3 class="text-xl font-semibold font-normal mb-2 ${
+                          appState.theme === "light"
+                            ? "text-blue-700"
+                            : "text-blue-400"
+                        }">
+                            ${post.title}
+                        </h3>
+                        <p class="text-sm ${
+                          appState.theme === "light"
+                            ? "text-gray-600"
+                            : "text-gray-300"
+                        } mb-3 line-clamp-2">
+                            ${post.content}
+                        </p>
+                        <div class="flex items-center justify-between text-xs font-normal ${
+                          appState.theme === "light"
+                            ? "text-gray-500"
+                            : "text-gray-400"
+                        } border-t pt-3 mt-4 ${
+              appState.theme === "light" ? "border-gray-100" : "border-gray-700"
+            }">
+                            <div class="flex items-center gap-2">
+                                <span class="w-4 h-4">${Icons.User}</span>
+                                <span>${post.authorName || "Anonymous"}</span>
+                                <span class="mx-1">•</span>
+                                <span>${createdAtDate}</span>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <span class="flex items-center gap-1 text-green-500">
+                                    <span class="w-4 h-4">${
+                                      Icons.ThumbsUp
+                                    }</span> ${post.upvotes || 0}
+                                </span>
+                                <span class="flex items-center gap-1 text-red-500">
+                                    <span class="w-4 h-4">${
+                                      Icons.ThumbsDown
+                                    }</span> ${post.downvotes || 0}
+                                </span>
+                                <span class="flex items-center gap-1 text-blue-500">
+                                    <span class="w-4 h-4">${
+                                      Icons.MessageCircleMore
+                                    }</span> ${commentsCount}
+                                </span>
+                                ${
+                                  post.isResolved
+                                    ? `<span class="flex items-center gap-1 text-green-600 font-semibold"> <span class="w-4 h-4">${Icons.CheckCircle}</span> Resolved</span>`
+                                    : ""
+                                }
+                            </div>
+                        </div>
+                        ${
+                          post.category
+                            ? `
+                            <div class="mt-3 flex flex-wrap gap-2">
+                                <span class="px-3 py-1 rounded-full text-xs font-semibold ${
+                                  appState.theme === "light"
+                                    ? "bg-blue-50 text-blue-700"
+                                    : "bg-blue-900 text-blue-200"
+                                }">
+                                    ${post.category}
+                                </span>
+                                ${
+                                  post.subCategory
+                                    ? `<span class="px-3 py-1 rounded-full text-xs font-semibold ${
+                                        appState.theme === "light"
+                                          ? "bg-indigo-50 text-indigo-700"
+                                          : "bg-indigo-900 text-indigo-200"
+                                      }"> ${post.subCategory}</span>`
+                                    : ""
+                                }
+                                ${
+                                  post.tags && post.tags.length > 0
+                                    ? post.tags
+                                        .map(
+                                          (tag) =>
+                                            `<span class="px-3 py-1 rounded-full text-xs font-semibold ${
+                                              appState.theme === "light"
+                                                ? "bg-gray-100 text-gray-600"
+                                                : "bg-gray-700 text-gray-300"
+                                            }">${tag}</span>`
+                                        )
+                                        .join("")
+                                    : ""
+                                }
+                            </div>
+                        `
+                            : ""
+                        }
+                    `;
+            postsContainer.appendChild(postDiv);
+          });
+        }
+        renderRightSidebar(); // Render the right sidebar for home view
+      }
+
+      function renderPostDetail() {
+        const post = appState.selectedPost;
+        if (!post) {
+          navigateTo("home"); // Redirect if no post is selected
+          return;
+        }
+
+        const mainContent = elements.mainContent;
+        mainContent.innerHTML = `
+                <div class="flex-1">
+                    <button id="back-to-home-btn" class="mb-6 flex items-center gap-2 text-base font-semibold ${
+                      appState.theme === "light"
+                        ? "text-blue-600 hover:text-blue-700"
+                        : "text-blue-400 hover:text-blue-300"
+                    } transition-colors">
+                        <span class="w-5 h-5">${
+                          Icons.ArrowLeft
+                        }</span> Back to Forum
+                    </button>
+
+                    <div class="p-6 md:p-8 rounded-2xl shadow-lg transition-colors duration-300 ${
+                      appState.theme === "light" ? "bg-white" : "bg-gray-800"
+                    }">
+                        ${
+                          appState.editingPostId === post.id
+                            ? `
+                            <!-- Edit Post Form -->
+                            <div class="space-y-4">
+                                <div>
+                                    <label for="edit-post-title" class="block text-sm font-medium mb-1 ${
+                                      appState.theme === "light"
+                                        ? "text-gray-700"
+                                        : "text-gray-300"
+                                    }">Title</label>
+                                    <input type="text" id="edit-post-title" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                                      appState.theme === "light"
+                                        ? "border-gray-200 bg-gray-50 text-gray-900"
+                                        : "border-gray-700 bg-gray-900 text-white"
+                                    } transition-colors" value="${
+                                post.title
+                              }" required />
+                                </div>
+                                <div>
+                                    <label for="edit-post-content" class="block text-sm font-medium mb-1 ${
+                                      appState.theme === "light"
+                                        ? "text-gray-700"
+                                        : "text-gray-300"
+                                    }">Content</label>
+                                    <textarea id="edit-post-content" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                                      appState.theme === "light"
+                                        ? "border-gray-200 bg-gray-50 text-gray-900"
+                                        : "border-gray-700 bg-gray-900 text-white"
+                                    } transition-colors" rows="8" required>${
+                                post.content
+                              }</textarea>
+                                </div>
+                                <div class="flex gap-3">
+                                    <button id="save-post-btn" class="flex items-center gap-2 px-5 py-2.5 bg-green-600 text-white rounded-xl shadow-md hover:bg-green-700 transition-all text-sm font-semibold transform active:scale-95">
+                                        ${Icons.Save} Save
+                                    </button>
+                                    <button id="cancel-edit-post-btn" class="flex items-center gap-2 px-5 py-2.5 bg-gray-300 text-gray-800 rounded-xl shadow-md hover:bg-gray-400 transition-all text-sm font-semibold transform active:scale-95">
+                                        ${Icons.Cancel} Cancel
+                                    </button>
+                                </div>
+                            </div>
+                        `
+                            : `
+                            <!-- Display Post -->
+                            <div class="flex items-center justify-between mb-3">
+                                <h2 class="text-3xl md:text-4xl font-bold font-normal ${
+                                  appState.theme === "light"
+                                    ? "text-gray-900"
+                                    : "text-white"
+                                }">
+                                    ${post.title}
+                                </h2>
+                                <div class="flex gap-2">
+                                    ${
+                                      post.authorId === appState.userId
+                                        ? `
+                                        <button id="edit-post-btn" class="p-2 rounded-full ${
+                                          appState.theme === "light"
+                                            ? "hover:bg-gray-100"
+                                            : "hover:bg-gray-700"
+                                        } transition-colors" aria-label="Edit Post">
+                                            ${Icons.Edit}
+                                        </button>
+                                        <button id="delete-post-btn" class="p-2 rounded-full ${
+                                          appState.theme === "light"
+                                            ? "hover:bg-red-100 text-red-600"
+                                            : "hover:bg-red-800 text-red-400"
+                                        } transition-colors" aria-label="Delete Post">
+                                            ${Icons.Trash}
+                                        </button>
+                                    `
+                                        : ""
+                                    }
+                                </div>
+                            </div>
+                            <div class="flex flex-wrap items-center gap-4 text-sm font-normal mb-4">
+                                <span class="flex items-center gap-1 ${
+                                  appState.theme === "light"
+                                    ? "text-gray-600"
+                                    : "text-gray-300"
+                                }">
+                                    <span class="w-4 h-4">${
+                                      Icons.User
+                                    }</span> ${post.authorName || "Anonymous"}
+                                </span>
+                                ${
+                                  post.createdAt
+                                    ? `<span class="flex items-center gap-1 ${
+                                        appState.theme === "light"
+                                          ? "text-gray-600"
+                                          : "text-gray-300"
+                                      }">
+                                    <span class="mx-1">•</span>
+                                    ${new Date(
+                                      post.createdAt.toDate()
+                                    ).toLocaleString()}
+                                </span>`
+                                    : ""
+                                }
+                                ${
+                                  post.isResolved
+                                    ? `<span class="flex items-center gap-1 text-green-600 font-semibold px-2 py-1 bg-green-100 rounded-full dark:bg-green-900 dark:text-green-200">
+                                    <span class="w-4 h-4">${Icons.CheckCircle}</span> Resolved
+                                </span>`
+                                    : ""
+                                }
+                            </div>
+                            <p class="text-lg font-normal leading-relaxed mb-6 ${
+                              appState.theme === "light"
+                                ? "text-gray-800"
+                                : "text-gray-200"
+                            }">
+                                ${post.content}
+                            </p>
+                        `
+                        }
+
+                        <div class="flex flex-wrap gap-3 mb-6 border-t pt-4 ${
+                          appState.theme === "light"
+                            ? "border-gray-100"
+                            : "border-gray-700"
+                        }">
+                            <button id="upvote-btn" class="flex items-center gap-1 px-4 py-2 rounded-xl text-sm font-semibold 
+                                ${
+                                  post.upvotedBy &&
+                                  post.upvotedBy.includes(appState.userId)
+                                    ? appState.theme === "light"
+                                      ? "bg-blue-500 text-white"
+                                      : "bg-blue-600 text-white"
+                                    : appState.theme === "light"
+                                    ? "bg-blue-100 text-blue-700 hover:bg-blue-200"
+                                    : "bg-blue-900 text-blue-200 hover:bg-blue-800"
+                                }
+                                transition-colors transform active:scale-95">
+                                <span class="w-4 h-4">${
+                                  post.upvotedBy &&
+                                  post.upvotedBy.includes(appState.userId)
+                                    ? Icons.ThumbsUpSolid
+                                    : Icons.ThumbsUp
+                                }</span> ${post.upvotes || 0}
+                            </button>
+                            <button id="downvote-btn" class="flex items-center gap-1 px-4 py-2 rounded-xl text-sm font-semibold 
+                                ${
+                                  post.downvotedBy &&
+                                  post.downvotedBy.includes(appState.userId)
+                                    ? appState.theme === "light"
+                                      ? "bg-red-500 text-white"
+                                      : "bg-red-600 text-white"
+                                    : appState.theme === "light"
+                                    ? "bg-red-100 text-red-700 hover:bg-red-200"
+                                    : "bg-red-900 text-red-200 hover:bg-red-800"
+                                }
+                                transition-colors transform active:scale-95">
+                                <span class="w-4 h-4">${
+                                  post.downvotedBy &&
+                                  post.downvotedBy.includes(appState.userId)
+                                    ? Icons.ThumbsDownSolid
+                                    : Icons.ThumbsDown
+                                }</span> ${post.downvotes || 0}
+                            </button>
+                            ${
+                              post.authorId === appState.userId
+                                ? `
+                                <button id="resolve-btn" class="flex items-center gap-1 px-4 py-2 rounded-xl text-sm font-semibold ${
+                                  post.isResolved
+                                    ? "bg-orange-100 text-orange-700 hover:bg-orange-200"
+                                    : "bg-green-100 text-green-700 hover:bg-green-200"
+                                } ${
+                                    appState.theme === "dark" &&
+                                    (post.isResolved
+                                      ? "bg-orange-900 text-orange-200 hover:bg-orange-800"
+                                      : "bg-green-900 text-green-200 hover:bg-green-800")
+                                  } transition-colors transform active:scale-95">
+                                    <span class="w-4 h-4">${
+                                      Icons.CheckCircle
+                                    }</span> ${
+                                    post.isResolved
+                                      ? "Unresolve"
+                                      : "Mark as Resolved"
+                                  }
+                                </button>
+                            `
+                                : ""
+                            }
+                            <button id="ai-summary-btn" class="flex items-center gap-1 px-4 py-2 rounded-xl text-sm font-semibold ${
+                              appState.theme === "light"
+                                ? "bg-purple-100 text-purple-700 hover:bg-purple-200"
+                                : "bg-purple-900 text-purple-200 hover:bg-purple-800"
+                            } transition-colors transform active:scale-95">
+                                <span class="w-4 h-4">${
+                                  Icons.Zap
+                                }</span> AI Summary
+                            </button>
+                            <button id="ai-suggest-answer-btn" class="flex items-center gap-1 px-4 py-2 rounded-xl text-sm font-semibold ${
+                              appState.theme === "light"
+                                ? "bg-indigo-100 text-indigo-700 hover:bg-indigo-200"
+                                : "bg-indigo-900 text-indigo-200 hover:bg-indigo-800"
+                            } transition-colors transform active:scale-95">
+                                <span class="w-4 h-4">${
+                                  Icons.Zap
+                                }</span> AI Suggest Answer
+                            </button>
+                            <button id="ai-grammar-check-btn" class="flex items-center gap-1 px-4 py-2 rounded-xl text-sm font-semibold ${
+                              appState.theme === "light"
+                                ? "bg-teal-100 text-teal-700 hover:bg-teal-200"
+                                : "bg-teal-900 text-teal-200 hover:bg-teal-800"
+                            } transition-colors transform active:scale-95">
+                                <span class="w-4 h-4">${
+                                  Icons.Zap
+                                }</span> AI Grammar Check
+                            </button>
+                            <button id="ai-auto-tag-btn" class="flex items-center gap-1 px-4 py-2 rounded-xl text-sm font-semibold ${
+                              appState.theme === "light"
+                                ? "bg-emerald-100 text-emerald-700 hover:bg-emerald-200"
+                                : "bg-emerald-900 text-emerald-200 hover:bg-emerald-800"
+                            } transition-colors transform active:scale-95">
+                                <span class="w-4 h-4">${
+                                  Icons.Zap
+                                }</span> AI Auto-Tag
+                            </button>
+                        </div>
+
+                        ${
+                          post.category
+                            ? `
+                            <div class="mt-3 flex flex-wrap gap-2 mb-6">
+                                <span class="px-3 py-1 rounded-full text-xs font-semibold ${
+                                  appState.theme === "light"
+                                    ? "bg-blue-50 text-blue-700"
+                                    : "bg-blue-900 text-blue-200"
+                                }">
+                                    ${post.category}
+                                </span>
+                                ${
+                                  post.subCategory
+                                    ? `<span class="px-3 py-1 rounded-full text-xs font-semibold ${
+                                        appState.theme === "light"
+                                          ? "bg-indigo-50 text-indigo-700"
+                                          : "bg-indigo-900 text-indigo-200"
+                                      }"> ${post.subCategory}</span>`
+                                    : ""
+                                }
+                                ${
+                                  post.tags && post.tags.length > 0
+                                    ? post.tags
+                                        .map(
+                                          (tag) =>
+                                            `<span class="px-3 py-1 rounded-full text-xs font-semibold ${
+                                              appState.theme === "light"
+                                                ? "bg-gray-100 text-gray-600"
+                                                : "bg-gray-700 text-gray-300"
+                                            }">${tag}</span>`
+                                        )
+                                        .join("")
+                                    : ""
+                                }
+                            </div>
+                        `
+                            : ""
+                        }
+                    </div>
+
+                    <div class="mt-8">
+                        <h3 class="text-2xl font-bold font-normal mb-4 ${
+                          appState.theme === "light"
+                            ? "text-gray-900"
+                            : "text-white"
+                        }">Comments (<span id="comments-count">0</span>)</h3>
+                        <div id="comments-container" class="space-y-4"></div>
+
+                        <div class="mt-6 p-6 rounded-2xl shadow-lg ${
+                          appState.theme === "light"
+                            ? "bg-white"
+                            : "bg-gray-800"
+                        }">
+                            <h4 class="text-xl font-bold font-normal mb-4 ${
+                              appState.theme === "light"
+                                ? "text-gray-900"
+                                : "text-white"
+                            }">Add a Comment</h4>
+                            <textarea id="comment-content-textarea" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                              appState.theme === "light"
+                                ? "border-gray-200 bg-gray-50 text-gray-900"
+                                : "border-gray-700 bg-gray-900 text-white"
+                            } transition-colors" rows="4" placeholder="Write your comment here..." required></textarea>
+                            <button id="post-comment-btn" class="mt-4 px-6 py-3 bg-blue-600 text-white rounded-xl shadow-md hover:bg-blue-700 transition-colors font-semibold transform active:scale-95" disabled>
+                                Post Comment
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div id="right-sidebar" class="w-64 ml-8 p-6 hidden lg:block rounded-2xl shadow-lg ${
+                  appState.theme === "light" ? "bg-white" : "bg-gray-800"
+                }">
+                    <!-- Right sidebar content will be rendered here -->
+                </div>
+            `;
+
+        document.getElementById("back-to-home-btn").onclick = () =>
+          navigateTo("home");
+        document.getElementById("upvote-btn").onclick = () =>
+          updatePostVotes(post.id, "up");
+        document.getElementById("downvote-btn").onclick = () =>
+          updatePostVotes(post.id, "down");
+
+        if (post.authorId === appState.userId) {
+          const resolveBtn = document.getElementById("resolve-btn");
+          if (resolveBtn) {
+            // Ensure button exists if user is author
+            resolveBtn.onclick = () =>
+              togglePostResolved(post.id, post.isResolved);
+          }
+
+          const editPostBtn = document.getElementById("edit-post-btn");
+          if (editPostBtn) {
+            editPostBtn.onclick = () => {
+              appState.editingPostId = post.id;
+              renderPostDetail(); // Re-render in edit mode
+            };
+          }
+
+          const deletePostBtn = document.getElementById("delete-post-btn");
+          if (deletePostBtn) {
+            deletePostBtn.onclick = () => deletePost(post.id);
+          }
+
+          const savePostBtn = document.getElementById("save-post-btn");
+          const cancelEditPostBtn = document.getElementById(
+            "cancel-edit-post-btn"
+          );
+          if (savePostBtn && cancelEditPostBtn) {
+            savePostBtn.onclick = () => {
+              const newTitle = document.getElementById("edit-post-title").value;
+              const newContent = document.getElementById("edit-post-content")
+                .value;
+              if (newTitle.trim() && newContent.trim()) {
+                updatePost(post.id, { title: newTitle, content: newContent });
+              } else {
+                showToast("Title and content cannot be empty.", "error");
+              }
+            };
+            cancelEditPostBtn.onclick = () => {
+              appState.editingPostId = null;
+              renderPostDetail(); // Exit edit mode
+            };
+          }
+        }
+
+        document.getElementById("ai-summary-btn").onclick = () =>
+          callGeminiAI(
+            `Summarize the following IELTS forum post and its comments:\n\nPost Title: "${
+              post.title
+            }"\nPost Content: "${post.content}"\n\nComments:\n${(
+              appState.comments[post.id] || []
+            )
+              .map((c) => c.content)
+              .join("\n")}`,
+            "ai-summary-response"
+          );
+        document.getElementById("ai-suggest-answer-btn").onclick = () =>
+          callGeminiAI(
+            `Given the following IELTS forum post and comments, suggest a helpful answer or improvement:\n\nPost Title: "${
+              post.title
+            }"\nPost Content: "${post.content}"\n\nExisting Comments:\n${(
+              appState.comments[post.id] || []
+            )
+              .map((c) => c.content)
+              .join("\n")}`,
+            "ai-suggest-answer-response"
+          );
+        document.getElementById("ai-grammar-check-btn").onclick = () =>
+          callGeminiAI(
+            `Check the grammar and spelling of the following text from an IELTS forum post. Provide corrections and explanations:\n\n"${post.content}"`,
+            "ai-grammar-check-response"
+          );
+        document.getElementById("ai-auto-tag-btn").onclick = () =>
+          callGeminiAI(
+            `Given the following IELTS forum post content, suggest relevant tags (e.g., "Grammar", "Band 7+", "Cue Card", "Writing Task 2", "Speaking Practice"). Provide them as a comma-separated list:\n\n"${post.content}"`,
+            "ai-auto-tag-response"
+          );
+
+        const commentContentTextarea = document.getElementById(
+          "comment-content-textarea"
+        );
+        const postCommentBtn = document.getElementById("post-comment-btn");
+
+        commentContentTextarea.oninput = () => {
+          postCommentBtn.disabled = !commentContentTextarea.value.trim();
+        };
+        postCommentBtn.onclick = () => {
+          // Add top-level comment (depth 0)
+          addComment(post.id, commentContentTextarea.value, null, 0);
+          commentContentTextarea.value = "";
+          postCommentBtn.disabled = true;
+        };
+
+        renderComments(post.id);
+        renderRightSidebar(); // Render the right sidebar for post detail view
+      }
+
+      function renderComments(postId) {
+        const commentsContainer = document.getElementById("comments-container");
+        const commentsCountSpan = document.getElementById("comments-count");
+        const allPostComments = appState.comments[postId] || [];
+
+        commentsCountSpan.textContent = allPostComments.length;
+        commentsContainer.innerHTML = ""; // Clear existing comments
+
+        if (allPostComments.length === 0) {
+          commentsContainer.innerHTML = `<p class="text-md ${
+            appState.theme === "light" ? "text-gray-600" : "text-gray-400"
+          }">No comments yet. Be the first to reply!</p>`;
+          return;
+        }
+
+        // Create a map for quick lookup and to store direct children for each comment
+        const commentData = new Map();
+        allPostComments.forEach((comment) => {
+          commentData.set(comment.id, { ...comment, directChildren: [] });
+        });
+
+        // Populate directChildren for each comment
+        allPostComments.forEach((comment) => {
+          if (comment.parentId && commentData.has(comment.parentId)) {
+            commentData
+              .get(comment.parentId)
+              .directChildren.push(commentData.get(comment.id));
+          }
+        });
+
+        // Get all top-level comments and sort them
+        const topLevelComments = Array.from(commentData.values())
+          .filter(
+            (comment) =>
+              comment.parentId === null || comment.parentId === undefined
+          )
+          .sort(
+            (a, b) =>
+              (a.createdAt?.toDate() || new Date(0)) -
+              (b.createdAt?.toDate() || new Date(0))
+          );
+
+        // Helper function to get all descendants (for unified toggle logic)
+        function getAllDescendants(commentId, commentsMap) {
+          let descendants = [];
+          const comment = commentsMap.get(commentId);
+          if (!comment || !comment.directChildren) return descendants;
+
+          // Use a stack for depth-first traversal to ensure correct order for display
+          const stack = [
+            ...comment.directChildren.sort(
+              (a, b) =>
+                (b.createdAt?.toDate() || new Date(0)) -
+                (a.createdAt?.toDate() || new Date(0))
+            ),
+          ]; // Sort initially for consistent processing order
+
+          while (stack.length > 0) {
+            const currentChild = stack.pop(); // Get the last item (LIFO for stack)
+            descendants.push(currentChild);
+            // Add children of the currentChild to the stack in reverse order to maintain chronological order when popped
+            if (
+              currentChild.directChildren &&
+              currentChild.directChildren.length > 0
+            ) {
+              stack.push(
+                ...currentChild.directChildren.sort(
+                  (a, b) =>
+                    (b.createdAt?.toDate() || new Date(0)) -
+                    (a.createdAt?.toDate() || new Date(0))
+                )
+              );
+            }
+          }
+          // Sort descendants by creation date to ensure chronological order in the flat list
+          return descendants.sort(
+            (a, b) =>
+              (a.createdAt?.toDate() || new Date(0)) -
+              (b.createdAt?.toDate() || new Date(0))
+          );
+        }
+
+        // Function to render a single comment block
+        function renderCommentBlock(comment, containerElement) {
+          const isReply =
+            comment.parentId !== null && comment.parentId !== undefined;
+          // Apply ml-8 only if it's a reply
+          const indentClasses = isReply ? "ml-8" : "";
+
+          const commentDiv = document.createElement("div");
+          commentDiv.className = `p-4 rounded-xl shadow-sm mb-3 ${
+            appState.theme === "light"
+              ? "bg-white border border-gray-100"
+              : "bg-gray-800 border border-gray-700"
+          } ${indentClasses}`;
+          const createdAtDate = comment.createdAt
+            ? new Date(comment.createdAt.toDate()).toLocaleString()
+            : "N/A";
+
+          let repliedToHtml = "";
+          if (isReply) {
+            const parentComment = commentData.get(comment.parentId);
+            if (parentComment) {
+              repliedToHtml = `<span class="text-blue-500 font-semibold">@${
+                parentComment.authorName || "Anonymous"
+              }</span> `;
+            }
+          }
+
+          commentDiv.innerHTML = `
+                    <div class="flex items-center gap-3 mb-2 text-sm">
+                        <span class="w-4 h-4">${Icons.User}</span>
+                        <span class="font-semibold ${
+                          appState.theme === "light"
+                            ? "text-gray-800"
+                            : "text-gray-200"
+                        }">${comment.authorName || "Anonymous"}</span>
+                        <span class="${
+                          appState.theme === "light"
+                            ? "text-gray-500"
+                            : "text-gray-400"
+                        }">
+                            ${createdAtDate}
+                        </span>
+                    </div>
+                    ${
+                      appState.editingCommentId === comment.id
+                        ? `
+                        <!-- Edit Comment Form -->
+                        <div class="space-y-2">
+                            <textarea id="edit-comment-content-${
+                              comment.id
+                            }" class="w-full p-2 border rounded-xl focus:ring-1 focus:ring-blue-400 ${
+                            appState.theme === "light"
+                              ? "border-gray-200 bg-gray-50 text-gray-900"
+                              : "border-gray-700 bg-gray-900 text-white"
+                          } transition-colors" rows="2" required>${
+                            comment.content
+                          }</textarea>
+                            <div class="flex gap-2">
+                                <button id="save-comment-btn-${
+                                  comment.id
+                                }" class="flex items-center gap-1 px-3 py-1.5 bg-green-600 text-white rounded-lg text-xs hover:bg-green-700 transition-colors">
+                                    ${Icons.Save} Save
+                                </button>
+                                <button id="cancel-edit-comment-btn-${
+                                  comment.id
+                                }" class="flex items-center gap-1 px-3 py-1.5 bg-gray-300 text-gray-800 rounded-lg text-xs hover:bg-gray-400 transition-colors">
+                                    ${Icons.Cancel} Cancel
+                                </button>
+                            </div>
+                        </div>
+                    `
+                        : `
+                        <!-- Display Comment -->
+                        <div class="flex items-center justify-between">
+                            <p class="font-normal ${
+                              appState.theme === "light"
+                                ? "text-gray-700"
+                                : "text-gray-300"
+                            } mb-3">${repliedToHtml}${comment.content}</p>
+                            ${
+                              comment.authorId === appState.userId
+                                ? `
+                                <div class="flex gap-2">
+                                    <button id="edit-comment-btn-${
+                                      comment.id
+                                    }" class="p-1 rounded-full ${
+                                    appState.theme === "light"
+                                      ? "hover:bg-gray-100"
+                                      : "hover:bg-gray-700"
+                                  } transition-colors text-xs" aria-label="Edit Comment">
+                                        ${Icons.Edit}
+                                    </button>
+                                    <button id="delete-comment-btn-${
+                                      comment.id
+                                    }" class="p-1 rounded-full ${
+                                    appState.theme === "light"
+                                      ? "hover:bg-red-100 text-red-600"
+                                      : "hover:bg-red-800 text-red-400"
+                                  } transition-colors text-xs" aria-label="Delete Comment">
+                                        ${Icons.Trash}
+                                    </button>
+                                </div>
+                            `
+                                : ""
+                            }
+                        </div>
+                    `
+                    }
+                    <div class="flex flex-wrap gap-2 text-sm">
+                        <button id="comment-upvote-btn-${
+                          comment.id
+                        }" class="flex items-center gap-1 px-2 py-1 rounded-md text-xs font-semibold 
+                            ${
+                              comment.upvotedBy &&
+                              comment.upvotedBy.includes(appState.userId)
+                                ? appState.theme === "light"
+                                  ? "bg-blue-500 text-white"
+                                  : "bg-blue-600 text-white"
+                                : appState.theme === "light"
+                                ? "bg-blue-50 text-blue-700 hover:bg-blue-100"
+                                : "bg-blue-900 text-blue-200 hover:bg-blue-800"
+                            }
+                            transition-colors">
+                            <span class="w-3 h-3">${
+                              comment.upvotedBy &&
+                              comment.upvotedBy.includes(appState.userId)
+                                ? Icons.ThumbsUpSolid
+                                : Icons.ThumbsUp
+                            }</span> ${comment.upvotes || 0}
+                        </button>
+                        <button id="comment-downvote-btn-${
+                          comment.id
+                        }" class="flex items-center gap-1 px-2 py-1 rounded-md text-xs font-semibold 
+                            ${
+                              comment.downvotedBy &&
+                              comment.downvotedBy.includes(appState.userId)
+                                ? appState.theme === "light"
+                                  ? "bg-red-500 text-white"
+                                  : "bg-red-600 text-white"
+                                : appState.theme === "light"
+                                ? "bg-red-50 text-red-700 hover:bg-red-100"
+                                : "bg-red-900 text-red-200 hover:bg-red-800"
+                            }
+                            transition-colors">
+                            <span class="w-3 h-3">${
+                              comment.downvotedBy &&
+                              comment.downvotedBy.includes(appState.userId)
+                                ? Icons.ThumbsDownSolid
+                                : Icons.ThumbsDown
+                            }</span> ${comment.downvotes || 0}
+                        </button>
+                        <button id="comment-ai-summary-btn-${
+                          comment.id
+                        }" class="flex items-center gap-1 px-2 py-1 rounded-md text-xs font-semibold ${
+            appState.theme === "light"
+              ? "bg-purple-50 text-purple-700 hover:bg-purple-100"
+              : "bg-purple-900 text-purple-200 hover:bg-purple-800"
+          } transition-colors">
+                            <span class="w-3 h-3">${Icons.Zap}</span> AI
+                        </button>
+                        <button id="comment-reply-btn-${
+                          comment.id
+                        }" class="flex items-center gap-1 px-2 py-1 rounded-md text-xs font-semibold ${
+            appState.theme === "light"
+              ? "bg-gray-100 text-gray-700 hover:bg-gray-200"
+              : "bg-gray-700 text-gray-200 hover:bg-gray-600"
+          } transition-colors">
+                            Reply
+                        </button>
+                    </div>
+                    <div id="reply-form-container-${
+                      comment.id
+                    }" class="mt-3 hidden">
+                        <textarea id="reply-textarea-${
+                          comment.id
+                        }" class="w-full p-2 border rounded-xl focus:ring-1 focus:ring-blue-400 ${
+            appState.theme === "light"
+              ? "border-gray-200 bg-gray-50 text-gray-900"
+              : "border-gray-700 bg-gray-900 text-white"
+          } transition-colors" rows="2" placeholder="Write your reply..." required></textarea>
+                        <button id="submit-reply-btn-${
+                          comment.id
+                        }" class="mt-2 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700 transition-colors" disabled>Post Reply</button>
+                    </div>
+                `;
+          containerElement.appendChild(commentDiv);
+
+          // Attach event listeners for comment actions
+          document.getElementById(
+            `comment-upvote-btn-${comment.id}`
+          ).onclick = () => updateCommentVotes(comment.id, "up");
+          document.getElementById(
+            `comment-downvote-btn-${comment.id}`
+          ).onclick = () => updateCommentVotes(comment.id, "down");
+          document.getElementById(
+            `comment-ai-summary-btn-${comment.id}`
+          ).onclick = () =>
+            callGeminiAI(
+              `Analyze and provide a concise summary or critique of the following comment within an IELTS forum discussion:\n\n"${comment.content}"\n\nComment Author: ${comment.authorName}`,
+              `ai-comment-response-${comment.id}`
+            );
+
+          const replyButton = document.getElementById(
+            `comment-reply-btn-${comment.id}`
+          );
+          const replyFormContainer = document.getElementById(
+            `reply-form-container-${comment.id}`
+          );
+          const replyTextarea = document.getElementById(
+            `reply-textarea-${comment.id}`
+          );
+          const submitReplyBtn = document.getElementById(
+            `submit-reply-btn-${comment.id}`
+          );
+
+          replyButton.onclick = () => {
+            replyFormContainer.classList.toggle("hidden");
+            if (!replyFormContainer.classList.contains("hidden")) {
+              replyTextarea.focus();
+            }
+          };
+
+          replyTextarea.oninput = () => {
+            submitReplyBtn.disabled = !replyTextarea.value.trim();
+          };
+
+          submitReplyBtn.onclick = () => {
+            // When adding a reply, the depth increments. However, for visual display
+            // we only care about the single indent for any reply.
+            addComment(
+              postId,
+              replyTextarea.value,
+              comment.id,
+              comment.depth + 1
+            );
+            replyTextarea.value = "";
+            submitReplyBtn.disabled = true;
+            replyFormContainer.classList.add("hidden"); // Hide form after submitting
+          };
+
+          // Edit comment listeners
+          if (comment.authorId === appState.userId) {
+            const editCommentBtn = document.getElementById(
+              `edit-comment-btn-${comment.id}`
+            );
+            if (editCommentBtn) {
+              editCommentBtn.onclick = () => {
+                appState.editingCommentId = comment.id;
+                renderComments(postId); // Re-render comments to show edit form
+              };
+            }
+            const saveCommentBtn = document.getElementById(
+              `save-comment-btn-${comment.id}`
+            );
+            const cancelEditCommentBtn = document.getElementById(
+              `cancel-edit-comment-btn-${comment.id}`
+            );
+            if (saveCommentBtn && cancelEditCommentBtn) {
+              saveCommentBtn.onclick = () => {
+                const newContent = document.getElementById(
+                  `edit-comment-content-${comment.id}`
+                ).value;
+                if (newContent.trim()) {
+                  updateComment(comment.id, newContent);
+                } else {
+                  showToast("Comment content cannot be empty.", "error");
+                }
+              };
+              cancelEditCommentBtn.onclick = () => {
+                appState.editingCommentId = null;
+                renderComments(postId); // Exit edit mode
+              };
+            }
+            const deleteCommentBtn = document.getElementById(
+              `delete-comment-btn-${comment.id}`
+            );
+            if (deleteCommentBtn) {
+              deleteCommentBtn.onclick = () =>
+                deleteComment(comment.id, postId);
+            }
+          }
+        }
+
+        // Render comments based on the flattened and sorted list
+        // Process top-level comments first, then their descendants if expanded
+        topLevelComments.forEach((toplevelComment) => {
+          renderCommentBlock(toplevelComment, commentsContainer); // Render the top-level comment
+
+          // If the top-level comment is expanded, render all its descendants
+          if (appState.expandedReplies[toplevelComment.id]) {
+            const allDescendants = getAllDescendants(
+              toplevelComment.id,
+              commentData
+            );
+            allDescendants.forEach((descendant) => {
+              renderCommentBlock(descendant, commentsContainer);
+            });
+          }
+
+          // Add the "View/Hide Replies" button only for top-level comments that have direct children
+          if (toplevelComment.directChildren.length > 0) {
+            const toggleRepliesButton = document.createElement("button");
+            const areRepliesExpanded =
+              appState.expandedReplies[toplevelComment.id];
+            const allReplyCount = getAllDescendants(
+              toplevelComment.id,
+              commentData
+            ).length; // Count total descendants
+            const buttonText = areRepliesExpanded
+              ? `Hide Replies`
+              : `View ${allReplyCount} replies`;
+            const icon = areRepliesExpanded
+              ? Icons.ChevronDown
+              : Icons.ChevronRight;
+
+            // This button should appear below the top-level comment's content, but before the next top-level comment.
+            // It should not be indented, to indicate it controls the entire thread.
+            toggleRepliesButton.className = `flex items-center gap-1 px-2 py-1 rounded-full text-xs font-semibold mt-2 mb-3 ${
+              appState.theme === "light"
+                ? "bg-blue-50 text-blue-700 hover:bg-blue-100"
+                : "bg-blue-900 text-blue-200 hover:bg-blue-800"
+            } transition-colors`;
+            toggleRepliesButton.innerHTML = `${icon} ${buttonText}`;
+            toggleRepliesButton.onclick = (e) => {
+              e.stopPropagation();
+              appState.expandedReplies = {
+                ...appState.expandedReplies,
+                [toplevelComment.id]: !areRepliesExpanded, // Toggle state for the top-level comment
+              };
+              renderComments(postId); // Re-render all comments to reflect changes
+            };
+            commentsContainer.appendChild(toggleRepliesButton);
+          }
+        });
+      }
+
+      function renderCreatePostForm() {
+        const mainContent = elements.mainContent;
+        mainContent.innerHTML = `
+                <div class="flex-1">
+                    <button id="back-to-home-btn" class="mb-6 flex items-center gap-2 text-base font-semibold ${
+                      appState.theme === "light"
+                        ? "text-blue-600 hover:text-blue-700"
+                        : "text-blue-400 hover:text-blue-300"
+                    } transition-colors">
+                        <span class="w-5 h-5">${
+                          Icons.ArrowLeft
+                        }</span> Back to Forum
+                    </button>
+                    <div class="p-6 md:p-8 rounded-2xl shadow-lg transition-colors duration-300 ${
+                      appState.theme === "light" ? "bg-white" : "bg-gray-800"
+                    }">
+                        <h2 class="text-3xl font-bold font-normal mb-6 ${
+                          appState.theme === "light"
+                            ? "text-gray-900"
+                            : "text-white"
+                        }">Create New Post</h2>
+                        <form id="create-post-form" class="space-y-6">
+                            <div>
+                                <label for="post-title" class="block text-sm font-medium mb-2 ${
+                                  appState.theme === "light"
+                                    ? "text-gray-700"
+                                    : "text-gray-300"
+                                }">Title</label>
+                                <input type="text" id="post-title" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                                  appState.theme === "light"
+                                    ? "border-gray-200 bg-gray-50 text-gray-900"
+                                    : "border-gray-700 bg-gray-900 text-white"
+                                } transition-colors" placeholder="Enter post title" required />
+                            </div>
+                            <div>
+                                <label for="post-content" class="block text-sm font-medium mb-2 ${
+                                  appState.theme === "light"
+                                    ? "text-gray-700"
+                                    : "text-gray-300"
+                                }">Content</label>
+                                <textarea id="post-content" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                                  appState.theme === "light"
+                                    ? "border-gray-200 bg-gray-50 text-gray-900"
+                                    : "border-gray-700 bg-gray-900 text-white"
+                                } transition-colors" rows="8" placeholder="Share your thoughts, questions, or tips..." required></textarea>
+                                <p class="mt-2 text-xs ${
+                                  appState.theme === "light"
+                                    ? "text-gray-500"
+                                    : "text-gray-400"
+                                }">
+                                    Share your thoughts, questions, or tips.
+                                </p>
+                            </div>
+                            <!-- Image and Video upload fields removed -->
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label for="post-category" class="block text-sm font-medium mb-2 ${
+                                      appState.theme === "light"
+                                        ? "text-gray-700"
+                                        : "text-gray-300"
+                                    }">Category</label>
+                                    <select id="post-category" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                                      appState.theme === "light"
+                                        ? "border-gray-200 bg-gray-50 text-gray-900"
+                                        : "border-gray-700 bg-gray-900 text-white"
+                                    } transition-colors" required>
+                                        <option value="">Select a Category</option>
+                                    </select>
+                                </div>
+                                <div id="subcategory-container" class="hidden">
+                                    <label for="post-sub-category" class="block text-sm font-medium mb-2 ${
+                                      appState.theme === "light"
+                                        ? "text-gray-700"
+                                        : "text-gray-300"
+                                    }">Subcategory (Optional)</label>
+                                    <select id="post-sub-category" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                                      appState.theme === "light"
+                                        ? "border-gray-200 bg-gray-50 text-gray-900"
+                                        : "border-gray-700 bg-gray-900 text-white"
+                                    } transition-colors"></select>
+                                </div>
+                            </div>
+                            <button type="submit" class="w-full px-6 py-3 bg-blue-600 text-white rounded-xl shadow-md hover:bg-blue-700 transition-colors font-semibold transform active:scale-95">
+                                Create Post
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                <div id="right-sidebar" class="w-64 ml-8 p-6 hidden lg:block rounded-2xl shadow-lg ${
+                  appState.theme === "light" ? "bg-white" : "bg-gray-800"
+                }">
+                    <!-- Right sidebar content will be rendered here -->
+                </div>
+            `;
+
+        document.getElementById("back-to-home-btn").onclick = () =>
+          navigateTo("home");
+
+        const form = document.getElementById("create-post-form");
+        const titleInput = document.getElementById("post-title");
+        const contentTextarea = document.getElementById("post-content");
+        const categorySelect = document.getElementById("post-category");
+        const subCategorySelect = document.getElementById("post-sub-category");
+        const subCategoryContainer = document.getElementById(
+          "subcategory-container"
+        );
+        // Removed references to imageUpload and videoUpload
+
+        const categoriesData = [
+          {
+            name: "IELTS Speaking",
+            subcategories: ["Cue Cards", "Fluency", "Pronunciation"],
+          },
+          {
+            name: "IELTS Writing",
+            subcategories: [
+              "Writing Task 1",
+              "Writing Task 2",
+              "Grammar Help",
+              "Vocabulary",
+            ],
+          },
+          { name: "IELTS Listening" },
+          { name: "IELTS Reading" },
+          { name: "Tips & Strategies" },
+          { name: "Band 9 Answers" },
+          { name: "Motivation & Support" },
+        ];
+
+        // Populate categories
+        categoriesData.forEach((cat) => {
+          const option = document.createElement("option");
+          option.value = cat.name;
+          option.textContent = cat.name;
+          categorySelect.appendChild(option);
+        });
+
+        // Handle category change to update subcategories
+        categorySelect.onchange = () => {
+          const selectedCategory = categoriesData.find(
+            (cat) => cat.name === categorySelect.value
+          );
+          subCategorySelect.innerHTML =
+            '<option value="">Select a Subcategory</option>'; // Reset subcategories
+          if (
+            selectedCategory &&
+            selectedCategory.subcategories &&
+            selectedCategory.subcategories.length > 0
+          ) {
+            subCategoryContainer.classList.remove("hidden");
+            selectedCategory.subcategories.forEach((sub) => {
+              const option = document.createElement("option");
+              option.value = sub;
+              option.textContent = sub;
+              subCategorySelect.appendChild(option);
+            });
+          } else {
+            subCategoryContainer.classList.add("hidden");
+          }
+        };
+
+        form.onsubmit = async (e) => {
+          e.preventDefault();
+          await addPost({
+            title: titleInput.value,
+            content: contentTextarea.value,
+            category: categorySelect.value,
+            subCategory: subCategorySelect.value || null,
+          });
+          // No need to clear file inputs as they are removed
+        };
+        renderRightSidebar(); // Render the right sidebar for create post view
+      }
+
+      function renderUserProfile() {
+        const mainContent = elements.mainContent;
+        if (!appState.userProfile) {
+          mainContent.innerHTML = `<div class="flex-1 p-6 flex justify-center items-center ${
+            appState.theme === "light" ? "text-gray-700" : "text-gray-300"
+          }">Loading user profile...</div>`;
+          return;
+        }
+
+        mainContent.innerHTML = `
+                <div class="flex-1">
+                    <button id="back-to-home-btn" class="mb-6 flex items-center gap-2 text-base font-semibold ${
+                      appState.theme === "light"
+                        ? "text-blue-600 hover:text-blue-700"
+                        : "text-blue-400 hover:text-blue-300"
+                    } transition-colors">
+                        <span class="w-5 h-5">${
+                          Icons.ArrowLeft
+                        }</span> Back to Forum
+                    </button>
+                    <div class="p-6 md:p-8 rounded-2xl shadow-lg transition-colors duration-300 ${
+                      appState.theme === "light" ? "bg-white" : "bg-gray-800"
+                    }">
+                        <div class="flex flex-col sm:flex-row items-center gap-6 mb-6 pb-6 border-b border-gray-200 dark:border-gray-700">
+                            <div class="w-28 h-28 rounded-full flex items-center justify-center bg-blue-100 text-blue-600 text-6xl font-anton ring-4 ring-blue-200 dark:ring-blue-700">
+                                ${appState.userProfile.name[0]}
+                            </div>
+                            <div class="text-center sm:text-left">
+                                <h2 class="text-3xl md:text-4xl font-bold font-anton ${
+                                  appState.theme === "light"
+                                    ? "text-gray-900"
+                                    : "text-white"
+                                }">${appState.userProfile.name}</h2>
+                                <p class="text-md ${
+                                  appState.theme === "light"
+                                    ? "text-gray-600"
+                                    : "text-gray-400"
+                                }">User ID: ${appState.userId}</p>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <div>
+                                <h3 class="text-xl font-semibold font-normal mb-4 ${
+                                  appState.theme === "light"
+                                    ? "text-gray-800"
+                                    : "text-white"
+                                }">Performance & Goals</h3>
+                                <div class="space-y-4">
+                                    <div class="flex items-center gap-3 p-3 rounded-lg ${
+                                      appState.theme === "light"
+                                        ? "bg-gray-50"
+                                        : "bg-gray-700"
+                                    } shadow-sm">
+                                        <span class="w-5 h-5">${
+                                          Icons.Award
+                                        }</span>
+                                        <span class="font-normal ${
+                                          appState.theme === "light"
+                                            ? "text-gray-700"
+                                            : "text-gray-300"
+                                        }">
+                                            Reputation Points: <span class="font-bold text-lg">${
+                                              appState.userProfile.reputation
+                                            }</span>
+                                        </span>
+                                    </div>
+                                    <div class="flex items-center gap-3 p-3 rounded-lg ${
+                                      appState.theme === "light"
+                                        ? "bg-gray-50"
+                                        : "bg-gray-700"
+                                    } shadow-sm">
+                                        <span class="w-5 h-5">${
+                                          Icons.Target
+                                        }</span>
+                                        <span class="font-normal ${
+                                          appState.theme === "light"
+                                            ? "text-gray-700"
+                                            : "text-gray-300"
+                                        }">
+                                            Target Band: <span class="font-bold text-lg">${
+                                              appState.userProfile.bandGoal
+                                            }</span>
+                                        </span>
+                                    </div>
+                                    <div class="flex items-center gap-3 p-3 rounded-lg ${
+                                      appState.theme === "light"
+                                        ? "bg-gray-50"
+                                        : "bg-gray-700"
+                                    } shadow-sm">
+                                        <span class="w-5 h-5">${
+                                          Icons.Activity
+                                        }</span>
+                                        <span class="font-normal ${
+                                          appState.theme === "light"
+                                            ? "text-gray-700"
+                                            : "text-gray-300"
+                                        }">
+                                            Preparation Status: <span class="font-bold text-lg">${
+                                              appState.userProfile
+                                                .preparationStatus
+                                            }</span>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div>
+                                <h3 class="text-xl font-semibold font-normal mb-4 ${
+                                  appState.theme === "light"
+                                    ? "text-gray-800"
+                                    : "text-white"
+                                }">Badges</h3>
+                                <div id="badges-container" class="flex flex-wrap gap-3">
+                                    <!-- Badges will be appended here -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="right-sidebar" class="w-64 ml-8 p-6 hidden lg:block rounded-2xl shadow-lg ${
+                  appState.theme === "light" ? "bg-white" : "bg-gray-800"
+                }">
+                    <!-- Right sidebar content will be rendered here -->
+                </div>
+            `;
+        document.getElementById("back-to-home-btn").onclick = () =>
+          navigateTo("home");
+
+        const badgesContainer = document.getElementById("badges-container");
+        if (
+          appState.userProfile.badges &&
+          appState.userProfile.badges.length > 0
+        ) {
+          appState.userProfile.badges.forEach((badge) => {
+            const badgeSpan = document.createElement("span");
+            badgeSpan.className = `flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium ${
+              appState.theme === "light"
+                ? "bg-yellow-100 text-yellow-800"
+                : "bg-yellow-900 text-yellow-200"
+            } shadow-sm`;
+            badgeSpan.innerHTML = `<span class="w-4 h-4">${Icons.Award}</span> ${badge}`;
+            badgesContainer.appendChild(badgeSpan);
+          });
+        } else {
+          badgesContainer.innerHTML = `<p class="text-md ${
+            appState.theme === "light" ? "text-gray-600" : "text-gray-400"
+          }">No badges earned yet.</p>`;
+        }
+        renderRightSidebar(); // Render the right sidebar for profile view
+      }
+
+      function renderRightSidebar() {
+        const rightSidebar = document.getElementById("right-sidebar");
+        if (!rightSidebar) return; // Only render if sidebar exists (i.e., on larger screens)
+
+        // Clear existing content and set base classes for consistency
+        rightSidebar.innerHTML = "";
+        rightSidebar.className = `w-64 ml-8 p-6 hidden lg:block rounded-2xl shadow-lg ${
+          appState.theme === "light" ? "bg-white" : "bg-gray-800"
+        } flex-shrink-0`;
+
+        // Search Bar Section
+        const searchSection = document.createElement("div");
+        searchSection.className = `mb-8 p-4 rounded-xl ${
+          appState.theme === "light" ? "bg-gray-50" : "bg-gray-700"
+        } shadow-inner`;
+        searchSection.innerHTML = `
+                <h3 class="text-lg font-semibold mb-3 ${
+                  appState.theme === "light" ? "text-gray-800" : "text-white"
+                }">
+                    <i class="fas fa-search mr-2"></i> Search Forum
+                </h3>
+                <div class="relative">
+                    <input type="text" id="sidebar-search-input" placeholder="Search posts..." class="w-full p-2.5 pl-10 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                      appState.theme === "light"
+                        ? "border-gray-200 bg-white text-gray-900"
+                        : "border-gray-600 bg-gray-800 text-white"
+                    } transition-colors">
+                    <span class="absolute left-3 top-1/2 -translate-y-1/2 ${
+                      appState.theme === "light"
+                        ? "text-gray-400"
+                        : "text-gray-300"
+                    }">${Icons.Search}</span>
+                </div>
+                <div id="sidebar-search-results" class="mt-3 max-h-60 overflow-y-auto space-y-2 text-sm"></div>
+            `;
+        rightSidebar.appendChild(searchSection);
+
+        const searchInput = document.getElementById("sidebar-search-input");
+        const searchResultsContainer = document.getElementById(
+          "sidebar-search-results"
+        );
+
+        let searchTimeout;
+        searchInput.oninput = () => {
+          clearTimeout(searchTimeout);
+          searchTimeout = setTimeout(() => {
+            const query = searchInput.value.toLowerCase().trim();
+            searchResultsContainer.innerHTML = ""; // Clear previous results
+
+            if (query.length > 0) {
+              const matchingPosts = appState.posts
+                .filter(
+                  (post) =>
+                    post.title.toLowerCase().includes(query) ||
+                    post.content.toLowerCase().includes(query)
+                )
+                .slice(0, 5); // Limit to top 5 suggestions
+
+              if (matchingPosts.length > 0) {
+                matchingPosts.forEach((post) => {
+                  const resultItem = document.createElement("div");
+                  resultItem.className = `p-2 rounded-lg cursor-pointer ${
+                    appState.theme === "light"
+                      ? "hover:bg-blue-50 text-gray-700"
+                      : "hover:bg-blue-900 text-gray-200"
+                  } transition-colors`;
+                  resultItem.innerHTML = `
+                                    <div class="font-medium ${
+                                      appState.theme === "light"
+                                        ? "text-blue-700"
+                                        : "text-blue-300"
+                                    } line-clamp-1">${post.title}</div>
+                                    <div class="${
+                                      appState.theme === "light"
+                                        ? "text-gray-600"
+                                        : "text-gray-400"
+                                    } line-clamp-2">${post.content}</div>
+                                `;
+                  resultItem.onclick = (e) => {
+                    e.stopPropagation(); // Prevent search input from losing focus immediately
+                    navigateTo("postDetail", { post: post });
+                  };
+                  searchResultsContainer.appendChild(resultItem);
+                });
+              } else {
+                searchResultsContainer.innerHTML = `<p class="p-2 ${
+                  appState.theme === "light" ? "text-gray-500" : "text-gray-400"
+                }">No results found.</p>`;
+              }
+            }
+          }, 300); // Debounce search input
+        };
+
+        // User Stats Section
+        const userStatsSection = document.createElement("div");
+        userStatsSection.className = `mb-8 p-4 rounded-xl ${
+          appState.theme === "light" ? "bg-gray-50" : "bg-gray-700"
+        } shadow-inner`;
+        userStatsSection.innerHTML = `
+                <h3 class="text-lg font-semibold mb-4 ${
+                  appState.theme === "light" ? "text-gray-800" : "text-white"
+                }">
+                    <i class="fas fa-user-circle mr-2"></i> Your Stats
+                </h3>
+                ${
+                  appState.userProfile
+                    ? `
+                    <div class="space-y-3 text-sm">
+                        <div class="flex items-center gap-2 ${
+                          appState.theme === "light"
+                            ? "text-gray-700"
+                            : "text-gray-300"
+                        }">
+                            ${
+                              Icons.Award
+                            } Reputation: <span class="font-bold">${
+                        appState.userProfile.reputation || 0
+                      }</span>
+                        </div>
+                        <div class="flex items-center gap-2 ${
+                          appState.theme === "light"
+                            ? "text-gray-700"
+                            : "text-gray-300"
+                        }">
+                            ${
+                              Icons.Target
+                            } Target Band: <span class="font-bold">${
+                        appState.userProfile.bandGoal || "N/A"
+                      }</span>
+                        </div>
+                        <div class="flex items-center gap-2 ${
+                          appState.theme === "light"
+                            ? "text-gray-700"
+                            : "text-gray-300"
+                        }">
+                            ${Icons.Activity} Status: <span class="font-bold">${
+                        appState.userProfile.preparationStatus || "New Learner"
+                      }</span>
+                        </div>
+                    </div>
+                `
+                    : `<p class="text-sm ${
+                        appState.theme === "light"
+                          ? "text-gray-600"
+                          : "text-gray-400"
+                      }">Sign in to see your stats.</p>`
+                }
+            `;
+        rightSidebar.appendChild(userStatsSection);
+
+        // Quick Links Section
+        const quickLinksSection = document.createElement("div");
+        quickLinksSection.className = `p-4 rounded-xl ${
+          appState.theme === "light" ? "bg-gray-50" : "bg-gray-700"
+        } shadow-inner`;
+        quickLinksSection.innerHTML = `
+                <h3 class="text-lg font-semibold mb-4 ${
+                  appState.theme === "light" ? "text-gray-800" : "text-white"
+                }">
+                    <i class="fas fa-external-link-alt mr-2"></i> Quick Links
+                </h3>
+                <ul class="space-y-3 text-sm">
+                    <li>
+                        <a href="https://www.ielts.org/" target="_blank" rel="noopener noreferrer" class="flex items-center gap-2 ${
+                          appState.theme === "light"
+                            ? "text-blue-600 hover:text-blue-700"
+                            : "text-blue-400 hover:text-blue-300"
+                        } transition-colors">
+                            ${Icons.Link} Official IELTS Website
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://takeielts.britishcouncil.org/prepare-test/free-ielts-practice-tests" target="_blank" rel="noopener noreferrer" class="flex items-center gap-2 ${
+                          appState.theme === "light"
+                            ? "text-blue-600 hover:text-blue-700"
+                            : "text-blue-400 hover:text-blue-300"
+                        } transition-colors">
+                            ${Icons.Link} Free Practice Tests
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://www.youtube.com/c/E2IELTS" target="_blank" rel="noopener noreferrer" class="flex items-center gap-2 ${
+                          appState.theme === "light"
+                            ? "text-blue-600 hover:text-blue-700"
+                            : "text-blue-400 hover:text-blue-300"
+                        } transition-colors">
+                            ${Icons.Link} E2 IELTS YouTube
+                        </a>
+                    </li>
+                </ul>
+            `;
+        rightSidebar.appendChild(quickLinksSection);
+      }
+
+      // --- Main Render Loop ---
+      function renderMainContent() {
+        if (!appState.isAuthReady) {
+          elements.mainContent.innerHTML = `
+                    <div class="min-h-screen flex items-center justify-center font-normal ${
+                      appState.theme === "light"
+                        ? "text-gray-800"
+                        : "text-white"
+                    } flex-1">
+                        <div class="flex flex-col items-center">
+                            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mb-4"></div>
+                            <p class="text-lg ${
+                              appState.theme === "light"
+                                ? "text-gray-700"
+                                : "text-gray-300"
+                            }">Loading IELTS Mahir...</p>
+                        </div>
+                    </div>
+                `;
+          return;
+        }
+
+        switch (appState.view) {
+          case "home":
+            renderPostList();
+            break;
+          case "postDetail":
+            renderPostDetail();
+            break;
+          case "createPost":
+            renderCreatePostForm();
+            break;
+          case "profile":
+            renderUserProfile();
+            break;
+          default:
+            renderPostList();
+        }
+      }
+
+      function renderApp() {
+        renderHeader();
+        renderSidebar();
+        renderMainContent();
+        updateThemeClasses(); // Apply theme on initial render
+      }
+
+      // --- Firebase Listener Setup Function ---
+      function setupFirestoreListeners() {
+        const appId =
+          typeof __app_id !== "undefined" ? __app_id : "default-app-id";
+
+        // Unsubscribe from previous listeners if they exist
+        if (appState.postsUnsubscribe) appState.postsUnsubscribe();
+        if (appState.commentsUnsubscribe) appState.commentsUnsubscribe();
+
+        // Modified: Removed where clauses from Firestore query for posts.
+        // All posts will be fetched, and filtering will happen client-side.
+        let postsQueryRef = collection(
+          appState.db,
+          `artifacts/${appId}/public/data/posts`
+        );
+        postsQueryRef = query(postsQueryRef, orderBy("createdAt", "desc")); // Keep orderBy for initial sort
+
+        // Set up real-time listener for posts
+        appState.postsUnsubscribe = onSnapshot(
+          postsQueryRef,
+          (snapshot) => {
+            appState.posts = snapshot.docs.map((doc) => ({
+              id: doc.id,
+              ...doc.data(),
+            }));
+            // Update selectedPost with latest data if on post detail view
+            if (appState.view === "postDetail" && appState.selectedPost) {
+              const updatedSelectedPost = appState.posts.find(
+                (p) => p.id === appState.selectedPost.id
+              );
+              if (updatedSelectedPost) {
+                appState.selectedPost = updatedSelectedPost;
+              }
+            }
+            // Always re-render relevant content after posts update
+            if (appState.view === "home" || appState.view === "postDetail") {
+              renderMainContent();
+            }
+          },
+          (error) => {
+            console.error("Error fetching posts:", error);
+            showToast("Error loading posts. Check console.", "error");
+          }
+        );
+
+        // Set up real-time listener for ALL comments (to sort in memory later)
+        const commentsColRef = collection(
+          appState.db,
+          `artifacts/${appId}/public/data/comments`
+        );
+        appState.commentsUnsubscribe = onSnapshot(
+          commentsColRef,
+          (snapshot) => {
+            const allFetchedComments = snapshot.docs.map((doc) => ({
+              id: doc.id,
+              ...doc.data(),
+            }));
+            // Organize comments by postId
+            const commentsByPost = {};
+            allFetchedComments.forEach((comment) => {
+              if (!commentsByPost[comment.postId]) {
+                commentsByPost[comment.postId] = [];
+              }
+              commentsByPost[comment.postId].push(comment);
+            });
+
+            appState.comments = commentsByPost;
+
+            // Re-render relevant content based on current view
+            if (appState.view === "home") {
+              renderPostList(); // To update comment counts on posts in home view
+            } else if (
+              appState.view === "postDetail" &&
+              appState.selectedPost
+            ) {
+              renderComments(appState.selectedPost.id); // Re-render comments if on post detail view
+            }
+          },
+          (error) => {
+            console.error("Error fetching comments:", error);
+            showToast("Error loading comments. Check console.", "error");
+          }
+        );
+      }
+
+      // --- Firebase Initialization and Listeners ---
+      document.addEventListener("DOMContentLoaded", async () => {
+        elements.header = document.getElementById("app-header");
+        elements.sidebar = document.getElementById("app-sidebar");
+        elements.mainContent = document.getElementById("main-content");
+        elements.aiModalOverlay = document.getElementById("ai-modal-overlay");
+        elements.aiModalCloseBtn = document.getElementById(
+          "ai-modal-close-btn"
+        );
+
+        elements.aiModalCloseBtn.onclick = () => {
+          elements.aiModalOverlay.classList.add("hidden");
+        };
+
+        // Define default Firebase config and app ID for local development
+        const defaultAppId = "ielts-mahir-community-forum"; // User's actual project ID is used as default app ID
+        const defaultFirebaseConfig = {
+          apiKey: "AIzaSyAxsd0CnLsh7t7yFy3ZPp6saGD_YpLL1mY",
+          authDomain: "ielts-mahir-community-forum.firebaseapp.com",
+          projectId: "ielts-mahir-community-forum",
+          storageBucket: "ielts-mahir-community-forum.firebasestorage.app", // This will be unused
+          messagingSenderId: "1036043607546",
+          appId: "1:1036043607546:web:bd217e04cc0ec5f296d843",
+          measurementId: "G-YC4CG1WKD3",
+        };
+
+        const appId = typeof __app_id !== "undefined" ? __app_id : defaultAppId;
+        const firebaseConfig =
+          typeof __firebase_config !== "undefined"
+            ? JSON.parse(__firebase_config)
+            : defaultFirebaseConfig;
+
+        try {
+          const app = initializeApp(firebaseConfig);
+          appState.db = getFirestore(app);
+          appState.auth = getAuth(app);
+          // appState.storage = getStorage(app); // Storage initialization removed
+
+          // Listen for auth state changes
+          onAuthStateChanged(appState.auth, async (user) => {
+            if (user) {
+              appState.userId = user.uid;
+              // Fetch or create user profile
+              const userRef = doc(
+                appState.db,
+                `artifacts/${appId}/users/${user.uid}/userProfile/profile`
+              );
+              const userSnap = await getDoc(userRef);
+              if (userSnap.exists()) {
+                appState.userProfile = userSnap.data();
+              } else {
+                const newUserProfile = {
+                  name: `User-${user.uid.substring(0, 5)}`,
+                  bandGoal: "N/A",
+                  preparationStatus: "New Learner",
+                  reputation: 0,
+                  badges: [],
+                  createdAt: serverTimestamp(),
+                  userId: user.uid,
+                };
+                await setDoc(userRef, newUserProfile);
+                appState.userProfile = newUserProfile;
+              }
+            } else {
+              // Sign in anonymously if no token is provided
+              const initialAuthToken =
+                typeof __initial_auth_token !== "undefined"
+                  ? __initial_auth_token
+                  : null;
+              if (initialAuthToken) {
+                await signInWithCustomToken(appState.auth, initialAuthToken);
+              } else {
+                await signInAnonymously(appState.auth);
+              }
+            }
+            appState.isAuthReady = true;
+            // ONLY set up Firestore listeners AFTER authentication is ready
+            setupFirestoreListeners();
+            renderApp(); // Initial render once auth is ready
+          });
+        } catch (error) {
+          console.error("Error initializing Firebase or signing in:", error);
+          showToast(
+            "Failed to initialize app. Check console for Firebase config errors.",
+            "error"
+          );
+          appState.isAuthReady = true; // Ensure UI unblocks
+          renderApp();
+        }
+      });
+    </script>
+  </body>
+</html>
