@@ -1,0 +1,2788 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>IELTS Mahir Spelling Test - Elite Edition</title>
+    <!-- Tailwind CSS CDN -->
+    <!-- <link rel="stylesheet" href="style.css" /> -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        font-family: "Inter", sans-serif;
+        background: linear-gradient(
+          135deg,
+          #e0f2fe 0%,
+          #f0f4f8 100%
+        ); /* Light blue gradient */
+        color: #2c3e50; /* Darker text */
+        transition: background-color 0.4s ease, color 0.4s ease;
+      }
+      body.dark-mode {
+        background: linear-gradient(
+          135deg,
+          #2d3748 0%,
+          #1a202c 100%
+        ); /* Dark blue gradient */
+        color: #cbd5e1; /* Lighter text */
+      }
+      .container {
+        max-width: 100%;
+      }
+      .card {
+        background-color: #ffffff;
+        border-radius: 2rem; /* Even more rounded */
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15); /* Stronger, softer shadow */
+        transition: background-color 0.4s ease, box-shadow 0.4s ease;
+        position: relative; /* For progress bar positioning */
+        width: 100%;
+      }
+      @media (max-width: 768px) {
+        .card {
+          padding-left: 3vw !important;
+          padding-right: 3vw !important;
+        }
+      }
+      .dark-mode .card {
+        background-color: #2d3748; /* Darker card */
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+      }
+      .btn-primary {
+        background: linear-gradient(
+          45deg,
+          #6366f1,
+          #8b5cf6
+        ); /* Indigo to Purple gradient */
+        color: white;
+        padding: 0.85rem 1.75rem;
+        border-radius: 1rem;
+        font-weight: 600;
+        transition: all 0.2s ease-in-out;
+        box-shadow: 0 4px 10px rgba(99, 102, 241, 0.3);
+      }
+
+      .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 15px rgba(99, 102, 241, 0.4);
+        background: linear-gradient(
+          45deg,
+          #4f46e5,
+          #7c3aed
+        ); /* Darker gradient */
+      }
+      .btn-primary:active {
+        transform: translateY(0);
+        box-shadow: 0 2px 5px rgba(99, 102, 241, 0.2);
+      }
+      .btn-secondary {
+        background-color: #e2e8f0; /* Light grey */
+        color: #475569; /* Slate grey */
+        padding: 0.85rem 1.75rem;
+        border-radius: 1rem;
+        font-weight: 600;
+        transition: all 0.2s ease-in-out;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+      .dark-mode .btn-secondary {
+        background-color: #4a5568;
+        color: #e2e8f0;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      }
+      .btn-secondary:hover {
+        background-color: #cbd5e1; /* Darker light grey */
+        transform: translateY(-2px);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+      }
+      .dark-mode .btn-secondary:hover {
+        background-color: #646c7d;
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+      }
+      input[type="text"] {
+        border-radius: 1rem; /* More rounded */
+        border: 2px solid #a78bfa; /* Accent color border */
+        padding: 1rem 1.25rem;
+        transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        font-size: 2.25rem; /* Larger font */
+        font-weight: 500;
+        text-align: center;
+      }
+      input[type="text"]:focus {
+        border-color: #6366f1;
+        outline: none;
+        box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.3);
+      }
+      .dark-mode input[type="text"]:focus {
+        border-color: #a78bfa;
+        box-shadow: 0 0 0 4px rgba(167, 139, 250, 0.3);
+      }
+      .toggle-switch {
+        position: relative;
+        display: inline-block;
+        width: 50px; /* Slightly larger */
+        height: 28px;
+      }
+      .toggle-switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+      }
+      .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #cbd5e1; /* Light grey for off state */
+        transition: 0.4s;
+        border-radius: 34px;
+      }
+      .slider:before {
+        position: absolute;
+        content: "";
+        height: 20px; /* Slightly larger */
+        width: 20px;
+        left: 4px;
+        bottom: 4px;
+        background-color: white;
+        transition: 0.4s;
+        border-radius: 50%;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+      }
+      input:checked + .slider {
+        background-color: #6366f1; /* Indigo */
+      }
+      input:focus + .slider {
+        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+      }
+      input:checked + .slider:before {
+        transform: translateX(22px); /* Adjust for larger switch */
+      }
+      .feedback {
+        padding: 0.75rem 1.5rem;
+        border-radius: 0.75rem;
+        margin-top: 1.5rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      .feedback.show {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      .feedback.correct {
+        background-color: #d1fae5; /* Green light */
+        color: #065f46; /* Green dark */
+      }
+      .feedback.incorrect {
+        background-color: #fee2e2; /* Red light */
+        color: #991b1b; /* Red dark */
+      }
+      .dark-mode .feedback.correct {
+        background-color: #166534;
+        color: #a7f3d0;
+      }
+      .dark-mode .feedback.incorrect {
+        background-color: #7f1d1d;
+        color: #fecaca;
+      }
+      .word-list-item {
+        display: flex;
+        flex-direction: column; /* Stack word and details */
+        align-items: flex-start;
+        padding: 0.75rem 1rem;
+        border-bottom: 1px solid #e2e8f0;
+      }
+      .dark-mode .word-list-item {
+        border-color: #4a5568;
+      }
+      .word-list-item:last-child {
+        border-bottom: none;
+      }
+      .icon-btn {
+        background: none;
+        border: none;
+        padding: 0.6rem;
+        border-radius: 0.75rem;
+        transition: background-color 0.2s ease, transform 0.1s ease;
+        display: flex; /* For centering icon */
+        align-items: center;
+        justify-content: center;
+      }
+      .icon-btn:hover {
+        background-color: #f1f5f9;
+        transform: translateY(-1px);
+      }
+      .dark-mode .icon-btn:hover {
+        background-color: #4a5568;
+      }
+      select {
+        border-radius: 0.75rem;
+        border: 1px solid #cbd5e1;
+        padding: 0.6rem 1rem !important;
+        background-color: white;
+        color: #334155;
+        transition: border-color 0.2s ease;
+      }
+      .dark-mode select {
+        background-color: #4a5568;
+        border-color: #646c7d;
+        color: #e2e8f0;
+      }
+
+      /* Modal Styles */
+      .modal {
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.7); /* Darker backdrop */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.3s ease, visibility 0.3s ease;
+        backdrop-filter: blur(5px); /* Subtle blur effect */
+      }
+      .modal.show {
+        opacity: 1;
+        visibility: visible;
+      }
+      .modal-content {
+        background: linear-gradient(
+          135deg,
+          #ffffff,
+          #f0f4f8
+        ); /* Gradient background for modal */
+        padding: 3rem; /* More padding */
+        border-radius: 1.5rem; /* More rounded */
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3); /* Stronger shadow */
+        text-align: center;
+        max-width: 450px; /* Slightly wider */
+        width: 90%;
+        transform: scale(0.9); /* Pop-in animation */
+        transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Springy animation */
+        border: 1px solid rgba(255, 255, 255, 0.3); /* Glassmorphism light border */
+      }
+      .modal.show .modal-content {
+        transform: scale(1);
+      }
+      .dark-mode .modal-content {
+        background: linear-gradient(135deg, #2d3748, #1a202c);
+        color: #e2e8f0;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+      }
+      .modal-message {
+        font-size: 1.4rem; /* Larger font */
+        margin-bottom: 2rem;
+        font-weight: 600;
+        line-height: 1.5;
+        color: #334155; /* Ensure good contrast */
+      }
+      .dark-mode .modal-message {
+        color: #e2e8f0;
+      }
+
+      /* Progress Bar */
+      .progress-bar-container {
+        width: 100%;
+        height: 8px; /* Thinner */
+        background-color: #e2e8f0;
+        border-radius: 9999px; /* Fully rounded */
+        overflow: hidden;
+        margin-bottom: 1.5rem;
+      }
+      .dark-mode .progress-bar-container {
+        background-color: #4a5568;
+      }
+      .progress-bar-fill {
+        height: 100%;
+        width: 0%;
+        background: linear-gradient(
+          90deg,
+          #6366f1,
+          #8b5cf6
+        ); /* Matching primary button gradient */
+        border-radius: 9999px;
+        transition: width 0.5s ease-out;
+      }
+
+      /* Spelling Difference highlighting */
+      .diff-correct {
+        color: #22c55e; /* Green */
+        font-weight: bold;
+      }
+      .diff-incorrect {
+        color: #ef4444; /* Red */
+        font-weight: bold;
+        text-decoration: underline; /* Underline for incorrect */
+      }
+
+      /* MCQ Options */
+      .mcq-option {
+        background-color: #f8fafc;
+        border: 2px solid #e0e7ff;
+        border-radius: 0.75rem;
+        padding: 1rem 1.5rem;
+        cursor: pointer;
+        transition: all 0.2s ease-in-out;
+        font-weight: 500;
+        text-align: center;
+        word-break: break-word; /* Ensure long words wrap */
+        white-space: normal;
+      }
+      .dark-mode .mcq-option {
+        background-color: #3b4657;
+        border-color: #4a5568;
+        color: #f8fafc;
+      }
+      .mcq-option:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(99, 102, 241, 0.1);
+        border-color: #a78bfa;
+      }
+      .dark-mode .mcq-option:hover {
+        box-shadow: 0 4px 10px rgba(167, 139, 250, 0.1);
+        border-color: #8b5cf6;
+      }
+      .mcq-option.selected {
+        border-color: #6366f1;
+        background-color: #e0e7ff;
+        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+      }
+      .dark-mode .mcq-option.selected {
+        border-color: #8b5cf6;
+        background-color: #4f46e5;
+      }
+      .mcq-option.correct-answer {
+        background-color: #d1fae5;
+        border-color: #22c55e;
+        color: #065f46;
+        box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.3);
+      }
+      .dark-mode .mcq-option.correct-answer {
+        background-color: #166534;
+        border-color: #22c55e;
+        color: #a7f3d0;
+      }
+      .mcq-option.incorrect-answer {
+        background-color: #fee2e2;
+        border-color: #ef4444;
+        color: #991b1b;
+        box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.3);
+      }
+      .dark-mode .mcq-option.incorrect-answer {
+        background-color: #7f1d1d;
+        border-color: #ef4444;
+        color: #fecaca;
+      }
+      .mcq-loading {
+        min-height: 120px; /* Placeholder height */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-style: italic;
+        color: #718096;
+      }
+      .dark-mode .mcq-loading {
+        color: #a0aec0;
+      }
+      .timer-display {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: #6366f1;
+        margin-bottom: 1rem;
+        min-height: 2rem; /* Ensure consistent height */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .dark-mode .timer-display {
+        color: #a78bfa;
+      }
+
+      /* Intro Modal Specific Styles */
+      #introModal .modal-content {
+        max-width: 650px; /* Slightly wider to accommodate text */
+        height: auto; /* Auto height based on content */
+        max-height: 90vh; /* Max height to prevent overflow on small screens */
+        padding: 3rem 2.5rem;
+        overflow-y: auto; /* Enable scrolling for long content */
+      }
+      #introModal h2 {
+        font-size: 2.5rem; /* Larger heading */
+        margin-bottom: 2rem;
+        color: #2d3748; /* Darker color for emphasis */
+        font-weight: 700;
+        line-height: 1.2;
+      }
+      .dark-mode #introModal h2 {
+        color: #f7fafc;
+      }
+      #introModal p,
+      #introModal li {
+        font-size: 1.15rem; /* Slightly larger paragraph text */
+        line-height: 1.7;
+        margin-bottom: 0.75rem;
+        text-align: left;
+        color: #4a5568;
+      }
+      .dark-mode #introModal p,
+      .dark-mode #introModal li {
+        color: #a0aec0;
+      }
+      #introModal ul {
+        list-style: disc;
+        padding-left: 1.5rem;
+        margin-bottom: 1.5rem;
+      }
+      #introModal ul li {
+        margin-bottom: 0.5rem;
+      }
+      #introModal .button-group {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 1.5rem; /* More space between buttons */
+        margin-top: 3rem;
+      }
+      #startQuizFromIntroBtn,
+      #listenRulesBtn {
+        padding: 1rem 2rem !important; /* Adjust padding for better sizing */
+        border-radius: 1.25rem; /* Consistent border radius with other buttons */
+        font-size: 1.1rem; /* Slightly larger font for buttons */
+      }
+    </style>
+  </head>
+  <body class="flex items-center justify-center min-h-screen p-4">
+    <div class="container mx-auto p-6 lg:p-8 card">
+      <!-- Progress Bar -->
+      <div class="progress-bar-container">
+        <div id="progressBar" class="progress-bar-fill"></div>
+      </div>
+
+      <!-- Header -->
+      <header
+        class="flex items-center justify-between mb-8 pb-4 border-b border-gray-200 dark:border-gray-700"
+      >
+        <h1
+          class="text-4xl font-extrabold text-indigo-700 dark:text-indigo-400 font-anton"
+        >
+          <span class="inline-block align-middle mr-2">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="32"
+              height="32"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="lucide lucide-spell-check"
+            >
+              <path
+                d="m12 21-6-6c-2.92-2.92-1.72-7.17 1.46-10.34 3.19-3.19 7.44-4.39 10.34-1.46l6 6c2.92 2.92 1.72 7.17-1.46 10.34-3.19 3.19-7.44 4.39-10.34 1.46Z"
+              />
+              <path d="m16 8-6 6" />
+              <path d="m15 9-1 1" />
+            </svg>
+          </span>
+          IELTS Mahir Spelling Test
+        </h1>
+        <button
+          id="darkModeToggle"
+          class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="lucide lucide-moon dark:lucide-sun"
+          >
+            <circle cx="12" cy="12" r="10" />
+            <path d="M12 2v2" />
+            <path d="M12 20v2" />
+            <path d="M4.93 4.93l1.41 1.41" />
+            <path d="M17.66 17.66l1.41 1.41" />
+            <path d="M2 12h2" />
+            <path d="M20 12h2" />
+            <path d="M4.93 19.07l1.41-1.41" />
+            <path d="M17.66 6.34l1.41-1.41" />
+          </svg>
+        </button>
+      </header>
+
+      <!-- Main Test Area -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Left Panel: Settings & Controls -->
+        <div
+          class="lg:col-span-1 p-6 bg-gray-50 dark:bg-gray-800 rounded-xl shadow-inner"
+        >
+          <h2
+            class="text-2xl font-semibold mb-4 text-gray-800 dark:text-gray-100 flex items-center"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="lucide lucide-settings mr-2"
+            >
+              <path
+                d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.78 1.28a2 2 0 0 0 .73 2.73l.15.08a2 2 0 0 1 1 1.74v.44a2 2 0 0 1-1 1.73l-.15.08a2 2 0 0 0-.73 2.73l.78 1.28a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 1 1.74v.18a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.78-1.28a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74V4a2 2 0 0 0-2-2z"
+              />
+              <circle cx="12" cy="12" r="3" />
+            </svg>
+            Settings
+          </h2>
+
+          <!-- Difficulty Level -->
+          <div class="mb-4">
+            <label
+              for="difficulty"
+              class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+              >Difficulty Level:</label
+            >
+            <select id="difficulty" class="w-full">
+              <option value="easy">Easy</option>
+              <option value="medium" selected>Medium</option>
+              <option value="hard">Hard</option>
+              <option value="ielts">IELTS Academic</option>
+            </select>
+          </div>
+
+          <!-- Word Category -->
+          <div class="mb-4">
+            <label
+              for="category"
+              class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+              >Word Category:</label
+            >
+            <select id="category" class="w-full">
+              <option value="all">All Words</option>
+              <option value="common_mistakes">Common Mistakes</option>
+              <option value="academic_vocab">Academic Vocabulary</option>
+              <option value="science">Science</option>
+              <option value="technology">Technology</option>
+              <option value="art_culture">Art & Culture</option>
+              <option value="custom">Custom Words</option>
+            </select>
+          </div>
+
+          <!-- Test Length -->
+          <div class="mb-4">
+            <label
+              for="wordCountSelect"
+              class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+              >Number of Words:</label
+            >
+            <select id="wordCountSelect" class="w-full">
+              <option value="5">5 Words</option>
+              <option value="10">10 Words</option>
+              <option value="20" selected>20 Words</option>
+              <option value="all">All Words in Category</option>
+            </select>
+          </div>
+
+          <!-- Test Mode Toggle -->
+          <div class="mb-4 flex items-center justify-between">
+            <span class="text-sm font-medium text-gray-700 dark:text-gray-300"
+              >Test Mode:</span
+            >
+            <div class="flex items-center space-x-3">
+              <label
+                class="inline-flex items-center text-sm text-gray-700 dark:text-gray-300 cursor-pointer"
+              >
+                <input
+                  type="radio"
+                  name="testMode"
+                  value="listening"
+                  id="modeListening"
+                  class="form-radio h-4 w-4 text-indigo-600"
+                  checked
+                />
+                <span class="ml-1">Listening</span>
+              </label>
+              <label
+                class="inline-flex items-center text-sm text-gray-700 dark:text-gray-300 cursor-pointer"
+              >
+                <input
+                  type="radio"
+                  name="testMode"
+                  value="mcq"
+                  id="modeMCQ"
+                  class="form-radio h-4 w-4 text-indigo-600"
+                />
+                <span class="ml-1">MCQ</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Timer Toggle -->
+          <div class="mb-4 flex items-center justify-between">
+            <span class="text-sm font-medium text-gray-700 dark:text-gray-300"
+              >Enable Timer (30s per word):</span
+            >
+            <label class="toggle-switch">
+              <input type="checkbox" id="timerToggle" />
+              <span class="slider"></span>
+            </label>
+          </div>
+
+          <!-- Custom Words Input -->
+          <div
+            id="customWordSection"
+            class="hidden mb-4 p-4 bg-gray-100 dark:bg-gray-700 rounded-lg"
+          >
+            <label
+              for="customWords"
+              class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+              >Enter Custom Words (word, sentence; new line for each):</label
+            >
+            <textarea
+              id="customWords"
+              rows="5"
+              class="w-full p-2 border rounded-md dark:bg-gray-600 dark:border-gray-500 dark:text-gray-100"
+              placeholder="Example:&#10;accommodate, The hotel can accommodate up to 200 guests.&#10;definitely, I will definitely finish my assignment tonight."
+            ></textarea>
+            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+              Each line should be 'word, sentence'. Words without sentences will
+              be spoken as just the word.
+            </p>
+          </div>
+
+          <button id="startNewTestBtn" class="w-full btn-primary">
+            <span class="flex items-center justify-center">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="lucide lucide-play-square mr-2"
+              >
+                <rect width="18" height="18" x="3" y="3" rx="2" />
+                <path d="m9 8 6 4-6 4Z" />
+              </svg>
+              Start New Test
+            </span>
+          </button>
+        </div>
+
+        <!-- Middle Panel: Test Interface -->
+        <div
+          class="lg:col-span-2 p-6 bg-white dark:bg-gray-900 rounded-xl shadow-lg flex flex-col items-center justify-center relative"
+        >
+          <div id="timerDisplay" class="timer-display"></div>
+
+          <!-- Word Display / Play Button -->
+          <div class="relative mb-6 text-center w-full">
+            <div
+              id="wordDisplay"
+              class="text-5xl font-bold text-gray-900 dark:text-white transition-opacity duration-300 min-h-[60px] flex items-center justify-center"
+            >
+              <span id="currentWordSpan">---</span>
+              <!-- Hidden with dashes initially -->
+            </div>
+            <div
+              id="sentenceDisplay"
+              class="text-xl text-gray-700 dark:text-gray-300 mt-2 italic min-h-[3rem] flex items-center justify-center px-4"
+            >
+              <!-- Sentence will be displayed here immediately -->
+            </div>
+            <button
+              id="playAudioBtn"
+              class="absolute -top-4 -right-12 p-3 rounded-full bg-indigo-100 dark:bg-indigo-700 text-indigo-700 dark:text-white hover:bg-indigo-200 dark:hover:bg-indigo-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="lucide lucide-volume-2"
+              >
+                <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+                <path
+                  d="M19.07 4.93a10 10 0 0 1 0 14.14M22.39 2.61a14 14 0 0 1 0 18.78"
+                />
+              </svg>
+            </button>
+          </div>
+
+          <!-- Input Field (Listening Mode) -->
+          <input
+            type="text"
+            id="spellingInput"
+            class="w-full max-w-md text-center text-3xl font-medium p-4"
+            placeholder="Type the word here..."
+            autofocus
+            autocomplete="off"
+          />
+
+          <!-- MCQ Options (MCQ Mode) -->
+          <div
+            id="mcqOptionsContainer"
+            class="grid grid-cols-1 md:grid-cols-2 gap-4 w-full max-w-lg hidden"
+          >
+            <!-- MCQ options will be dynamically loaded here -->
+            <p class="mcq-loading col-span-full">Generating options...</p>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="flex flex-wrap justify-center gap-4 mt-6">
+            <button id="checkBtn" class="btn-primary flex items-center">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="lucide lucide-check-circle mr-2"
+              >
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                <path d="m9 11 3 3L22 4" />
+              </svg>
+              Check
+            </button>
+            <button id="hintBtn" class="btn-secondary flex items-center">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="lucide lucide-lightbulb mr-2"
+              >
+                <path
+                  d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 3c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"
+                />
+                <path d="M9 18h6" />
+                <path d="M10 22h4" />
+                <path d="M12 14v8" />
+              </svg>
+              Hint
+            </button>
+            <button id="revealBtn" class="btn-secondary flex items-center">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="lucide lucide-eye mr-2"
+              >
+                <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" />
+                <circle cx="12" cy="12" r="3" />
+              </svg>
+              Reveal
+            </button>
+            <button id="skipBtn" class="btn-secondary flex items-center">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="lucide lucide-chevrons-right mr-2"
+              >
+                <path d="m6 17 5-5-5-5" />
+                <path d="m13 17 5-5-5-5" />
+              </svg>
+              Skip
+            </button>
+            <button
+              id="nextBtn"
+              class="btn-primary flex items-center disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="lucide lucide-arrow-right-circle mr-2"
+              >
+                <circle cx="12" cy="12" r="10" />
+                <path d="M8 12h8" />
+                <path d="m12 16 4-4-4-4" />
+              </svg>
+              Next Word
+            </button>
+          </div>
+
+          <!-- Feedback Message -->
+          <div
+            id="feedbackMessage"
+            class="feedback text-center w-full max-w-md hidden mt-6 text-xl font-semibold"
+          ></div>
+          <div
+            id="spellingDiff"
+            class="text-center w-full max-w-md hidden mt-2 text-lg font-mono"
+          ></div>
+
+          <!-- Score and Progress -->
+          <div
+            class="mt-8 text-lg text-gray-700 dark:text-gray-300 font-medium"
+          >
+            Score: <span id="correctScore">0</span> /
+            <span id="totalWordsAttempted">0</span>
+            <span
+              id="progressIndicator"
+              class="ml-4 text-sm text-gray-500 dark:text-gray-400"
+              >Word <span id="currentWordIndex">0</span> of
+              <span id="totalWordsInList">0</span></span
+            >
+          </div>
+        </div>
+      </div>
+
+      <!-- Review Incorrect Words Section -->
+      <div
+        id="reviewSection"
+        class="mt-8 p-6 bg-gray-50 dark:bg-gray-800 rounded-xl shadow-inner hidden"
+      >
+        <h2
+          class="text-2xl font-semibold mb-4 text-gray-800 dark:text-gray-100 flex items-center"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="lucide lucide-x-octagon mr-2"
+          >
+            <polygon
+              points="7.86 2 16.14 2 22 7.86 22 16.14 16.14 22 7.86 22 2 16.14 2 7.86 7.86 2"
+            />
+            <path d="m15 9-6 6" />
+            <path d="m9 9 6 6" />
+          </svg>
+          Incorrectly Spelled Words
+        </h2>
+        <div
+          id="incorrectWordsList"
+          class="max-h-60 overflow-y-auto border border-gray-200 dark:border-gray-700 rounded-lg"
+        >
+          <p
+            class="p-4 text-gray-500 dark:text-gray-400"
+            id="noIncorrectWordsMsg"
+          >
+            No incorrect words yet. Keep practicing!
+          </p>
+        </div>
+        <button
+          id="practiceIncorrectBtn"
+          class="w-full btn-primary mt-4 hidden"
+        >
+          <span class="flex items-center justify-center">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="lucide lucide-refresh-ccw mr-2"
+            >
+              <path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
+              <path d="M3 3v5h5" />
+              <path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16" />
+              <path d="M21 21v-5h-5" />
+            </svg>
+            Practice These Words
+          </span>
+        </button>
+      </div>
+
+      <!-- Footer -->
+      <footer
+        class="mt-8 pt-4 border-t border-gray-200 dark:border-gray-700 text-center text-gray-500 dark:text-gray-400 text-sm"
+      >
+        <p>
+          &copy; 2024 IELTS Mahir Spelling Test. All rights reserved.
+        </p>
+      </footer>
+    </div>
+
+    <!-- Custom Alert Modal (for general messages) -->
+    <div id="customModal" class="modal">
+      <div class="modal-content">
+        <p id="modalMessage" class="modal-message"></p>
+        <button id="modalCloseBtn" class="btn-primary">OK</button>
+      </div>
+    </div>
+
+    <!-- Introduction Modal -->
+    <div id="introModal" class="modal">
+      <div class="modal-content">
+        <h2 class="font-poppins">Welcome to IELTS Mahir Spelling Test!</h2>
+        <p>
+          This quiz is designed to help you improve your English spelling for
+          the IELTS exam. Here's how it works:
+        </p>
+        <p><strong>Listening Mode:</strong></p>
+        <ul>
+          <li>
+            <p>
+              - You will hear a word and a sentence using that word. The word
+              itself will be hidden.
+            </p>
+          </li>
+          <li><p>- Type the word into the input field.</p></li>
+          <li><p>- Click "Check" to see if your spelling is correct.</p></li>
+          <li>
+            <p>
+              - If you're stuck, use "Hint" to reveal letters or "Reveal" to see
+              the full word.
+            </p>
+          </li>
+          <li>
+            <p>
+              - "Skip" will move to the next word and mark the current one
+              incorrect.
+            </p>
+          </li>
+        </ul>
+        <p><strong>MCQ Mode:</strong></p>
+        <ul>
+          <li><p>- You will hear a word and a sentence.</p></li>
+          <li>
+            <p>- Choose the correct spelling from the four options provided.</p>
+          </li>
+        </ul>
+        <p>
+          <strong>Timer:</strong> If enabled, you'll have 30 seconds per word.
+          If time runs out, the word is marked incorrect.
+        </p>
+        <p>
+          All incorrectly spelled words are saved for review and practice at the
+          end of the test.
+        </p>
+        <div class="button-group">
+          <button id="startQuizFromIntroBtn" class="btn-primary">
+            <span class="flex items-center justify-center">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="lucide lucide-play-square mr-2"
+              >
+                <rect width="18" height="18" x="3" y="3" rx="2" />
+                <path d="m9 8 6 4-6 4Z" />
+              </svg>
+              Start Quiz
+            </span>
+          </button>
+          <button id="listenRulesBtn" class="btn-secondary">
+            <span class="flex items-center justify-center">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="lucide lucide-volume-2 mr-2"
+              >
+                <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+                <path
+                  d="M19.07 4.93a10 10 0 0 1 0 14.14M22.39 2.61a14 14 0 0 1 0 18.78"
+                />
+              </svg>
+              Listen to Rules
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Data for word lists. Each word is now an object with 'word' and 'sentence' properties.
+      const wordLists = {
+        easy: [
+          {
+            word: "accommodate",
+            sentence: "The hotel can accommodate up to 200 guests.",
+          },
+          {
+            word: "definitely",
+            sentence: "I will definitely finish my assignment tonight.",
+          },
+          {
+            word: "separate",
+            sentence: "Please separate the recycling from the trash.",
+          },
+          {
+            word: "judgment",
+            sentence: "It's important to use good judgment.",
+          },
+          { word: "publicly", sentence: "He announced his decision publicly." },
+          { word: "believe", sentence: "Do you believe in magic?" },
+          { word: "receive", sentence: "I hope to receive your letter soon." },
+          {
+            word: "achieve",
+            sentence: "She worked hard to achieve her goals.",
+          },
+          { word: "friend", sentence: "My best friend lives next door." },
+          { word: "piece", sentence: "Can I have a piece of cake?" },
+          { word: "height", sentence: "What is the height of the mountain?" },
+          {
+            word: "leisure",
+            sentence: "Reading is my favorite leisure activity.",
+          },
+          {
+            word: "foreign",
+            sentence: "She enjoys learning foreign languages.",
+          },
+          {
+            word: "neighbour",
+            sentence: "Our new neighbour moved in last week.",
+          },
+          { word: "weight", sentence: "The package had a lot of weight." },
+          {
+            word: "calendar",
+            sentence: "Check your calendar for the meeting date.",
+          },
+          {
+            word: "government",
+            sentence: "The government issued new regulations.",
+          },
+          {
+            word: "environment",
+            sentence: "Protecting the environment is crucial.",
+          },
+          { word: "business", sentence: "He runs a successful business." },
+          { word: "address", sentence: "What is your current address?" },
+        ],
+        medium: [
+          {
+            word: "independent",
+            sentence: "She is a very independent person.",
+          },
+          {
+            word: "noticeable",
+            sentence: "There was a noticeable change in his attitude.",
+          },
+          { word: "millennium", sentence: "We live in a new millennium." },
+          {
+            word: "necessary",
+            sentence: "It's necessary to study for the exam.",
+          },
+          {
+            word: "liaison",
+            sentence: "She acts as a liaison between the two departments.",
+          },
+          {
+            word: "guarantee",
+            sentence: "The warranty offers a guarantee of quality.",
+          },
+          {
+            word: "maintenance",
+            sentence: "Car maintenance is important for safety.",
+          },
+          {
+            word: "occasionally",
+            sentence: "We occasionally go out for dinner.",
+          },
+          {
+            word: "embarrass",
+            sentence: "Don't embarrass him in front of everyone.",
+          },
+          {
+            word: "queue",
+            sentence: "Please form a queue at the ticket counter.",
+          },
+          {
+            word: "conscience",
+            sentence: "His conscience bothered him after the lie.",
+          },
+          {
+            word: "conscious",
+            sentence: "He remained conscious despite the injury.",
+          },
+          { word: "privilege", sentence: "It's a privilege to work here." },
+          {
+            word: "questionnaire",
+            sentence: "Please fill out this questionnaire.",
+          },
+          { word: "recommend", sentence: "I highly recommend this book." },
+          { word: "rhythm", sentence: "The music had a catchy rhythm." },
+          {
+            word: "silhouette",
+            sentence: "We saw a silhouette of a person in the window.",
+          },
+          {
+            word: "supersede",
+            sentence: "The new law will supersede the old one.",
+          },
+          {
+            word: "threshold",
+            sentence: "She stood at the threshold of the door.",
+          },
+          {
+            word: "underrate",
+            sentence: "Don't underrate the power of kindness.",
+          },
+        ],
+        hard: [
+          {
+            word: "onomatopoeia",
+            sentence: "Buzz and sizzle are examples of onomatopoeia.",
+          },
+          {
+            word: "phenomenon",
+            sentence: "The aurora borealis is a natural phenomenon.",
+          },
+          {
+            word: "entrepreneur",
+            sentence: "She became a successful entrepreneur.",
+          },
+          { word: "connoisseur", sentence: "He is a wine connoisseur." },
+          {
+            word: "bureaucracy",
+            sentence: "Dealing with the bureaucracy can be frustrating.",
+          },
+          {
+            word: "chrysanthemum",
+            sentence: "A chrysanthemum is a beautiful flower.",
+          },
+          {
+            word: "dichotomy",
+            sentence: "There's a clear dichotomy between theory and practice.",
+          },
+          {
+            word: "idiosyncrasy",
+            sentence:
+              "One of his idiosyncrasies is always wearing mismatched socks.",
+          },
+          {
+            word: "minuscule",
+            sentence: "The chances of success were minuscule.",
+          },
+          {
+            word: "nauseous",
+            sentence: "The motion of the boat made her nauseous.",
+          },
+          {
+            word: "phlegm",
+            sentence: "He cleared the phlegm from his throat.",
+          },
+          {
+            word: "rendezvous",
+            sentence: "They had a secret rendezvous at the cafe.",
+          },
+          {
+            word: "sesquipedalian",
+            sentence:
+              "His sesquipedalian vocabulary often confused his listeners.",
+          },
+          {
+            word: "surveillance",
+            sentence: "The building was under constant surveillance.",
+          },
+          {
+            word: "ubiquitous",
+            sentence: "Smartphones are ubiquitous in modern society.",
+          },
+          {
+            word: "vicissitude",
+            sentence: "Life's vicissitudes include both joys and sorrows.",
+          },
+          { word: "epitome", sentence: "She is the epitome of elegance." },
+          {
+            word: "paradigm",
+            sentence: "The discovery shifted the scientific paradigm.",
+          },
+          {
+            word: "rhetoric",
+            sentence: "His rhetoric was designed to persuade the crowd.",
+          },
+          {
+            word: "synonymous",
+            sentence: "Wealth is not synonymous with happiness.",
+          },
+        ],
+        ielts: [
+          {
+            word: "analyze",
+            sentence: "You need to analyze the data carefully.",
+          },
+          {
+            word: "significant",
+            sentence: "There was a significant improvement in her scores.",
+          },
+          {
+            word: "fundamental",
+            sentence: "Respect is a fundamental human right.",
+          },
+          { word: "consequence", sentence: "Every action has a consequence." },
+          {
+            word: "illustrate",
+            sentence: "Can you illustrate your point with an example?",
+          },
+          {
+            word: "evaluate",
+            sentence:
+              "We need to evaluate the effectiveness of the new policy.",
+          },
+          {
+            word: "emphasize",
+            sentence: "The speaker will emphasize key points.",
+          },
+          { word: "hypothesis", sentence: "They formulated a new hypothesis." },
+          {
+            word: "interpret",
+            sentence: "It's difficult to interpret complex data.",
+          },
+          {
+            word: "methodology",
+            sentence: "The research methodology was very detailed.",
+          },
+          {
+            word: "objective",
+            sentence: "The main objective of the study is clear.",
+          },
+          {
+            word: "perspective",
+            sentence: "Try to see it from a different perspective.",
+          },
+          {
+            word: "principle",
+            sentence: "Adhere to ethical principles in your work.",
+          },
+          {
+            word: "relevant",
+            sentence: "Please provide only relevant information.",
+          },
+          {
+            word: "structure",
+            sentence: "The essay requires a clear structure.",
+          },
+          {
+            word: "theory",
+            sentence: "Einstein developed the theory of relativity.",
+          },
+          {
+            word: "valid",
+            sentence: "Your argument is valid and well-supported.",
+          },
+          {
+            word: "variable",
+            sentence: "Temperature is a crucial variable in this experiment.",
+          },
+          {
+            word: "disseminate",
+            sentence: "The goal is to disseminate knowledge widely.",
+          },
+          {
+            word: "facilitate",
+            sentence: "Technology can facilitate communication.",
+          },
+          {
+            word: "implement",
+            sentence: "We need to implement the new strategy.",
+          },
+          {
+            word: "integrate",
+            sentence: "Try to integrate new ideas into your existing plan.",
+          },
+          {
+            word: "justify",
+            sentence: "Can you justify your decision with evidence?",
+          },
+          { word: "perceive", sentence: "How do you perceive the situation?" },
+          {
+            word: "scrutinize",
+            sentence: "The committee will scrutinize the proposal.",
+          },
+          {
+            word: "sustain",
+            sentence: "It's hard to sustain that level of effort.",
+          },
+          {
+            word: "underscore",
+            sentence: "The report will underscore the importance of education.",
+          },
+          {
+            word: "utilize",
+            sentence: "You should utilize all available resources.",
+          },
+          {
+            word: "correlation",
+            sentence:
+              "There's a strong correlation between exercise and health.",
+          },
+          {
+            word: "implication",
+            sentence: "Consider the implications of your actions.",
+          },
+          { word: "period", sentence: "This was a period of great change." },
+          {
+            word: "principle",
+            sentence: "He lives by his own moral principles.",
+          },
+          {
+            word: "procedure",
+            sentence: "Follow the correct safety procedure.",
+          },
+          { word: "process", sentence: "Learning is a continuous process." },
+          {
+            word: "require",
+            sentence: "This task will require a lot of effort.",
+          },
+          {
+            word: "research",
+            sentence: "She is conducting research on renewable energy.",
+          },
+          { word: "response", sentence: "We are awaiting their response." },
+          { word: "role", sentence: "What is your role in the team?" },
+          { word: "section", sentence: "Read the next section of the book." },
+          { word: "sector", sentence: "The technology sector is booming." },
+          {
+            word: "significant",
+            sentence: "This discovery is highly significant.",
+          },
+          { word: "similar", sentence: "The two cases are very similar." },
+          {
+            word: "source",
+            sentence: "What is the source of this information?",
+          },
+          {
+            word: "specific",
+            sentence: "Please be specific about your needs.",
+          },
+          {
+            word: "structure",
+            sentence: "The molecular structure is complex.",
+          },
+          {
+            word: "theory",
+            sentence: "The theory of evolution is widely accepted.",
+          },
+          {
+            word: "vary",
+            sentence: "Prices may vary depending on the season.",
+          },
+        ],
+        science: [
+          {
+            word: "photosynthesis",
+            sentence: "Plants perform photosynthesis to create food.",
+          },
+          { word: "metabolism", sentence: "Exercise boosts your metabolism." },
+          {
+            word: "ecosystem",
+            sentence: "Protecting the rainforest ecosystem is vital.",
+          },
+          {
+            word: "mitochondria",
+            sentence:
+              "Mitochondria are often called the powerhouse of the cell.",
+          },
+          {
+            word: "chromosome",
+            sentence: "Each chromosome carries genetic information.",
+          },
+          { word: "gravity", sentence: "Gravity keeps us on the ground." },
+          { word: "velocity", sentence: "The velocity of light is constant." },
+          {
+            word: "atom",
+            sentence: "The smallest particle of an element is an atom.",
+          },
+          {
+            word: "molecule",
+            sentence: "Water is a molecule made of hydrogen and oxygen.",
+          },
+          {
+            word: "evolution",
+            sentence: "The theory of evolution explains the diversity of life.",
+          },
+          {
+            word: "biodiversity",
+            sentence: "Protecting biodiversity is crucial for our planet.",
+          },
+          {
+            word: "cellular",
+            sentence: "Cellular respiration occurs in all living organisms.",
+          },
+          { word: "chemistry", sentence: "Chemistry is the study of matter." },
+          {
+            word: "physics",
+            sentence: "Physics deals with energy, force, and motion.",
+          },
+          {
+            word: "biology",
+            sentence: "Biology is the study of living organisms.",
+          },
+        ],
+        technology: [
+          {
+            word: "algorithm",
+            sentence: "Search engines use complex algorithms.",
+          },
+          {
+            word: "encryption",
+            sentence: "Data encryption protects sensitive information.",
+          },
+          {
+            word: "cybersecurity",
+            sentence: "Cybersecurity is essential for online safety.",
+          },
+          {
+            word: "artificial",
+            sentence: "Artificial intelligence is rapidly advancing.",
+          },
+          {
+            word: "intelligence",
+            sentence: "Artificial intelligence is rapidly advancing.",
+          },
+          {
+            word: "blockchain",
+            sentence: "Blockchain technology underpins cryptocurrencies.",
+          },
+          {
+            word: "database",
+            sentence:
+              "All customer information is stored in a secure database.",
+          },
+          {
+            word: "programming",
+            sentence: "He is learning computer programming.",
+          },
+          {
+            word: "interface",
+            sentence: "The user interface is very intuitive.",
+          },
+          {
+            word: "software",
+            sentence: "Install the latest software updates.",
+          },
+          {
+            word: "hardware",
+            sentence: "The computer's hardware needs an upgrade.",
+          },
+          {
+            word: "networking",
+            sentence: "Good networking skills are important in business.",
+          },
+          {
+            word: "robotics",
+            sentence: "Robotics is a rapidly developing field.",
+          },
+          {
+            word: "virtual",
+            sentence: "They offer virtual tours of the museum.",
+          },
+          {
+            word: "augmented",
+            sentence:
+              "Augmented reality overlays digital information onto the real world.",
+          },
+        ],
+        art_culture: [
+          {
+            word: "renaissance",
+            sentence: "The Renaissance was a period of great artistic revival.",
+          },
+          {
+            word: "baroque",
+            sentence:
+              "Baroque music is characterized by its elaborate ornamentation.",
+          },
+          {
+            word: "expressionism",
+            sentence:
+              "Expressionism emphasized emotional expression over reality.",
+          },
+          {
+            word: "impressionism",
+            sentence: "Impressionism focused on light and fleeting moments.",
+          },
+          {
+            word: "surrealism",
+            sentence: "Surrealism explored the subconscious mind.",
+          },
+          {
+            word: "symphony",
+            sentence: "Beethoven's Fifth Symphony is famous worldwide.",
+          },
+          {
+            word: "orchestra",
+            sentence: "The orchestra performed beautifully.",
+          },
+          {
+            word: "masterpiece",
+            sentence: "The Mona Lisa is a true masterpiece.",
+          },
+          {
+            word: "sculpture",
+            sentence: "He created a magnificent bronze sculpture.",
+          },
+          {
+            word: "architecture",
+            sentence: "The city is known for its stunning architecture.",
+          },
+          {
+            word: "literature",
+            sentence: "English literature is a vast field of study.",
+          },
+          {
+            word: "mythology",
+            sentence: "Greek mythology is full of fascinating stories.",
+          },
+          {
+            word: "folklore",
+            sentence: "The country's folklore is rich in ancient tales.",
+          },
+          {
+            word: "tradition",
+            sentence: "It's a long-standing family tradition.",
+          },
+          {
+            word: "heritage",
+            sentence: "Preserving cultural heritage is important.",
+          },
+        ],
+      };
+
+      // DOM Elements
+      const currentWordSpan = document.getElementById("currentWordSpan");
+      const sentenceDisplay = document.getElementById("sentenceDisplay");
+      const spellingInput = document.getElementById("spellingInput");
+      const checkBtn = document.getElementById("checkBtn");
+      const hintBtn = document.getElementById("hintBtn");
+      const revealBtn = document.getElementById("revealBtn");
+      const skipBtn = document.getElementById("skipBtn");
+      const nextBtn = document.getElementById("nextBtn");
+      const playAudioBtn = document.getElementById("playAudioBtn");
+      const feedbackMessage = document.getElementById("feedbackMessage");
+      const spellingDiff = document.getElementById("spellingDiff");
+      const correctScoreSpan = document.getElementById("correctScore");
+      const totalWordsAttemptedSpan = document.getElementById(
+        "totalWordsAttempted"
+      );
+      const currentWordIndexSpan = document.getElementById("currentWordIndex");
+      const totalWordsInListSpan = document.getElementById("totalWordsInList");
+      const progressBar = document.getElementById("progressBar");
+      const timerDisplay = document.getElementById("timerDisplay");
+
+      const difficultySelect = document.getElementById("difficulty");
+      const categorySelect = document.getElementById("category");
+      const wordCountSelect = document.getElementById("wordCountSelect");
+      const modeListeningRadio = document.getElementById("modeListening");
+      const modeMCQRadio = document.getElementById("modeMCQ");
+      const timerToggle = document.getElementById("timerToggle");
+      const customWordSection = document.getElementById("customWordSection");
+      const customWordsTextarea = document.getElementById("customWords");
+      const startNewTestBtn = document.getElementById("startNewTestBtn");
+      const darkModeToggle = document.getElementById("darkModeToggle");
+
+      const reviewSection = document.getElementById("reviewSection");
+      const incorrectWordsList = document.getElementById("incorrectWordsList");
+      const noIncorrectWordsMsg = document.getElementById(
+        "noIncorrectWordsMsg"
+      );
+      const practiceIncorrectBtn = document.getElementById(
+        "practiceIncorrectBtn"
+      );
+
+      const mcqOptionsContainer = document.getElementById(
+        "mcqOptionsContainer"
+      );
+
+      // Modal Elements
+      const customModal = document.getElementById("customModal");
+      const modalMessage = document.getElementById("modalMessage");
+      const modalCloseBtn = document.getElementById("modalCloseBtn");
+
+      // Intro Modal Elements
+      const introModal = document.getElementById("introModal");
+      const startQuizFromIntroBtn = document.getElementById(
+        "startQuizFromIntroBtn"
+      );
+      const listenRulesBtn = document.getElementById("listenRulesBtn");
+
+      // Game State Variables
+      const TIMER_DURATION = 30; // Seconds for the timer
+      let currentWordList = [];
+      let currentWordObj = null;
+      let currentWordIndex = -1;
+      let correctCount = 0;
+      let totalAttempts = 0;
+      let incorrectWords = [];
+      let currentMode = "listening";
+      let isTestInProgress = false;
+      let hintRevealedLetters = 0;
+      let selectedMCQOption = null;
+      let timerInterval;
+      let timeLeftForTimer = TIMER_DURATION; // Track current time left
+
+      // Initialize Lucide Icons (call this after the DOM is loaded)
+      window.onload = () => {
+        lucide.createIcons();
+        loadSettings();
+        // Show introduction modal first
+        if (localStorage.getItem("introSeen") !== "true") {
+          showIntroductionModal();
+        } else {
+          resetTest(); // If intro already seen, start test directly
+        }
+      };
+
+      // --- Custom Modal Functions (for general messages) ---
+      /**
+       * Shows a custom modal with a given message.
+       * @param {string} message The message to display in the modal.
+       */
+      function showCustomModal(message) {
+        modalMessage.textContent = message;
+        customModal.classList.add("show");
+      }
+
+      /**
+       * Hides the custom modal.
+       */
+      function hideCustomModal() {
+        modalCloseBtn.disabled = false; // Enable button in case it was disabled during speech
+        customModal.classList.remove("show");
+      }
+
+      modalCloseBtn.addEventListener("click", hideCustomModal);
+      customModal.addEventListener("click", (e) => {
+        if (e.target === customModal) {
+          hideCustomModal();
+        }
+      });
+
+      // --- Introduction Modal Functions ---
+      /**
+       * Shows the introduction modal.
+       */
+      function showIntroductionModal() {
+        introModal.classList.add("show");
+        // Disable start button until rules are optionally played, or user skips
+        startQuizFromIntroBtn.disabled = false;
+        listenRulesBtn.disabled = false;
+      }
+
+      /**
+       * Hides the introduction modal.
+       */
+      function hideIntroductionModal() {
+        introModal.classList.remove("show");
+        localStorage.setItem("introSeen", "true"); // Mark intro as seen
+      }
+
+      startQuizFromIntroBtn.addEventListener("click", () => {
+        hideIntroductionModal();
+        resetTest();
+      });
+
+      listenRulesBtn.addEventListener("click", () => {
+        const rulesText = `
+                Welcome to IELTS Mahir Spelling Test! This quiz is designed to help you improve your English spelling for the IELTS exam.
+                Here's how it works:
+                In Listening Mode, you will hear a word and a sentence using that word. The word itself will be hidden. Type the word into the input field.
+                Click "Check" to see if your spelling is correct. If you're stuck, use "Hint" to reveal letters or "Reveal" to see the full word.
+                "Skip" will move to the next word and mark the current one incorrect.
+                In Multiple Choice Question mode, you will hear a word and a sentence, then choose the correct spelling from the four options provided.
+                If the Timer is enabled, you'll have 30 seconds per word. If time runs out, the word is marked incorrect.
+                All incorrectly spelled words are saved for review and practice at the end of the test.
+            `;
+        // Temporarily disable the "Start Quiz" button and "Listen to Rules" button during speech
+        startQuizFromIntroBtn.disabled = true;
+        listenRulesBtn.disabled = true;
+        playAudio(rulesText, () => {
+          // Re-enable buttons after speech finishes
+          startQuizFromIntroBtn.disabled = false;
+          listenRulesBtn.disabled = false;
+        });
+      });
+
+      /**
+       * Updates the list of incorrectly spelled words for review.
+       */
+      function updateIncorrectWordsList() {
+        incorrectWordsList.innerHTML = "";
+        if (incorrectWords.length === 0) {
+          noIncorrectWordsMsg.classList.remove("hidden");
+          practiceIncorrectBtn.classList.add("hidden");
+          return;
+        } else {
+          noIncorrectWordsMsg.classList.add("hidden");
+          practiceIncorrectBtn.classList.remove("hidden");
+        }
+
+        incorrectWords.forEach((item) => {
+          const div = document.createElement("div");
+          div.className = "word-list-item dark:text-gray-200";
+
+          let correctHtml = "";
+          let guessedHtml = "";
+          const maxLength = Math.max(item.word.length, item.guessed.length);
+
+          for (let i = 0; i < maxLength; i++) {
+            const correctChar = item.word[i] || "";
+            const guessedChar = item.guessed[i] || "";
+
+            if (correctChar.toLowerCase() === guessedChar.toLowerCase()) {
+              correctHtml += `<span class="diff-correct">${correctChar}</span>`;
+              guessedHtml += `<span class="diff-correct">${guessedChar}</span>`;
+            } else {
+              correctHtml += `<span class="diff-correct">${correctChar}</span>`;
+              guessedHtml += `<span class="diff-incorrect">${guessedChar}</span>`;
+            }
+          }
+
+          div.innerHTML = `
+                    <div class="flex flex-col items-start w-full">
+                        <span class="font-medium text-lg">${item.word}</span>
+                        <span class="text-sm text-gray-600 dark:text-gray-400 italic mb-1">${
+                          item.sentence ? `"${item.sentence}"` : ""
+                        }</span>
+                        <div class="text-xs text-gray-500 dark:text-gray-400">
+                            Correct: <span class="font-bold">${
+                              correctHtml || "(Empty)"
+                            }</span>
+                        </div>
+                        <div class="text-xs text-gray-500 dark:text-gray-400">
+                            Your Guess: <span class="font-bold">${
+                              guessedHtml || "(Empty)"
+                            }</span>
+                        </div>
+                    </div>
+                    <button class="icon-btn play-review-audio self-end" data-word="${
+                      item.word
+                    }" data-sentence="${item.sentence || ""}">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-volume-2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M22.39 2.61a14 14 0 0 1 0 18.78"/></svg>
+                    </button>
+                `;
+          incorrectWordsList.appendChild(div);
+        });
+
+        document.querySelectorAll(".play-review-audio").forEach((button) => {
+          button.addEventListener("click", (event) => {
+            const wordToPlay = event.currentTarget.dataset.word;
+            const sentenceToPlay = event.currentTarget.dataset.sentence;
+            playAudio(`${wordToPlay}. ${sentenceToPlay}`);
+          });
+        });
+      }
+
+      // --- Core Functions ---
+
+      /**
+       * Loads settings from localStorage (e.g., dark mode preference, test mode, timer, word count).
+       */
+      function loadSettings() {
+        const isDarkMode = localStorage.getItem("darkMode") === "true";
+        if (isDarkMode) {
+          document.body.classList.add("dark-mode");
+          darkModeToggle.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-sun"><circle cx="12" cy="12" r="10"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="M4.93 4.93l1.41 1.41"/><path d="M17.66 17.66l1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="M4.93 19.07l1.41-1.41"/><path d="M17.66 6.34l1.41-1.41"/></svg>`;
+        } else {
+          document.body.classList.remove("dark-mode");
+        }
+
+        const savedTestMode = localStorage.getItem("testMode");
+        if (savedTestMode === "mcq") {
+          modeMCQRadio.checked = true;
+          currentMode = "mcq";
+        } else {
+          modeListeningRadio.checked = true;
+          currentMode = "listening";
+        }
+
+        timerToggle.checked = localStorage.getItem("timerEnabled") === "true";
+        wordCountSelect.value = localStorage.getItem("wordCount") || "20";
+
+        toggleInputModeDisplay(); // Update UI based on initial mode
+      }
+
+      /**
+       * Toggles dark mode and saves preference to localStorage.
+       */
+      darkModeToggle.addEventListener("click", () => {
+        document.body.classList.toggle("dark-mode");
+        const isDarkMode = document.body.classList.contains("dark-mode");
+        localStorage.setItem("darkMode", isDarkMode);
+
+        if (isDarkMode) {
+          darkModeToggle.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-sun"><circle cx="12" cy="12" r="10"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="M4.93 4.93l1.41 1.41"/><path d="M17.66 17.66l1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="M4.93 19.07l1.41-1.41"/><path d="M17.66 6.34l1.41-1.41"/></svg>`;
+        } else {
+          darkModeToggle.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-moon"><circle cx="12" cy="12" r="10"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="M4.93 4.93l1.41 1.41"/><path d="M17.66 17.66l1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="M4.93 19.07l1.41-1.41"/><path d="M17.66 6.34l1.41-1.41"/></svg>`;
+        }
+        lucide.createIcons();
+      });
+
+      /**
+       * Resets the test state and loads the initial word list based on settings.
+       */
+      async function resetTest() {
+        const selectedDifficulty = difficultySelect.value;
+        const selectedCategory = categorySelect.value;
+        const selectedWordCount = wordCountSelect.value;
+
+        let baseWordSet = [];
+
+        if (selectedCategory === "custom") {
+          const customWordsRaw = customWordsTextarea.value
+            .trim()
+            .split("\n")
+            .filter((line) => line.length > 0);
+          const parsedCustomWords = customWordsRaw
+            .map((line) => {
+              const parts = line.split(",");
+              const word = parts[0] ? parts[0].trim() : "";
+              const sentence =
+                parts.length > 1 ? parts.slice(1).join(",").trim() : "";
+              return { word, sentence };
+            })
+            .filter((item) => item.word.length > 0);
+
+          if (parsedCustomWords.length === 0) {
+            showCustomModal(
+              "Please enter some custom words. Each line should be 'word, sentence' or just 'word'."
+            );
+            categorySelect.value = "all";
+            customWordSection.classList.add("hidden");
+            return;
+          }
+          baseWordSet = parsedCustomWords;
+        } else if (selectedCategory === "all") {
+          if (selectedDifficulty === "all") {
+            for (const key in wordLists) {
+              if (key !== "custom") {
+                baseWordSet = baseWordSet.concat(wordLists[key]);
+              }
+            }
+          } else {
+            baseWordSet = wordLists[selectedDifficulty] || [];
+          }
+        } else {
+          baseWordSet = wordLists[selectedCategory] || [];
+        }
+
+        if (baseWordSet.length === 0) {
+          showCustomModal(
+            "No words found for the selected category/difficulty. Please try different settings or add custom words."
+          );
+          return;
+        }
+
+        // Apply word count filter
+        if (selectedWordCount !== "all" && baseWordSet.length > 0) {
+          const count = parseInt(selectedWordCount);
+          if (!isNaN(count) && count > 0) {
+            baseWordSet = shuffleArray(baseWordSet).slice(0, count);
+          }
+        } else {
+          baseWordSet = shuffleArray(baseWordSet); // Shuffle all if 'all' selected
+        }
+
+        currentWordList = baseWordSet; // Set the final list for the test
+
+        currentWordIndex = -1;
+        correctCount = 0;
+        totalAttempts = 0;
+        incorrectWords = [];
+        currentMode = document.querySelector('input[name="testMode"]:checked')
+          .value;
+        isTestInProgress = true;
+        hintRevealedLetters = 0;
+        selectedMCQOption = null;
+        clearInterval(timerInterval); // Clear any existing timer
+        timerDisplay.textContent = ""; // Clear timer display
+
+        updateScoreDisplay();
+        updateProgressBar();
+        updateIncorrectWordsList();
+        hideFeedbackAndDiff();
+        spellingInput.value = "";
+        // spellingInput.focus(); // Focus after audio is done
+
+        // Reset UI for new test
+        currentWordSpan.textContent = ""; // Will be set with dashes in nextWord
+        currentWordSpan.style.opacity = "1"; // Ensure visible dashes
+        sentenceDisplay.textContent = ""; // Will be set with dashes in nextWord
+        sentenceDisplay.style.opacity = "1"; // Ensure sentence is visible
+
+        // Disable interaction buttons initially
+        checkBtn.disabled = true;
+        hintBtn.disabled = true;
+        revealBtn.disabled = true;
+        skipBtn.disabled = true;
+        nextBtn.disabled = true; // IMPORTANT: Disable next button on reset
+        playAudioBtn.disabled = false; // Play audio button should always be enabled to replay audio if needed.
+        spellingInput.disabled = true; // Disable input field
+
+        reviewSection.classList.add("hidden");
+        noIncorrectWordsMsg.classList.add("hidden");
+        practiceIncorrectBtn.classList.add("hidden");
+
+        toggleInputModeDisplay(); // Ensure correct input mode is shown
+
+        nextWord(); // Load the first word
+      }
+
+      /**
+       * Replaces the target word in a sentence with dashes.
+       * @param {string} sentence The original sentence.
+       * @param {string} word The word to replace with dashes.
+       * @returns {string} The sentence with the word replaced by dashes.
+       */
+      function replaceWordWithDashes(sentence, word) {
+        if (!sentence || !word) return sentence;
+        const dashes = Array(word.length).fill("_").join(""); // No spaces for exact match
+        // Create a regex to match the word with optional punctuation or spaces around it
+        // Use \b for word boundaries and `gi` for global and case-insensitive
+        const regex = new RegExp(`\\b${word}\\b`, "gi");
+        return sentence.replace(regex, dashes);
+      }
+
+      /**
+       * Displays the next word in the test.
+       */
+      async function nextWord() {
+        if (currentWordIndex < currentWordList.length - 1) {
+          currentWordIndex++;
+          currentWordObj = currentWordList[currentWordIndex];
+          spellingInput.value = "";
+          // spellingInput.focus(); // Focus after audio
+          hideFeedbackAndDiff();
+          selectedMCQOption = null;
+          clearInterval(timerInterval); // Clear previous word's timer
+          timerDisplay.textContent = ""; // Clear timer display
+
+          // Disable interaction buttons during audio playback and until action is taken
+          checkBtn.disabled = true;
+          hintBtn.disabled = true;
+          revealBtn.disabled = true;
+          skipBtn.disabled = true;
+          nextBtn.disabled = true; // IMPORTANT: Disable next button at start of new word
+          spellingInput.disabled = true;
+          playAudioBtn.disabled = false; // Ensure play audio button is enabled for replay
+
+          // Hide word, show dashes initially based on word length
+          currentWordSpan.textContent = Array(currentWordObj.word.length)
+            .fill("_")
+            .join(" ");
+          currentWordSpan.style.opacity = "1";
+
+          // Show sentence immediately with word replaced by dashes
+          sentenceDisplay.innerHTML = currentWordObj.sentence
+            ? replaceWordWithDashes(
+                currentWordObj.sentence,
+                currentWordObj.word
+              )
+            : "";
+          sentenceDisplay.style.opacity = "1";
+
+          // Play the combined audio (sentence + word)
+          const textToSpeak = currentWordObj.sentence
+            ? `${currentWordObj.sentence}. The word is: ${currentWordObj.word}.`
+            : currentWordObj.word;
+          playAudio(textToSpeak, () => {
+            // Re-enable input and action buttons AFTER audio finishes
+            spellingInput.disabled = false;
+            spellingInput.focus();
+            checkBtn.disabled = false;
+            hintBtn.disabled = false;
+            skipBtn.disabled = false;
+            revealBtn.disabled = false; // Reveal button is available now if needed
+
+            // Start timer AFTER audio finishes
+            if (timerToggle.checked) {
+              startTimer();
+            }
+          });
+
+          if (currentMode === "mcq") {
+            spellingInput.classList.add("hidden");
+            mcqOptionsContainer.classList.remove("hidden");
+            mcqOptionsContainer.innerHTML =
+              '<p class="mcq-loading col-span-full">Generating options...</p>';
+            // checkBtn.disabled will be true by default for MCQ until option selected
+            // hintBtn is already hidden for MCQ mode
+            try {
+              const options = await generateMCQOptions(currentWordObj.word);
+              displayMCQOptions(options);
+            } catch (error) {
+              console.error("Error generating MCQ options:", error);
+              showCustomModal(
+                "Failed to generate MCQ options. Please try again or switch to Listening mode."
+              );
+              mcqOptionsContainer.innerHTML =
+                '<p class="text-red-500 col-span-full">Error loading options.</p>';
+              checkBtn.disabled = false; // Allow check even if options failed to load for some reason
+            }
+          } else {
+            spellingInput.classList.remove("hidden");
+            mcqOptionsContainer.classList.add("hidden");
+          }
+
+          updateScoreDisplay();
+          updateProgressBar();
+        } else {
+          endTest();
+        }
+      }
+
+      /**
+       * Starts the countdown timer for the current word.
+       */
+      function startTimer() {
+        timeLeftForTimer = TIMER_DURATION; // Reset time left
+        timerDisplay.textContent = `Time: ${timeLeftForTimer}s`;
+
+        timerInterval = setInterval(() => {
+          timeLeftForTimer--;
+          timerDisplay.textContent = `Time: ${timeLeftForTimer}s`;
+          if (timeLeftForTimer <= 0) {
+            clearInterval(timerInterval);
+            timerDisplay.textContent = "Time's Up!";
+            checkSpelling(true); // Mark as timed out
+          }
+        }, 1000);
+      }
+
+      /**
+       * Ends the test and displays final results.
+       */
+      function endTest() {
+        isTestInProgress = false;
+        clearInterval(timerInterval);
+        timerDisplay.textContent = ""; // Ensure timer display is clear at end
+
+        currentWordSpan.textContent = "Test Completed!";
+        sentenceDisplay.textContent = ""; // Clear sentence
+        currentWordSpan.style.opacity = "1";
+        sentenceDisplay.style.opacity = "1";
+
+        spellingInput.value = "";
+        spellingInput.disabled = true;
+        checkBtn.disabled = true;
+        hintBtn.disabled = true;
+        revealBtn.disabled = true;
+        skipBtn.disabled = true;
+        nextBtn.disabled = true;
+        playAudioBtn.disabled = true;
+        mcqOptionsContainer.classList.add("hidden");
+
+        feedbackMessage.textContent = `You scored ${correctCount} out of ${totalAttempts}!`;
+        feedbackMessage.className =
+          "feedback bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 text-center w-full max-w-md mt-6 text-xl font-semibold show";
+
+        if (incorrectWords.length > 0) {
+          reviewSection.classList.remove("hidden");
+          noIncorrectWordsMsg.classList.add("hidden");
+          practiceIncorrectBtn.classList.remove("hidden");
+        } else {
+          noIncorrectWordsMsg.classList.remove("hidden");
+          practiceIncorrectBtn.classList.add("hidden");
+        }
+
+        reviewSection.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+
+      /**
+       * Checks the user's spelling against the current word or MCQ selection.
+       * @param {boolean} isTimedOut True if called due to timer running out.
+       */
+      function checkSpelling(isTimedOut = false) {
+        if (!isTestInProgress) return;
+
+        clearInterval(timerInterval); // Stop timer on check
+        timerDisplay.textContent = ""; // Clear timer display
+
+        hideFeedbackAndDiff();
+
+        let guessedWord = "";
+        let isCorrect = false;
+
+        if (currentMode === "listening") {
+          guessedWord = spellingInput.value.trim();
+          isCorrect =
+            guessedWord.toLowerCase() === currentWordObj.word.toLowerCase();
+        } else if (currentMode === "mcq") {
+          if (!selectedMCQOption && !isTimedOut) {
+            // If timed out, no option might be selected
+            showCustomModal("Please select an option first.");
+            return;
+          }
+          guessedWord = selectedMCQOption;
+          isCorrect =
+            guessedWord.toLowerCase() === currentWordObj.word.toLowerCase();
+        }
+
+        totalAttempts++; // Always count an attempt when checkSpelling is called
+
+        // Reveal word and sentence after checking
+        currentWordSpan.textContent = currentWordObj.word;
+        currentWordSpan.style.opacity = "1";
+        sentenceDisplay.textContent = currentWordObj.sentence || ""; // Show full sentence
+        sentenceDisplay.style.opacity = "1";
+
+        if (isTimedOut) {
+          feedbackMessage.textContent = `Time's up! The word was "${currentWordObj.word}".`;
+          feedbackMessage.className =
+            "feedback incorrect text-center w-full max-w-md mt-6 text-xl font-semibold show";
+          if (currentMode === "listening")
+            displaySpellingDifference(
+              currentWordObj.word,
+              guessedWord || "(No guess - Timed out)"
+            );
+        } else if (isCorrect) {
+          correctCount++; // Increment correct count only if correct
+          feedbackMessage.textContent = "Correct! Well done!";
+          feedbackMessage.className =
+            "feedback correct text-center w-full max-w-md mt-6 text-xl font-semibold show";
+        } else {
+          feedbackMessage.textContent = `Incorrect.`;
+          feedbackMessage.className =
+            "feedback incorrect text-center w-full max-w-md mt-6 text-xl font-semibold show";
+          if (currentMode === "listening") {
+            displaySpellingDifference(currentWordObj.word, guessedWord);
+          } else if (currentMode === "mcq") {
+            const optionsDivs = mcqOptionsContainer.querySelectorAll(
+              ".mcq-option"
+            );
+            optionsDivs.forEach((div) => {
+              div.classList.remove("selected");
+              if (
+                div.dataset.word.toLowerCase() ===
+                currentWordObj.word.toLowerCase()
+              ) {
+                div.classList.add("correct-answer");
+              } else if (
+                div.dataset.word.toLowerCase() === guessedWord.toLowerCase()
+              ) {
+                div.classList.add("incorrect-answer");
+              }
+              div.style.pointerEvents = "none"; // Disable clicking MCQs after check
+            });
+          }
+        }
+
+        // Disable all action buttons and input after an answer is processed
+        checkBtn.disabled = true;
+        hintBtn.disabled = true;
+        revealBtn.disabled = true; // Will be handled by checkSpelling path
+        skipBtn.disabled = true;
+        spellingInput.disabled = true;
+        if (currentMode === "mcq") {
+          mcqOptionsContainer.querySelectorAll(".mcq-option").forEach((div) => {
+            div.style.pointerEvents = "none";
+          });
+        }
+
+        // Enable next button as action for current word is complete
+        nextBtn.disabled = false;
+
+        if (
+          !isCorrect &&
+          !incorrectWords.some((item) => item.word === currentWordObj.word)
+        ) {
+          incorrectWords.push({
+            word: currentWordObj.word,
+            guessed:
+              guessedWord ||
+              (isTimedOut ? "(Timed Out)" : "(Skipped/Revealed)"),
+            sentence: currentWordObj.sentence,
+          });
+          updateIncorrectWordsList();
+        }
+        updateScoreDisplay();
+        updateProgressBar();
+      }
+
+      /**
+       * Reveals the correct spelling of the current word.
+       */
+      function revealSpelling() {
+        if (!isTestInProgress) return;
+        clearInterval(timerInterval);
+        timerDisplay.textContent = "";
+
+        hideFeedbackAndDiff();
+        feedbackMessage.textContent = `The word was: "${currentWordObj.word}"`;
+        feedbackMessage.className =
+          "feedback bg-yellow-100 text-yellow-800 dark:bg-yellow-800 dark:text-yellow-100 text-center w-full max-w-md mt-6 text-xl font-semibold show";
+
+        // Disable all interaction buttons
+        checkBtn.disabled = true;
+        hintBtn.disabled = true;
+        revealBtn.disabled = true; // Disable itself after being used
+        skipBtn.disabled = true;
+        spellingInput.disabled = true; // Disable input after revealing
+
+        currentWordSpan.textContent = currentWordObj.word;
+        sentenceDisplay.textContent = currentWordObj.sentence || ""; // Show full sentence
+        currentWordSpan.style.opacity = "1";
+        sentenceDisplay.style.opacity = "1";
+
+        if (!incorrectWords.some((item) => item.word === currentWordObj.word)) {
+          incorrectWords.push({
+            word: currentWordObj.word,
+            guessed: spellingInput.value.trim() || "(Revealed)",
+            sentence: currentWordObj.sentence,
+          });
+          updateIncorrectWordsList();
+        }
+
+        if (currentMode === "mcq") {
+          const optionsDivs = mcqOptionsContainer.querySelectorAll(
+            ".mcq-option"
+          );
+          optionsDivs.forEach((div) => {
+            div.classList.remove("selected", "incorrect-answer");
+            if (
+              div.dataset.word.toLowerCase() ===
+              currentWordObj.word.toLowerCase()
+            ) {
+              div.classList.add("correct-answer");
+            }
+            div.style.pointerEvents = "none"; // Disable clicking MCQs after revealing
+          });
+        }
+        totalAttempts++; // Revealing also counts as an attempt
+        updateScoreDisplay();
+        updateProgressBar();
+        nextBtn.disabled = false; // Enable next button after revealing
+      }
+
+      /**
+       * Provides a hint by revealing one letter of the current word.
+       */
+      function provideHint() {
+        if (!isTestInProgress || currentMode === "mcq") return;
+        if (hintRevealedLetters < currentWordObj.word.length) {
+          hintRevealedLetters++;
+          const partialWord = currentWordObj.word.substring(
+            0,
+            hintRevealedLetters
+          );
+          spellingInput.value = partialWord;
+          spellingInput.focus();
+          // playAudio(partialWord); // Avoid replaying partial words unless specifically requested
+        } else {
+          showCustomModal("No more hints available for this word!");
+          hintBtn.disabled = true;
+        }
+      }
+
+      /**
+       * Skips the current word.
+       */
+      function skipWord() {
+        if (!isTestInProgress) return;
+        clearInterval(timerInterval);
+        timerDisplay.textContent = "";
+
+        hideFeedbackAndDiff();
+        feedbackMessage.textContent = `Skipped! The word was "${currentWordObj.word}".`;
+        feedbackMessage.className =
+          "feedback incorrect text-center w-full max-w-md mt-6 text-xl font-semibold show";
+
+        // Disable all interaction buttons
+        checkBtn.disabled = true;
+        hintBtn.disabled = true;
+        revealBtn.disabled = true;
+        skipBtn.disabled = true; // Disable itself after being used
+        spellingInput.disabled = true; // Disable input after skipping
+
+        currentWordSpan.textContent = currentWordObj.word;
+        sentenceDisplay.textContent = currentWordObj.sentence || ""; // Show full sentence
+        currentWordSpan.style.opacity = "1";
+        sentenceDisplay.style.opacity = "1";
+
+        if (!incorrectWords.some((item) => item.word === currentWordObj.word)) {
+          incorrectWords.push({
+            word: currentWordObj.word,
+            guessed: "(Skipped)",
+            sentence: currentWordObj.sentence,
+          });
+          updateIncorrectWordsList();
+        }
+        totalAttempts++;
+        updateScoreDisplay();
+        updateProgressBar();
+        nextBtn.disabled = false; // Enable next button after skipping
+        // Removed setTimeout(nextWord, 1500); to force user to click Next Word
+      }
+
+      /**
+       * Plays the audio pronunciation of a given text.
+       * @param {string} text The text to pronounce.
+       * @param {function} [callback] An optional callback function to execute when speech ends.
+       */
+      function playAudio(text, callback = () => {}) {
+        if ("speechSynthesis" in window && text) {
+          // Stop any ongoing speech before starting a new one
+          window.speechSynthesis.cancel();
+
+          const utterance = new SpeechSynthesisUtterance(text);
+          utterance.lang = "en-US";
+          utterance.rate = 0.8;
+          utterance.pitch = 1.0;
+
+          utterance.onend = () => {
+            playAudioBtn.disabled = false;
+            callback(); // Execute callback after speech ends
+          };
+          utterance.onerror = (event) => {
+            console.error("SpeechSynthesisUtterance.onerror", event);
+            showCustomModal(
+              "Text-to-speech failed. Your browser might not support it fully, or there was an error with the speech service."
+            );
+            playAudioBtn.disabled = false;
+            callback(); // Also execute callback on error
+          };
+
+          playAudioBtn.disabled = true; // Disable while audio is playing
+          window.speechSynthesis.speak(utterance);
+        } else if (!text) {
+          callback(); // If no text, call callback immediately
+        } else {
+          showCustomModal(
+            "Your browser does not support text-to-speech. Please try a different browser."
+          );
+          callback(); // Call callback even if speech not supported
+        }
+      }
+
+      /**
+       * Updates the score and progress display.
+       */
+      function updateScoreDisplay() {
+        correctScoreSpan.textContent = correctCount;
+        totalWordsAttemptedSpan.textContent = totalAttempts;
+        currentWordIndexSpan.textContent = currentWordIndex + 1;
+        totalWordsInListSpan.textContent = currentWordList.length;
+      }
+
+      /**
+       * Updates the progress bar visually.
+       */
+      function updateProgressBar() {
+        if (currentWordList.length > 0) {
+          const progressPercentage =
+            ((currentWordIndex + 1) / currentWordList.length) * 100;
+          progressBar.style.width = `${progressPercentage}%`;
+        } else {
+          progressBar.style.width = "0%";
+        }
+      }
+
+      /**
+       * Generates HTML for showing the difference between correct and guessed spelling.
+       * @param {string} correctWord The correct spelling.
+       * @param {string} guessedWord The user's guessed spelling.
+       */
+      function displaySpellingDifference(correctWord, guessedWord) {
+        let correctHtml = "";
+        let guessedHtml = "";
+        const maxLength = Math.max(correctWord.length, guessedWord.length);
+
+        for (let i = 0; i < maxLength; i++) {
+          const correctChar = correctWord[i] || "";
+          const guessedChar = guessedWord[i] || "";
+
+          if (correctChar.toLowerCase() === guessedChar.toLowerCase()) {
+            correctHtml += `<span class="diff-correct">${correctChar}</span>`;
+            guessedHtml += `<span class="diff-correct">${guessedChar}</span>`;
+          } else {
+            correctHtml += `<span class="diff-correct">${correctChar}</span>`;
+            guessedHtml += `<span class="diff-incorrect">${guessedChar}</span>`;
+          }
+        }
+
+        spellingDiff.innerHTML = `
+                <div class="mb-1">Correct: <span class="font-bold">${
+                  correctHtml || "(Empty)"
+                }</span></div>
+                <div>Your Guess: <span class="font-bold">${
+                  guessedHtml || "(Empty)"
+                }</span></div>
+            `;
+        spellingDiff.classList.remove("hidden");
+      }
+
+      /**
+       * Hides the feedback message and spelling difference display.
+       */
+      function hideFeedbackAndDiff() {
+        feedbackMessage.classList.remove("show");
+        spellingDiff.classList.add("hidden");
+      }
+
+      /**
+       * Dynamically generates MCQ options using the Gemini API.
+       * @param {string} word The correct word for which to generate distractors.
+       * @returns {Promise<string[]>} A promise that resolves to an array of 4 spelling options.
+       */
+      async function generateMCQOptions(word) {
+        const prompt = `Generate three plausible but incorrect English spellings (distractors) for the word '${word}'.
+            Ensure these distractors are distinct from the correct word and from each other.
+            Provide the output as a JSON array of strings.`;
+
+        let chatHistory = [];
+        chatHistory.push({ role: "user", parts: [{ text: prompt }] });
+
+        const payload = {
+          contents: chatHistory,
+          generationConfig: {
+            responseMimeType: "application/json",
+            responseSchema: {
+              type: "ARRAY",
+              items: { type: "STRING" },
+            },
+          },
+        };
+
+        const apiKey = "";
+        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+        try {
+          const response = await fetch(apiUrl, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+          });
+
+          if (!response.ok) {
+            const errorBody = await response.json();
+            throw new Error(
+              `API error: ${response.status} - ${JSON.stringify(errorBody)}`
+            );
+          }
+
+          const result = await response.json();
+
+          if (
+            result.candidates &&
+            result.candidates.length > 0 &&
+            result.candidates[0].content &&
+            result.candidates[0].content.parts &&
+            result.candidates[0].content.parts.length > 0
+          ) {
+            const jsonString = result.candidates[0].content.parts[0].text;
+            const distractors = JSON.parse(jsonString);
+
+            let allOptions = [word].concat(
+              distractors.filter((d) => d.toLowerCase() !== word.toLowerCase())
+            );
+            while (allOptions.length < 4) {
+              allOptions.push(`_option_${allOptions.length + 1}`);
+            }
+            return shuffleArray(allOptions.slice(0, 4));
+          } else {
+            throw new Error(
+              "Unexpected API response structure or no candidates."
+            );
+          }
+        } catch (error) {
+          console.error("Fetch error for MCQ generation:", error);
+          return shuffleArray(
+            [
+              word,
+              word.split("").reverse().join(""),
+              word.slice(0, -1) + "e",
+              word.slice(0, 1) + "a" + word.slice(2),
+            ].slice(0, 4)
+          );
+        }
+      }
+
+      /**
+       * Displays the generated MCQ options on the UI.
+       * @param {string[]} options An array of spelling options.
+       */
+      function displayMCQOptions(options) {
+        mcqOptionsContainer.innerHTML = "";
+        options.forEach((option) => {
+          const div = document.createElement("div");
+          div.className = "mcq-option";
+          div.textContent = option;
+          div.dataset.word = option;
+          div.addEventListener("click", () => selectMCQOption(div, option));
+          mcqOptionsContainer.appendChild(div);
+        });
+        checkBtn.disabled = false;
+        revealBtn.disabled = false;
+      }
+
+      /**
+       * Handles selection of an MCQ option.
+       * @param {HTMLElement} selectedDiv The div element that was clicked.
+       * @param {string} optionWord The word associated with the selected option.
+       */
+      function selectMCQOption(selectedDiv, optionWord) {
+        mcqOptionsContainer.querySelectorAll(".mcq-option").forEach((div) => {
+          div.classList.remove("selected");
+        });
+        selectedDiv.classList.add("selected");
+        selectedMCQOption = optionWord;
+      }
+
+      /**
+       * Toggles visibility of spelling input vs. MCQ options based on currentMode.
+       */
+      function toggleInputModeDisplay() {
+        if (currentMode === "mcq") {
+          spellingInput.classList.add("hidden");
+          mcqOptionsContainer.classList.remove("hidden");
+          hintBtn.classList.add("hidden");
+          spellingInput.disabled = true;
+        } else {
+          spellingInput.classList.remove("hidden");
+          mcqOptionsContainer.classList.add("hidden");
+          hintBtn.classList.remove("hidden");
+          spellingInput.disabled = false;
+        }
+      }
+
+      /**
+       * Shuffles an array randomly.
+       * @param {Array} array The array to shuffle.
+       * @returns {Array} The shuffled array.
+       */
+      function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+      }
+
+      // --- Event Listeners ---
+
+      spellingInput.addEventListener("keydown", (event) => {
+        if (event.key === "Enter") {
+          event.preventDefault();
+          checkSpelling();
+        }
+      });
+
+      checkBtn.addEventListener("click", () => checkSpelling(false));
+      hintBtn.addEventListener("click", provideHint);
+      revealBtn.addEventListener("click", revealSpelling);
+      skipBtn.addEventListener("click", skipWord);
+      nextBtn.addEventListener("click", nextWord);
+      playAudioBtn.addEventListener("click", () => {
+        const textToSpeak = currentWordObj.sentence
+          ? `${currentWordObj.sentence}. The word is: ${currentWordObj.word}.`
+          : currentWordObj.word;
+        playAudio(textToSpeak);
+      });
+
+      startNewTestBtn.addEventListener("click", resetTest);
+
+      categorySelect.addEventListener("change", () => {
+        if (categorySelect.value === "custom") {
+          customWordSection.classList.remove("hidden");
+        } else {
+          customWordSection.classList.add("hidden");
+        }
+      });
+
+      wordCountSelect.addEventListener("change", () => {
+        localStorage.setItem("wordCount", wordCountSelect.value);
+      });
+
+      timerToggle.addEventListener("change", () => {
+        localStorage.setItem("timerEnabled", timerToggle.checked);
+        // Timer state is handled in nextWord via playAudio callback
+      });
+
+      modeListeningRadio.addEventListener("change", (event) => {
+        currentMode = event.target.value;
+        localStorage.setItem("testMode", currentMode);
+        toggleInputModeDisplay();
+        // Re-render current word/sentence if mode changes during a test
+        if (isTestInProgress && currentWordObj) {
+          spellingInput.value = "";
+          currentWordSpan.textContent = Array(currentWordObj.word.length)
+            .fill("_")
+            .join(" ");
+          sentenceDisplay.innerHTML = currentWordObj.sentence
+            ? replaceWordWithDashes(
+                currentWordObj.sentence,
+                currentWordObj.word
+              )
+            : "";
+
+          // Stop existing timer/audio if any, and replay with new mode logic
+          clearInterval(timerInterval);
+          timerDisplay.textContent = "";
+
+          // Disable all interaction buttons during the switch/audio playback
+          checkBtn.disabled = true;
+          hintBtn.disabled = true;
+          revealBtn.disabled = true;
+          skipBtn.disabled = true;
+          nextBtn.disabled = true;
+          spellingInput.disabled = true;
+
+          playAudio(
+            currentWordObj.sentence
+              ? `${currentWordObj.sentence}. The word is: ${currentWordObj.word}.`
+              : currentWordObj.word,
+            () => {
+              spellingInput.disabled = false;
+              spellingInput.focus();
+              checkBtn.disabled = false;
+              hintBtn.disabled = false;
+              skipBtn.disabled = false;
+              revealBtn.disabled = false; // Initially available, disabled after use
+
+              if (timerToggle.checked) startTimer();
+            }
+          );
+        }
+      });
+
+      modeMCQRadio.addEventListener("change", (event) => {
+        currentMode = event.target.value;
+        localStorage.setItem("testMode", currentMode);
+        toggleInputModeDisplay();
+        // Re-render current word/sentence if mode changes during a test
+        if (isTestInProgress && currentWordObj) {
+          spellingInput.value = "";
+          currentWordSpan.textContent = Array(currentWordObj.word.length)
+            .fill("_")
+            .join(" ");
+          sentenceDisplay.innerHTML = currentWordObj.sentence
+            ? replaceWordWithDashes(
+                currentWordObj.sentence,
+                currentWordObj.word
+              )
+            : "";
+
+          // Stop existing timer/audio if any, and re-generate MCQs
+          clearInterval(timerInterval);
+          timerDisplay.textContent = "";
+
+          // Disable all interaction buttons during the switch/audio playback
+          checkBtn.disabled = true;
+          hintBtn.disabled = true;
+          revealBtn.disabled = true;
+          skipBtn.disabled = true;
+          nextBtn.disabled = true;
+          spellingInput.disabled = true;
+
+          nextWord(); // Re-trigger nextWord to generate MCQs
+        }
+      });
+
+      practiceIncorrectBtn.addEventListener("click", () => {
+        if (incorrectWords.length > 0) {
+          currentWordList = shuffleArray(
+            incorrectWords.map((item) => ({
+              word: item.word,
+              sentence: item.sentence,
+            }))
+          );
+          currentWordIndex = -1;
+          correctCount = 0;
+          totalAttempts = 0;
+          incorrectWords = [];
+          isTestInProgress = true;
+          hintRevealedLetters = 0;
+          clearInterval(timerInterval);
+          timerDisplay.textContent = "";
+
+          updateScoreDisplay();
+          updateProgressBar();
+          updateIncorrectWordsList();
+          hideFeedbackAndDiff();
+          spellingInput.value = "";
+          // spellingInput.focus(); // Focus after audio
+
+          // Disable buttons initially
+          checkBtn.disabled = true;
+          hintBtn.disabled = true;
+          revealBtn.disabled = true;
+          skipBtn.disabled = true;
+          nextBtn.disabled = true; // IMPORTANT: Disable next button for practice start
+          playAudioBtn.disabled = false;
+          spellingInput.disabled = true;
+
+          reviewSection.classList.add("hidden");
+          noIncorrectWordsMsg.classList.add("hidden");
+          practiceIncorrectBtn.classList.add("hidden");
+
+          toggleInputModeDisplay();
+          nextWord();
+        }
+      });
+    </script>
+  </body>
+</html>
