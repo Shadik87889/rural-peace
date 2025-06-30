@@ -6,7 +6,6 @@
     <title>IELTS Mahir Community Forum</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts - Montserrat removed, using system font stack for modern feel -->
     <!-- Font Awesome for professional icons -->
     <link
       rel="stylesheet"
@@ -25,8 +24,6 @@
       .font-anton {
         font-family: "Anton", sans-serif; /* Kept for strong branding on title */
       }
-      /* Montserrat class removed as per request */
-
       /* Custom scrollbar for better aesthetics */
       ::-webkit-scrollbar {
         width: 8px;
@@ -127,7 +124,7 @@
     >
       <div
         id="ai-modal-content"
-        class="relative rounded-2xl shadow-2xl p-6 md:p-8 max-w-lg w-full"
+        class="relative rounded-2xl shadow-2xl p-6 md:p-8 max-w-lg w-full max-h-[85vh] md:max-h-[90vh] overflow-y-auto"
       >
         <button
           id="ai-modal-close-btn"
@@ -182,13 +179,14 @@
         db: null,
         auth: null,
         // storage: null, // Removed storage from state
-        userId: null,
-        userProfile: null,
+        userId: null, // Current authenticated user's ID
+        userProfile: null, // Current authenticated user's profile data
         isAuthReady: false,
         theme: "light", // 'light' or 'dark'
         view: "home", // 'home', 'postDetail', 'createPost', 'profile'
+        homeFeedType: "latest", // 'latest', 'forYou', 'following'
         selectedPost: null,
-        posts: [],
+        posts: [], // All posts fetched from Firestore
         comments: {}, // Comments will now store nested structure if available
         showSidebar: false,
         // Track Firestore listeners to unsubscribe later if needed (though for a simple app, not not strictly necessary)
@@ -202,11 +200,286 @@
         editingPostId: null, // Track which post is being edited
         editingCommentId: null, // Track which comment is being edited
         expandedReplies: {}, // New state to track which comment replies are expanded
+        editingProfile: false, // New state for profile editing
+        viewedProfile: null, // The profile object of the user currently being viewed
+        allUsersProfiles: [], // Cache for all user profiles for display and lookup
       };
 
       // --- Constants ---
       const MAX_VISIBLE_TOP_LEVEL_COMMENTS = 5;
       const MAX_VISIBLE_NESTED_REPLIES = 3;
+
+      const BAND_GOALS = [
+        "N/A",
+        "5.0",
+        "5.5",
+        "6.0",
+        "6.5",
+        "7.0",
+        "7.5",
+        "8.0",
+        "8.5",
+        "9.0",
+      ];
+      const PREP_STATUSES = [
+        "New Learner",
+        "Beginner",
+        "Intermediate",
+        "Advanced",
+        "Ready for Test",
+        "Test Taken",
+      ];
+      const COUNTRIES = [
+        "Afghanistan",
+        "Albania",
+        "Algeria",
+        "Andorra",
+        "Angola",
+        "Antigua and Barbuda",
+        "Argentina",
+        "Armenia",
+        "Australia",
+        "Austria",
+        "Azerbaijan",
+        "Bahamas",
+        "Bahrain",
+        "Bangladesh",
+        "Barbados",
+        "Belarus",
+        "Belgium",
+        "Belize",
+        "Benin",
+        "Bhutan",
+        "Bolivia",
+        "Bosnia and Herzegovina",
+        "Botswana",
+        "Brazil",
+        "Brunei",
+        "Bulgaria",
+        "Burkina Faso",
+        "Burundi",
+        "Cabo Verde",
+        "Cambodia",
+        "Cameroon",
+        "Canada",
+        "Central African Republic",
+        "Chad",
+        "Chile",
+        "China",
+        "Colombia",
+        "Comoros",
+        "Congo (Brazzaville)",
+        "Congo (Kinshasa)",
+        "Costa Rica",
+        "Croatia",
+        "Cuba",
+        "Cyprus",
+        "Czechia",
+        "Denmark",
+        "Djibouti",
+        "Dominica",
+        "Dominican Republic",
+        "Ecuador",
+        "Egypt",
+        "El Salvador",
+        "Equatorial Guinea",
+        "Eritrea",
+        "Estonia",
+        "Eswatini",
+        "Ethiopia",
+        "Fiji",
+        "Finland",
+        "France",
+        "Gabon",
+        "Gambia",
+        "Georgia",
+        "Germany",
+        "Ghana",
+        "Greece",
+        "Grenada",
+        "Guatemala",
+        "Guinea",
+        "Guinea-Bissau",
+        "Guyana",
+        "Haiti",
+        "Honduras",
+        "Hungary",
+        "Iceland",
+        "India",
+        "Indonesia",
+        "Iran",
+        "Iraq",
+        "Ireland",
+        "Israel",
+        "Italy",
+        "Ivory Coast",
+        "Jamaica",
+        "Japan",
+        "Jordan",
+        "Kazakhstan",
+        "Kenya",
+        "Kiribati",
+        "Kosovo",
+        "Kuwait",
+        "Kyrgyzstan",
+        "Laos",
+        "Latvia",
+        "Lebanon",
+        "Lesotho",
+        "Liberia",
+        "Libya",
+        "Liechtenstein",
+        "Lithuania",
+        "Luxembourg",
+        "Madagascar",
+        "Malawi",
+        "Malaysia",
+        "Maldives",
+        "Mali",
+        "Malta",
+        "Marshall Islands",
+        "Mauritania",
+        "Mauritius",
+        "Mexico",
+        "Micronesia",
+        "Moldova",
+        "Monaco",
+        "Mongolia",
+        "Montenegro",
+        "Morocco",
+        "Mozambique",
+        "Myanmar",
+        "Namibia",
+        "Nauru",
+        "Nepal",
+        "Netherlands",
+        "New Zealand",
+        "Nicaragua",
+        "Niger",
+        "Nigeria",
+        "North Korea",
+        "North Macedonia",
+        "Norway",
+        "Oman",
+        "Pakistan",
+        "Palau",
+        "Palestine",
+        "Panama",
+        "Papua New Guinea",
+        "Paraguay",
+        "Peru",
+        "Philippines",
+        "Poland",
+        "Portugal",
+        "Qatar",
+        "Romania",
+        "Russia",
+        "Rwanda",
+        "Saint Kitts and Nevis",
+        "Saint Lucia",
+        "Saint Vincent and the Grenadines",
+        "Samoa",
+        "San Marino",
+        "Sao Tome and Principe",
+        "Saudi Arabia",
+        "Senegal",
+        "Serbia",
+        "Seychelles",
+        "Sierra Leone",
+        "Singapore",
+        "Slovakia",
+        "Slovenia",
+        "Solomon Islands",
+        "Somalia",
+        "South Africa",
+        "South Korea",
+        "South Sudan",
+        "Spain",
+        "Sri Lanka",
+        "Sudan",
+        "Suriname",
+        "Sweden",
+        "Switzerland",
+        "Syria",
+        "Taiwan",
+        "Tajikistan",
+        "Tanzania",
+        "Thailand",
+        "Timor-Leste",
+        "Togo",
+        "Tonga",
+        "Trinidad and Tobago",
+        "Tunisia",
+        "Turkey",
+        "Turkmenistan",
+        "Tuvalu",
+        "Uganda",
+        "Ukraine",
+        "United Arab Emirates",
+        "United Kingdom",
+        "United States",
+        "Uruguay",
+        "Uzbekistan",
+        "Vanuatu",
+        "Vatican City",
+        "Venezuela",
+        "Vietnam",
+        "Yemen",
+        "Zambia",
+        "Zimbabwe",
+      ];
+      const IELTS_EXPERIENCES = [
+        "First time taking IELTS",
+        "Taken multiple times",
+        "Preparing for the first time",
+        "Already taken and passed",
+      ];
+
+      // Sample Badge Data (for UI display purposes)
+      const ALL_BADGES = [
+        {
+          id: "first_post",
+          name: "First Post",
+          description: "Created your first forum post!",
+          icon: "✍️",
+        },
+        {
+          id: "helpful_member",
+          name: "Helpful Member",
+          description: "Received 10 upvotes on your posts/comments.",
+          icon: "🌟",
+        },
+        {
+          id: "ielts_master",
+          name: "IELTS Master",
+          description: "Achieved Band 9 goal.",
+          icon: "🏆",
+        },
+        {
+          id: "daily_streak",
+          name: "Daily Contributor",
+          description: "Posted or commented for 3 consecutive days.",
+          icon: "🔥",
+        },
+        {
+          id: "speaking_expert",
+          name: "Speaking Expert",
+          description: "Contributed significantly to Speaking topics.",
+          icon: "🗣️",
+        },
+        {
+          id: "writing_guru",
+          name: "Writing Guru",
+          description: "Contributed significantly to Writing topics.",
+          icon: "📝",
+        },
+        {
+          id: "resolved_solver",
+          name: "Problem Solver",
+          description: "Marked 5 of your questions as resolved.",
+          icon: "✅",
+        },
+      ];
 
       // --- DOM Elements Cache ---
       const elements = {};
@@ -238,7 +511,12 @@
         Cancel: `<i class="fas fa-times-circle"></i>`, // Cancel icon
         Link: `<i class="fas fa-external-link-alt"></i>`, // Link icon
         Trash: `<i class="fas fa-trash-alt"></i>`, // Trash/Delete icon
-        // Image and Video icons removed as upload functionality is removed
+        Star: `<i class="fas fa-star"></i>`, // For a "Following" button or similar
+        Users: `<i class="fas fa-users"></i>`, // For a "Following Feed"
+        Filter: `<i class="fas fa-filter"></i>`, // For general filter icon
+        Heart: `<i class="fas fa-heart"></i>`, // For "For You" or trending
+        UserPlus: `<i class="fas fa-user-plus"></i>`, // For follow button
+        UserCheck: `<i class="fas fa-user-check"></i>`, // For unfollow button
       };
 
       // --- Core Functions ---
@@ -333,12 +611,98 @@
         renderApp(); // Re-render to apply theme to dynamic content
       }
 
+      /**
+       * Formats a Firestore Timestamp or Date object into a Facebook-like relative time string.
+       * @param {firebase.firestore.Timestamp | Date} timestamp The timestamp or date object.
+       * @returns {string} The formatted relative time string.
+       */
+      function formatRelativeTime(timestamp) {
+        if (!timestamp) return "N/A";
+
+        const date = timestamp.toDate ? timestamp.toDate() : timestamp; // Convert Firestore Timestamp to Date object
+        const now = new Date();
+        const seconds = Math.floor((now - date) / 1000);
+
+        if (seconds < 60) {
+          return seconds <= 0 ? "Just now" : `${seconds}s ago`;
+        }
+
+        const minutes = Math.floor(seconds / 60);
+        if (minutes < 60) {
+          return `${minutes}m ago`;
+        }
+
+        const hours = Math.floor(minutes / 60);
+        if (hours < 24) {
+          return `${hours}h ago`;
+        }
+
+        const yesterday = new Date(now);
+        yesterday.setDate(now.getDate() - 1);
+        if (
+          date.getDate() === yesterday.getDate() &&
+          date.getMonth() === yesterday.getMonth() &&
+          date.getFullYear() === yesterday.getFullYear()
+        ) {
+          return `Yesterday at ${new Intl.DateTimeFormat("en-US", {
+            hour: "numeric",
+            minute: "numeric",
+            hour12: true,
+          }).format(date)}`;
+        }
+
+        // Within the current year
+        if (date.getFullYear() === now.getFullYear()) {
+          return new Intl.DateTimeFormat("en-US", {
+            month: "short",
+            day: "numeric",
+            hour: "numeric",
+            minute: "numeric",
+            hour12: true,
+          }).format(date);
+        }
+
+        // Older than current year
+        return new Intl.DateTimeFormat("en-US", {
+          month: "short",
+          day: "numeric",
+          year: "numeric",
+        }).format(date);
+      }
+
+      /**
+       * Navigates to a new view in the application.
+       * @param {string} newView The name of the new view ('home', 'postDetail', 'createPost', 'profile').
+       * @param {object} [options={}] Optional parameters for the new view.
+       * @param {object} [options.post] The post object if navigating to 'postDetail'.
+       * @param {string} [options.category] The category to filter by if navigating to 'home'.
+       * @param {string} [options.subCategory] The subcategory to filter by if navigating to 'home'.
+       * @param {string} [options.targetUserId] The ID of the user whose profile is to be viewed if navigating to 'profile'.
+       * @param {'latest'|'forYou'|'following'} [options.homeFeedType] The type of feed to show if navigating to 'home'.
+       */
       function navigateTo(newView, options = {}) {
         appState.view = newView;
         appState.selectedPost = options.post || null;
         appState.activeCategory = options.category || null;
         appState.activeSubCategory = options.subCategory || null;
         appState.showSidebar = false; // Close sidebar on navigation
+
+        // Update homeFeedType only if navigating to 'home' and a new type is provided
+        if (newView === "home" && options.homeFeedType) {
+          appState.homeFeedType = options.homeFeedType;
+        } else if (newView !== "home") {
+          // Reset homeFeedType when navigating away from home, or keep previous setting if returning to generic home
+          // We can decide to always reset to 'latest' if desired, but for now, it's sticky
+        }
+
+        // Set the viewed profile ID. If navigating to 'profile' and targetUserId is provided, use it.
+        // Otherwise, if it's 'profile' view without a target, assume current user.
+        // For other views, clear viewedProfile to ensure no stale data.
+        if (newView === "profile") {
+          appState.viewedProfile = options.targetUserId || appState.userId;
+        } else {
+          appState.viewedProfile = null;
+        }
 
         // Reset visible comment/reply counts and editing state when navigating away from post detail
         if (newView !== "postDetail") {
@@ -348,11 +712,18 @@
           appState.editingCommentId = null;
           appState.expandedReplies = {}; // Reset expanded replies state
         }
+        // Reset profile editing state if navigating away from profile (or to a different profile)
+        if (
+          newView !== "profile" ||
+          (newView === "profile" && options.targetUserId !== appState.userId)
+        ) {
+          appState.editingProfile = false;
+        }
 
         renderMainContent();
         renderSidebar(); // Update sidebar visibility
         // Ensure posts are re-fetched with new filters if navigating to home
-        if (newView === "home" && appState.isAuthReady) {
+        if (appState.isAuthReady) {
           // No need to re-run setupFirestoreListeners for posts now, as filtering is client-side
           // The onSnapshot listener for posts will automatically update appState.posts
           // Then renderPostList will filter based on appState.activeCategory/SubCategory
@@ -376,7 +747,9 @@
 
         try {
           const appId =
-            typeof __app_id !== "undefined" ? __app_id : "default-app-id";
+            typeof __app_id !== "undefined"
+              ? __app_id
+              : "ielts-mahir-community-forum";
           await addDoc(
             collection(appState.db, `artifacts/${appId}/public/data/posts`),
             {
@@ -407,7 +780,9 @@
         if (!appState.db) return;
         try {
           const appId =
-            typeof __app_id !== "undefined" ? __app_id : "default-app-id";
+            typeof __app_id !== "undefined"
+              ? __app_id
+              : "ielts-mahir-community-forum";
           await updateDoc(
             doc(appState.db, `artifacts/${appId}/public/data/posts`, postId),
             updatedData
@@ -434,7 +809,9 @@
           async () => {
             try {
               const appId =
-                typeof __app_id !== "undefined" ? __app_id : "default-app-id";
+                typeof __app_id !== "undefined"
+                  ? __app_id
+                  : "ielts-mahir-community-forum";
               const batch = writeBatch(appState.db);
 
               // Delete the post document
@@ -491,7 +868,9 @@
         }
         try {
           const appId =
-            typeof __app_id !== "undefined" ? __app_id : "default-app-id";
+            typeof __app_id !== "undefined"
+              ? __app_id
+              : "ielts-mahir-community-forum";
           await addDoc(
             collection(appState.db, `artifacts/${appId}/public/data/comments`),
             {
@@ -520,7 +899,9 @@
         if (!appState.db) return;
         try {
           const appId =
-            typeof __app_id !== "undefined" ? __app_id : "default-app-id";
+            typeof __app_id !== "undefined"
+              ? __app_id
+              : "ielts-mahir-community-forum";
           await updateDoc(
             doc(
               appState.db,
@@ -553,7 +934,9 @@
           async () => {
             try {
               const appId =
-                typeof __app_id !== "undefined" ? __app_id : "default-app-id";
+                typeof __app_id !== "undefined"
+                  ? __app_id
+                  : "ielts-mahir-community-forum";
               const batch = writeBatch(appState.db);
 
               // Delete the comment document itself
@@ -598,7 +981,9 @@
         if (!appState.db) return;
         try {
           const appId =
-            typeof __app_id !== "undefined" ? __app_id : "default-app-id";
+            typeof __app_id !== "undefined"
+              ? __app_id
+              : "ielts-mahir-community-forum";
           await updateDoc(
             doc(appState.db, `artifacts/${appId}/public/data/posts`, postId),
             {
@@ -617,7 +1002,9 @@
         if (!appState.db || !appState.userId) return;
         try {
           const appId =
-            typeof __app_id !== "undefined" ? __app_id : "default-app-id";
+            typeof __app_id !== "undefined"
+              ? __app_id
+              : "ielts-mahir-community-forum";
           const postRef = doc(
             appState.db,
             `artifacts/${appId}/public/data/posts`,
@@ -634,21 +1021,26 @@
             const userAlreadyUpvoted = upvotedBy.includes(appState.userId);
             const userAlreadyDownvoted = downvotedBy.includes(appState.userId);
 
+            let authorReputationChange = 0;
+
             if (type === "up") {
               if (userAlreadyUpvoted) {
                 // User clicked upvote again, so remove upvote
                 upvotedBy = upvotedBy.filter((id) => id !== appState.userId);
                 newUpvotes--;
+                authorReputationChange = -1; // Lose 1 reputation for removing upvote
               } else {
                 // User upvoted
                 upvotedBy = [...upvotedBy, appState.userId];
                 newUpvotes++;
+                authorReputationChange = 1; // Gain 1 reputation for upvote
                 // If previously downvoted, remove downvote
                 if (userAlreadyDownvoted) {
                   downvotedBy = downvotedBy.filter(
                     (id) => id !== appState.userId
                   );
                   newDownvotes--;
+                  authorReputationChange += 1; // Gain 1 more reputation for negating a downvote
                 }
               }
             } else if (type === "down") {
@@ -658,14 +1050,16 @@
                   (id) => id !== appState.userId
                 );
                 newDownvotes--;
+                authorReputationChange = 1; // Gain 1 reputation for removing downvote
               } else {
-                // User downvoted
                 downvotedBy = [...downvotedBy, appState.userId];
                 newDownvotes++;
+                authorReputationChange = -1; // Lose 1 reputation for downvote
                 // If previously upvoted, remove upvote
                 if (userAlreadyUpvoted) {
                   upvotedBy = upvotedBy.filter((id) => id !== appState.userId);
                   newUpvotes--;
+                  authorReputationChange += -1; // Lose 1 more reputation for negating an upvote
                 }
               }
             }
@@ -676,6 +1070,30 @@
               upvotedBy: upvotedBy,
               downvotedBy: downvotedBy,
             });
+
+            // Update author's reputation only if there was a change and it's not the author themselves voting
+            if (
+              authorReputationChange !== 0 &&
+              currentData.authorId !== appState.userId
+            ) {
+              const authorProfileRef = doc(
+                appState.db,
+                `artifacts/${appId}/users/${currentData.authorId}/userProfile/profile`
+              );
+              const authorProfileSnap = await getDoc(authorProfileRef);
+              if (authorProfileSnap.exists()) {
+                const currentReputation =
+                  authorProfileSnap.data().reputation || 0;
+                await updateDoc(authorProfileRef, {
+                  reputation: Math.max(
+                    0,
+                    currentReputation + authorReputationChange
+                  ), // Reputation cannot go below 0
+                });
+                // Show a toast about reputation change if needed
+                // showToast(`Reputation for ${currentData.authorName} changed by ${authorReputationChange}`, 'info');
+              }
+            }
             showToast("Vote updated!", "info");
           }
         } catch (e) {
@@ -688,7 +1106,9 @@
         if (!appState.db || !appState.userId) return;
         try {
           const appId =
-            typeof __app_id !== "undefined" ? __app_id : "default-app-id";
+            typeof __app_id !== "undefined"
+              ? __app_id
+              : "ielts-mahir-community-forum";
           const commentRef = doc(
             appState.db,
             `artifacts/${appId}/public/data/comments`,
@@ -705,18 +1125,23 @@
             const userAlreadyUpvoted = upvotedBy.includes(appState.userId);
             const userAlreadyDownvoted = downvotedBy.includes(appState.userId);
 
+            let authorReputationChange = 0;
+
             if (type === "up") {
               if (userAlreadyUpvoted) {
                 upvotedBy = upvotedBy.filter((id) => id !== appState.userId);
                 newUpvotes--;
+                authorReputationChange = -1;
               } else {
                 upvotedBy = [...upvotedBy, appState.userId];
                 newUpvotes++;
+                authorReputationChange = 1;
                 if (userAlreadyDownvoted) {
                   downvotedBy = downvotedBy.filter(
                     (id) => id !== appState.userId
                   );
                   newDownvotes--;
+                  authorReputationChange += 1;
                 }
               }
             } else if (type === "down") {
@@ -725,12 +1150,15 @@
                   (id) => id !== appState.userId
                 );
                 newDownvotes--;
+                authorReputationChange = 1;
               } else {
                 downvotedBy = [...downvotedBy, appState.userId];
                 newDownvotes++;
+                authorReputationChange = -1;
                 if (userAlreadyUpvoted) {
                   upvotedBy = upvotedBy.filter((id) => id !== appState.userId);
                   newUpvotes--;
+                  authorReputationChange += -1;
                 }
               }
             }
@@ -741,11 +1169,105 @@
               upvotedBy: upvotedBy,
               downvotedBy: downvotedBy,
             });
+
+            // Update author's reputation
+            if (
+              authorReputationChange !== 0 &&
+              currentData.authorId !== appState.userId
+            ) {
+              const authorProfileRef = doc(
+                appState.db,
+                `artifacts/${appId}/users/${currentData.authorId}/userProfile/profile`
+              );
+              const authorProfileSnap = await getDoc(authorProfileRef);
+              if (authorProfileSnap.exists()) {
+                const currentReputation =
+                  authorProfileSnap.data().reputation || 0;
+                await updateDoc(authorProfileRef, {
+                  reputation: Math.max(
+                    0,
+                    currentReputation + authorReputationChange
+                  ),
+                });
+              }
+            }
             showToast("Comment vote updated!", "info");
           }
         } catch (e) {
           console.error("Error updating comment votes: ", e);
           showToast("Error updating comment vote. Check console.", "error");
+        }
+      }
+
+      /**
+       * Toggles follow status for a target user.
+       * @param {string} targetUserId The ID of the user to follow/unfollow.
+       */
+      async function toggleFollow(targetUserId) {
+        if (!appState.db || !appState.userId || !appState.userProfile) {
+          showToast("Please sign in to follow users.", "info");
+          return;
+        }
+        if (targetUserId === appState.userId) {
+          showToast("You cannot follow yourself.", "info");
+          return;
+        }
+
+        try {
+          const appId =
+            typeof __app_id !== "undefined"
+              ? __app_id
+              : "ielts-mahir-community-forum";
+          const currentUserProfileRef = doc(
+            appState.db,
+            `artifacts/${appId}/users/${appState.userId}/userProfile/profile`
+          );
+
+          let updatedFollowingArray;
+          let isCurrentlyFollowing =
+            appState.userProfile.following &&
+            appState.userProfile.following.includes(targetUserId);
+
+          if (isCurrentlyFollowing) {
+            // Unfollow
+            updatedFollowingArray = appState.userProfile.following.filter(
+              (id) => id !== targetUserId
+            );
+            showToast(
+              `Unfollowed ${
+                appState.allUsersProfiles.find((p) => p.userId === targetUserId)
+                  ?.name || "user"
+              }.`,
+              "info"
+            );
+          } else {
+            // Follow
+            updatedFollowingArray = [
+              ...(appState.userProfile.following || []),
+              targetUserId,
+            ];
+            showToast(
+              `Following ${
+                appState.allUsersProfiles.find((p) => p.userId === targetUserId)
+                  ?.name || "user"
+              }!`,
+              "success"
+            );
+          }
+
+          // Update Firestore
+          await updateDoc(currentUserProfileRef, {
+            following: updatedFollowingArray,
+          });
+
+          // Update local appState immediately
+          appState.userProfile.following = updatedFollowingArray;
+
+          // Re-render the main content to update all follow buttons
+          renderMainContent();
+        } catch (e) {
+          console.error("Error toggling follow:", e);
+          showToast("Error toggling follow. Check console.", "error");
         }
       }
 
@@ -763,7 +1285,8 @@
           let chatHistory = [];
           chatHistory.push({ role: "user", parts: [{ text: prompt }] });
           const payload = { contents: chatHistory };
-          const apiKey = "AIzaSyCsdeFOJrU43BZmnRP5WD1pm80fZH1cxN4"; // User provided API Key
+          // IMPORTANT: Updated API key as per user's correction
+          const apiKey = "AIzaSyCsdeFOJrU43BZmnRP5WD1pm80fZH1cxN4";
           const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
 
           const response = await fetch(apiUrl, {
@@ -837,7 +1360,415 @@
         };
       }
 
+      // --- Update User Profile Function ---
+      async function updateUserProfile(updatedData) {
+        if (!appState.db || !appState.userId) {
+          showToast("Error: User not authenticated.", "error");
+          return;
+        }
+        try {
+          const appId =
+            typeof __app_id !== "undefined"
+              ? __app_id
+              : "ielts-mahir-community-forum";
+          const userRef = doc(
+            appState.db,
+            `artifacts/${appId}/users/${appState.userId}/userProfile/profile`
+          );
+
+          // Update user profile document
+          await updateDoc(userRef, updatedData);
+
+          // If the name was updated, update all posts by this user
+          if (
+            updatedData.name &&
+            updatedData.name !== appState.userProfile.name
+          ) {
+            const batch = writeBatch(appState.db);
+            const userPostsQuery = query(
+              collection(appState.db, `artifacts/${appId}/public/data/posts`),
+              where("authorId", "==", appState.userId)
+            );
+            const userPostsSnapshot = await getDocs(userPostsQuery);
+
+            userPostsSnapshot.forEach((postDoc) => {
+              batch.update(postDoc.ref, { authorName: updatedData.name });
+            });
+
+            // Also update comments by this user
+            const userCommentsQuery = query(
+              collection(
+                appState.db,
+                `artifacts/${appId}/public/data/comments`
+              ),
+              where("authorId", "==", appState.userId)
+            );
+            const userCommentsSnapshot = await getDocs(userCommentsQuery);
+
+            userCommentsSnapshot.forEach((commentDoc) => {
+              batch.update(commentDoc.ref, { authorName: updatedData.name });
+            });
+
+            await batch.commit();
+            showToast("Posts and comments updated with new name!", "info");
+          }
+
+          showToast("Profile updated successfully!", "success");
+          appState.editingProfile = false; // Exit editing mode
+          // Re-fetch user profile to update appState with the latest (including implicitly updated name for posts/comments)
+          const userSnap = await getDoc(userRef);
+          if (userSnap.exists()) {
+            appState.userProfile = userSnap.data();
+          }
+          // Ensure allUsersProfiles is updated with the latest current user profile
+          const index = appState.allUsersProfiles.findIndex(
+            (p) => p.userId === appState.userId
+          );
+          if (index > -1) {
+            appState.allUsersProfiles[index] = {
+              ...appState.userProfile,
+              userId: appState.userId,
+            };
+          } else {
+            appState.allUsersProfiles.push({
+              ...appState.userProfile,
+              userId: appState.userId,
+            });
+          }
+          renderProfilePage(appState.userId); // Re-render current user's profile view
+        } catch (e) {
+          console.error("Error updating user profile or posts:", e);
+          showToast("Error updating profile. Check console.", "error");
+        }
+      }
+
       // --- Render Functions for Views ---
+
+      function renderRightSidebar() {
+        const rightSidebar = document.getElementById("right-sidebar");
+        if (!rightSidebar) return; // Only render if sidebar exists (i.e., on larger screens)
+
+        // Clear existing content and set base classes for consistency
+        rightSidebar.innerHTML = "";
+        rightSidebar.className = `w-64 ml-8 p-6 hidden lg:block rounded-2xl shadow-lg ${
+          appState.theme === "light" ? "bg-white" : "bg-gray-800"
+        } flex-shrink-0`;
+
+        // Search Bar Section
+        const searchSection = document.createElement("div");
+        searchSection.className = `mb-8 p-4 rounded-xl ${
+          appState.theme === "light" ? "bg-gray-50" : "bg-gray-700"
+        } shadow-inner`;
+        searchSection.innerHTML = `
+                <h3 class="text-lg font-semibold mb-3 ${
+                  appState.theme === "light" ? "text-gray-800" : "text-white"
+                }">
+                    <i class="fas fa-search mr-2"></i> Search Forum
+                </h3>
+                <div class="relative">
+                    <input type="text" id="sidebar-search-input" placeholder="Search posts and people..." class="w-full p-2.5 pl-10 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                      appState.theme === "light"
+                        ? "border-gray-200 bg-white text-gray-900"
+                        : "border-gray-600 bg-gray-800 text-white"
+                    } transition-colors">
+                    <span class="absolute left-3 top-1/2 -translate-y-1/2 ${
+                      appState.theme === "light"
+                        ? "text-gray-400"
+                        : "text-gray-300"
+                    }">${Icons.Search}</span>
+                </div>
+                <div id="sidebar-search-results" class="mt-3 max-h-60 overflow-y-auto space-y-2 text-sm"></div>
+            `;
+        rightSidebar.appendChild(searchSection);
+
+        const searchInput = document.getElementById("sidebar-search-input");
+        const searchResultsContainer = document.getElementById(
+          "sidebar-search-results"
+        );
+
+        let searchTimeout;
+        searchInput.oninput = () => {
+          clearTimeout(searchTimeout);
+          searchTimeout = setTimeout(() => {
+            const query = searchInput.value.toLowerCase().trim();
+            searchResultsContainer.innerHTML = ""; // Clear previous results
+
+            if (query.length > 0) {
+              // Search for posts
+              const matchingPosts = appState.posts
+                .filter(
+                  (post) =>
+                    post.title.toLowerCase().includes(query) ||
+                    post.content.toLowerCase().includes(query)
+                )
+                .slice(0, 3); // Limit to top 3 posts
+
+              // Search for people
+              const matchingUsers = appState.allUsersProfiles
+                .filter(
+                  (user) =>
+                    user.name.toLowerCase().includes(query) ||
+                    (user.bio && user.bio.toLowerCase().includes(query)) ||
+                    user.userId.toLowerCase().includes(query) // Can also search by user ID prefix
+                )
+                .slice(0, 3); // Limit to top 3 users
+
+              if (matchingPosts.length > 0) {
+                const postsHeader = document.createElement("h4");
+                postsHeader.className = `font-semibold text-base mb-2 mt-3 ${
+                  appState.theme === "light" ? "text-gray-800" : "text-white"
+                }`;
+                postsHeader.textContent = "Posts";
+                searchResultsContainer.appendChild(postsHeader);
+
+                matchingPosts.forEach((post) => {
+                  const resultItem = document.createElement("div");
+                  resultItem.className = `p-2 rounded-lg cursor-pointer ${
+                    appState.theme === "light"
+                      ? "hover:bg-blue-50 text-gray-700"
+                      : "hover:bg-blue-900 text-gray-200"
+                  } transition-colors`;
+                  resultItem.innerHTML = `
+                                    <div class="font-medium ${
+                                      appState.theme === "light"
+                                        ? "text-blue-700"
+                                        : "text-blue-300"
+                                    } line-clamp-1">${post.title}</div>
+                                    <div class="text-xs ${
+                                      appState.theme === "light"
+                                        ? "text-gray-600"
+                                        : "text-gray-400"
+                                    } line-clamp-2">${post.content}</div>
+                                `;
+                  resultItem.onclick = (e) => {
+                    e.stopPropagation(); // Prevent search input from losing focus immediately
+                    navigateTo("postDetail", { post: post });
+                  };
+                  searchResultsContainer.appendChild(resultItem);
+                });
+              }
+
+              if (matchingUsers.length > 0) {
+                const peopleHeader = document.createElement("h4");
+                peopleHeader.className = `font-semibold text-base mb-2 mt-3 ${
+                  appState.theme === "light" ? "text-gray-800" : "text-white"
+                }`;
+                peopleHeader.textContent = "People";
+                searchResultsContainer.appendChild(peopleHeader);
+
+                matchingUsers.forEach((user) => {
+                  const resultItem = document.createElement("div");
+                  resultItem.className = `p-2 rounded-lg cursor-pointer flex items-center gap-2 ${
+                    appState.theme === "light"
+                      ? "hover:bg-green-50 text-gray-700"
+                      : "hover:bg-green-900 text-gray-200"
+                  } transition-colors`;
+                  resultItem.innerHTML = `
+                                    <div class="w-8 h-8 rounded-full flex items-center justify-center bg-blue-100 text-blue-600 text-lg font-bold">
+                                        ${
+                                          user.name
+                                            ? user.name[0].toUpperCase()
+                                            : Icons.User
+                                        }
+                                    </div>
+                                    <div>
+                                        <div class="font-medium ${
+                                          appState.theme === "light"
+                                            ? "text-green-700"
+                                            : "text-green-300"
+                                        }">${
+                    user.name || `User-${user.userId.substring(0, 5)}`
+                  }</div>
+                                        <div class="text-xs ${
+                                          appState.theme === "light"
+                                            ? "text-gray-600"
+                                            : "text-gray-400"
+                                        } line-clamp-1">${
+                    user.bio || "IELTS Aspirant"
+                  } • ${user.reputation || 0} pts</div>
+                                    </div>
+                                `;
+                  resultItem.onclick = (e) => {
+                    e.stopPropagation();
+                    navigateTo("profile", { targetUserId: user.userId });
+                  };
+                  searchResultsContainer.appendChild(resultItem);
+                });
+              }
+
+              if (matchingPosts.length === 0 && matchingUsers.length === 0) {
+                searchResultsContainer.innerHTML = `<p class="p-2 ${
+                  appState.theme === "light" ? "text-gray-500" : "text-gray-400"
+                }">No results found.</p>`;
+              }
+            }
+          }, 300); // Debounce search input
+        };
+
+        // User Stats Section
+        const userStatsSection = document.createElement("div");
+        userStatsSection.className = `mb-8 p-4 rounded-xl ${
+          appState.theme === "light" ? "bg-gray-50" : "bg-gray-700"
+        } shadow-inner`;
+        userStatsSection.innerHTML = `
+                <h3 class="text-lg font-semibold mb-4 ${
+                  appState.theme === "light" ? "text-gray-800" : "text-white"
+                }">
+                    <i class="fas fa-user-circle mr-2"></i> Your Stats
+                </h3>
+                ${
+                  appState.userProfile
+                    ? `
+                    <div class="space-y-3 text-sm">
+                        <div class="flex items-center gap-2 ${
+                          appState.theme === "light"
+                            ? "text-gray-700"
+                            : "text-gray-300"
+                        }">
+                            ${
+                              Icons.Award
+                            } Reputation: <span class="font-bold">${
+                        appState.userProfile.reputation || 0
+                      }</span>
+                        </div>
+                        <div class="flex items-center gap-2 ${
+                          appState.theme === "light"
+                            ? "text-gray-700"
+                            : "text-gray-300"
+                        }">
+                            ${
+                              Icons.Target
+                            } Target Band: <span class="font-bold">${
+                        appState.userProfile.bandGoal || "N/A"
+                      }</span>
+                        </div>
+                        <div class="flex items-center gap-2 ${
+                          appState.theme === "light"
+                            ? "text-gray-700"
+                            : "text-gray-300"
+                        }">
+                            ${Icons.Activity} Status: <span class="font-bold">${
+                        appState.userProfile.preparationStatus || "New Learner"
+                      }</span>
+                        </div>
+                    </div>
+                `
+                    : `<p class="text-sm ${
+                        appState.theme === "light"
+                          ? "text-gray-600"
+                          : "text-gray-400"
+                      }">Sign in to see your stats.</p>`
+                }
+            `;
+        rightSidebar.appendChild(userStatsSection);
+
+        // Top Users Section (Simplified Leaderboard)
+        const topUsersSection = document.createElement("div");
+        topUsersSection.className = `mb-8 p-4 rounded-xl ${
+          appState.theme === "light" ? "bg-gray-50" : "bg-gray-700"
+        } shadow-inner`;
+        // Sort allUsersProfiles by reputation in descending order, take top 5
+        const topUsers = [...appState.allUsersProfiles]
+          .sort((a, b) => (b.reputation || 0) - (a.reputation || 0))
+          .slice(0, 5);
+
+        let topUsersHtml = "";
+        if (topUsers.length > 0) {
+          topUsersHtml = `<ul class="space-y-3 text-sm">`;
+          topUsers.forEach((user) => {
+            topUsersHtml += `
+                    <li class="flex items-center gap-2 ${
+                      appState.theme === "light"
+                        ? "text-gray-700"
+                        : "text-gray-300"
+                    }">
+                        <span class="w-5 h-5 flex-shrink-0">${
+                          Icons.Award
+                        }</span>
+                        <span class="flex-1 font-semibold cursor-pointer hover:underline" data-user-id="${
+                          user.userId
+                        }">${
+              user.name || `User-${user.userId.substring(0, 5)}`
+            }</span>
+                        <span class="font-bold text-blue-500">${
+                          user.reputation || 0
+                        } pts</span>
+                    </li>
+                `;
+          });
+          topUsersHtml += `</ul>`;
+        } else {
+          topUsersHtml = `<p class="text-sm ${
+            appState.theme === "light" ? "text-gray-600" : "text-gray-400"
+          }">No top users yet.</p>`;
+        }
+
+        topUsersSection.innerHTML = `
+            <h3 class="text-lg font-semibold mb-4 ${
+              appState.theme === "light" ? "text-gray-800" : "text-white"
+            }">
+                <i class="fas fa-trophy mr-2"></i> Top Users
+            </h3>
+            ${topUsersHtml}
+        `;
+        rightSidebar.appendChild(topUsersSection);
+
+        // Make top user names clickable
+        topUsers.forEach((user) => {
+          const userLink = topUsersSection.querySelector(
+            `[data-user-id="${user.userId}"]`
+          );
+          if (userLink) {
+            userLink.onclick = (e) => {
+              e.stopPropagation();
+              navigateTo("profile", { targetUserId: user.userId });
+            };
+          }
+        });
+
+        // Quick Links Section
+        const quickLinksSection = document.createElement("div");
+        quickLinksSection.className = `p-4 rounded-xl ${
+          appState.theme === "light" ? "bg-gray-50" : "bg-gray-700"
+        } shadow-inner`;
+        quickLinksSection.innerHTML = `
+                <h3 class="text-lg font-semibold mb-4 ${
+                  appState.theme === "light" ? "text-gray-800" : "text-white"
+                }">
+                    <i class="fas fa-external-link-alt mr-2"></i> Quick Links
+                </h3>
+                <ul class="space-y-3 text-sm">
+                    <li>
+                        <a href="https://www.ielts.org/" target="_blank" rel="noopener noreferrer" class="flex items-center gap-2 ${
+                          appState.theme === "light"
+                            ? "text-blue-600 hover:text-blue-700"
+                            : "text-blue-400 hover:text-blue-300"
+                        } transition-colors">
+                            ${Icons.Link} Official IELTS Website
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://takeielts.britishcouncil.org/prepare-test/free-ielts-practice-tests" target="_blank" rel="noopener noreferrer" class="flex items-center gap-2 ${
+                          appState.theme === "light"
+                            ? "text-blue-600 hover:text-blue-700"
+                            : "text-blue-400 hover:text-blue-300"
+                        } transition-colors">
+                            ${Icons.Link} Free Practice Tests
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://www.youtube.com/c/E2IELTS" target="_blank" rel="noopener noreferrer" class="flex items-center gap-2 ${
+                          appState.theme === "light"
+                            ? "text-blue-600 hover:text-blue-700"
+                            : "text-blue-400 hover:text-blue-300"
+                        } transition-colors">
+                            ${Icons.Link} E2 IELTS YouTube
+                        </a>
+                    </li>
+                </ul>
+            `;
+        rightSidebar.appendChild(quickLinksSection);
+      }
 
       function renderHeader() {
         const header = elements.header;
@@ -894,7 +1825,7 @@
           navigateTo("createPost");
         document.getElementById("theme-toggle-btn").onclick = toggleTheme;
         document.getElementById("profile-btn").onclick = () =>
-          navigateTo("profile");
+          navigateTo("profile", { targetUserId: appState.userId }); // Navigate to *current* user's profile
         document.getElementById("menu-toggle-btn").onclick = () => {
           appState.showSidebar = !appState.showSidebar;
           renderSidebar();
@@ -948,6 +1879,89 @@
         };
 
         const sidebarNav = document.getElementById("sidebar-nav");
+
+        // Add main feed filters
+        const feedFiltersDiv = document.createElement("div");
+        feedFiltersDiv.className = `pb-4 mb-4 border-b ${
+          appState.theme === "light" ? "border-gray-200" : "border-gray-700"
+        }`;
+        feedFiltersDiv.innerHTML = `
+            <h3 class="text-lg font-semibold mb-3 ${
+              appState.theme === "light" ? "text-gray-800" : "text-white"
+            }">
+                <span class="w-5 h-5 mr-2">${Icons.Filter}</span> Filter Feed
+            </h3>
+            <ul class="space-y-2">
+                <li>
+                    <button id="feed-latest-btn" class="block w-full text-left p-2 rounded-lg font-normal ${
+                      appState.homeFeedType === "latest"
+                        ? appState.theme === "light"
+                          ? "bg-blue-100 text-blue-700"
+                          : "bg-blue-800 text-blue-100"
+                        : appState.theme === "light"
+                        ? "text-gray-700 hover:bg-blue-50 hover:text-blue-700"
+                        : "text-gray-200 hover:bg-blue-900 hover:text-blue-100"
+                    } transition-all">
+                        Latest Posts
+                    </button>
+                </li>
+                <li>
+                    <button id="feed-for-you-btn" class="block w-full text-left p-2 rounded-lg font-normal ${
+                      appState.homeFeedType === "forYou"
+                        ? appState.theme === "light"
+                          ? "bg-blue-100 text-blue-700"
+                          : "bg-blue-800 text-blue-100"
+                        : appState.theme === "light"
+                        ? "text-gray-700 hover:bg-blue-50 hover:text-blue-700"
+                        : "text-gray-200 hover:bg-blue-900 hover:text-blue-100"
+                    } transition-all">
+                        <span class="w-4 h-4 inline-block align-middle mr-1">${
+                          Icons.Heart
+                        }</span> For You
+                    </button>
+                </li>
+                <li>
+                    <button id="feed-following-btn" class="block w-full text-left p-2 rounded-lg font-normal ${
+                      appState.homeFeedType === "following"
+                        ? appState.theme === "light"
+                          ? "bg-blue-100 text-blue-700"
+                          : "bg-blue-800 text-blue-100"
+                        : appState.theme === "light"
+                        ? "text-gray-700 hover:bg-blue-50 hover:text-blue-700"
+                        : "text-gray-200 hover:bg-blue-900 hover:text-blue-100"
+                    } transition-all">
+                        <span class="w-4 h-4 inline-block align-middle mr-1">${
+                          Icons.Users
+                        }</span> Following
+                    </button>
+                </li>
+            </ul>
+        `;
+        sidebarNav.appendChild(feedFiltersDiv);
+
+        document.getElementById("feed-latest-btn").onclick = () =>
+          navigateTo("home", { homeFeedType: "latest" });
+        document.getElementById("feed-for-you-btn").onclick = () =>
+          navigateTo("home", { homeFeedType: "forYou" });
+        document.getElementById("feed-following-btn").onclick = () =>
+          navigateTo("home", { homeFeedType: "following" });
+
+        // Add Categories section
+        const categoriesSection = document.createElement("div");
+        categoriesSection.className = `pb-4`;
+        categoriesSection.innerHTML = `
+            <h3 class="text-lg font-semibold mb-3 ${
+              appState.theme === "light" ? "text-gray-800" : "text-white"
+            }">
+                <span class="w-5 h-5 mr-2">${
+                  Icons.ChevronDown
+                }</span> Categories
+            </h3>
+            <nav id="categories-nav" class="space-y-3"></nav>
+        `;
+        sidebarNav.appendChild(categoriesSection);
+        const categoriesNav = document.getElementById("categories-nav");
+
         categoriesData.forEach((category) => {
           const categoryDiv = document.createElement("div");
           const isCategoryActive = appState.activeCategory === category.name;
@@ -994,7 +2008,7 @@
                         : ""
                     }
                 `;
-          sidebarNav.appendChild(categoryDiv);
+          categoriesNav.appendChild(categoryDiv); // Append to categoriesNav instead of sidebarNav directly
 
           document.getElementById(
             `category-btn-${category.name.replace(/\s/g, "-")}`
@@ -1025,6 +2039,7 @@
                 appState.theme === "light" ? "text-gray-600" : "text-gray-300"
               }`
             ); // Set text color for subcategories
+            subcategoriesList.classList.add("pl-4"); // Added padding to push items away from border
             category.subcategories.forEach((sub) => {
               const subLi = document.createElement("li");
               const isSubCategoryActive =
@@ -1063,7 +2078,16 @@
                       appState.theme === "light"
                         ? "text-gray-900"
                         : "text-white"
-                    }">Latest Discussions
+                    }">
+                        ${
+                          appState.homeFeedType === "latest"
+                            ? "Latest Discussions"
+                            : appState.homeFeedType === "forYou"
+                            ? "For You Discussions"
+                            : appState.homeFeedType === "following"
+                            ? "Discussions from Followed Users"
+                            : "Latest Discussions"
+                        }
                         ${
                           appState.activeCategory
                             ? `<span class="${
@@ -1092,8 +2116,10 @@
                 </div>
             `;
 
-        // Filter posts based on active category and subcategory (client-side filtering)
-        const filteredPosts = appState.posts.filter((post) => {
+        let postsToDisplay = [...appState.posts]; // Create a mutable copy
+
+        // Apply category/subcategory filters
+        postsToDisplay = postsToDisplay.filter((post) => {
           let matchesCategory = true;
           let matchesSubCategory = true;
 
@@ -1107,23 +2133,76 @@
           return matchesCategory && matchesSubCategory;
         });
 
+        // Apply feed type specific sorting/filtering
+        if (appState.homeFeedType === "forYou") {
+          // Simple "For You" logic: prioritize by net upvotes (upvotes - downvotes), then recency
+          postsToDisplay.sort((a, b) => {
+            const aScore = (a.upvotes || 0) - (a.downvotes || 0);
+            const bScore = (b.upvotes || 0) - (b.downvotes || 0); // Corrected: should be b.downvotes
+            if (bScore !== aScore) return bScore - aScore; // Higher score first
+            return (
+              (b.createdAt?.toDate() || new Date(0)) -
+              (a.createdAt?.toDate() || new Date(0))
+            ); // More recent if scores are equal
+          });
+        } else if (appState.homeFeedType === "following") {
+          const followedUserIds = appState.userProfile?.following || [];
+          if (followedUserIds.length > 0) {
+            postsToDisplay = postsToDisplay.filter((post) =>
+              followedUserIds.includes(post.authorId)
+            );
+          } else {
+            postsToDisplay = []; // No posts if not following anyone
+          }
+          // Always sort followed posts by recency
+          postsToDisplay.sort(
+            (a, b) =>
+              (b.createdAt?.toDate() || new Date(0)) -
+              (a.createdAt?.toDate() || new Date(0))
+          );
+        } else {
+          // 'latest' or default
+          // Already sorted by createdAt DESC in Firestore listener, so no extra sort needed here.
+          // If it wasn't, we'd do: postsToDisplay.sort((a, b) => (b.createdAt?.toDate() || new Date(0)) - (a.createdAt?.toDate() || new Date(0)));
+        }
+
         const postsContainer = document.getElementById("posts-container");
-        if (filteredPosts.length === 0) {
+        if (postsToDisplay.length === 0) {
+          let message = "No posts found for this selection.";
+          if (appState.homeFeedType === "following") {
+            message =
+              "You are not following any users, or they haven't posted yet.";
+          }
           postsContainer.innerHTML = `<p class="text-lg ${
             appState.theme === "light" ? "text-gray-600" : "text-gray-400"
-          }">No posts found for this selection. Be the first to create one!</p>`;
+          }">${message} Be the first to create one!</p>`;
         } else {
-          filteredPosts.forEach((post) => {
+          postsToDisplay.forEach((post) => {
             const postDiv = document.createElement("div");
             postDiv.className = `p-6 rounded-2xl shadow-lg transition-all duration-200 hover:shadow-xl hover:scale-[1.01] cursor-pointer ${
               appState.theme === "light" ? "bg-white" : "bg-gray-800"
             }`;
-            postDiv.onclick = () => navigateTo("postDetail", { post: post });
+            // Removed direct onclick on postDiv to prevent conflict with internal buttons
+            // instead, we'll make sure clicking anywhere else on the postdiv also navigates
+            postDiv.addEventListener("click", (e) => {
+              // Only navigate if the click target is not a button or a clickable span (like author name, which will have its own handler)
+              if (
+                e.target.tagName !== "BUTTON" &&
+                e.target.tagName !== "SPAN" &&
+                e.target.tagName !== "A"
+              ) {
+                navigateTo("postDetail", { post: post });
+              }
+            });
 
-            const createdAtDate = post.createdAt
-              ? new Date(post.createdAt.toDate()).toLocaleString()
-              : "N/A";
+            const formattedTime = formatRelativeTime(post.createdAt);
             const commentsCount = (appState.comments[post.id] || []).length;
+
+            const isAuthorCurrentUsers =
+              appState.userId && post.authorId === appState.userId;
+            const isFollowingAuthor = appState.userProfile?.following?.includes(
+              post.authorId
+            );
 
             postDiv.innerHTML = `
                         <h3 class="text-xl font-semibold font-normal mb-2 ${
@@ -1149,9 +2228,36 @@
             }">
                             <div class="flex items-center gap-2">
                                 <span class="w-4 h-4">${Icons.User}</span>
-                                <span>${post.authorName || "Anonymous"}</span>
+                                <span class="font-bold cursor-pointer hover:underline" data-user-id="${
+                                  post.authorId
+                                }">${post.authorName || "Anonymous"}</span>
+                                ${
+                                  !isAuthorCurrentUsers && appState.userId
+                                    ? `
+                                    <button class="ml-2 px-2 py-1 rounded-full text-xs font-semibold
+                                        ${
+                                          isFollowingAuthor
+                                            ? "bg-gray-300 text-gray-800 hover:bg-gray-400"
+                                            : "bg-blue-100 text-blue-700 hover:bg-blue-200"
+                                        }
+                                        dark:${
+                                          isFollowingAuthor
+                                            ? "bg-gray-600 text-white hover:bg-gray-700"
+                                            : "bg-blue-900 text-blue-200 hover:bg-blue-800"
+                                        }
+                                        transition-colors transform active:scale-95 follow-button hidden sm:block"
+                                        data-target-user-id="${post.authorId}">
+                                        ${
+                                          isFollowingAuthor
+                                            ? `<i class="fas fa-check"></i> Unfollow`
+                                            : `<i class="fas fa-user-plus"></i> Follow`
+                                        }
+                                    </button>
+                                `
+                                    : ""
+                                }
                                 <span class="mx-1">•</span>
-                                <span>${createdAtDate}</span>
+                                <span>${formattedTime}</span>
                             </div>
                             <div class="flex items-center gap-3">
                                 <span class="flex items-center gap-1 text-green-500">
@@ -1216,6 +2322,26 @@
                         }
                     `;
             postsContainer.appendChild(postDiv);
+
+            // Make author names clickable
+            const authorNameSpan = postDiv.querySelector(
+              `span[data-user-id="${post.authorId}"]`
+            );
+            if (authorNameSpan) {
+              authorNameSpan.onclick = (e) => {
+                e.stopPropagation(); // Prevent the postDiv's click event from firing
+                navigateTo("profile", { targetUserId: post.authorId });
+              };
+            }
+
+            // Attach event listener for the new follow button
+            const followButton = postDiv.querySelector(`.follow-button`);
+            if (followButton) {
+              followButton.onclick = (e) => {
+                e.stopPropagation(); // Prevent the postDiv's click event from firing
+                toggleFollow(post.authorId);
+              };
+            }
           });
         }
         renderRightSidebar(); // Render the right sidebar for home view
@@ -1227,6 +2353,13 @@
           navigateTo("home"); // Redirect if no post is selected
           return;
         }
+
+        const isAuthorCurrentUsers =
+          appState.userId && post.authorId === appState.userId;
+        const isFollowingAuthor = appState.userProfile?.following?.includes(
+          post.authorId
+        );
+        const formattedTime = formatRelativeTime(post.createdAt);
 
         const mainContent = elements.mainContent;
         mainContent.innerHTML = `
@@ -1299,7 +2432,7 @@
                                 </h2>
                                 <div class="flex gap-2">
                                     ${
-                                      post.authorId === appState.userId
+                                      isAuthorCurrentUsers
                                         ? `
                                         <button id="edit-post-btn" class="p-2 rounded-full ${
                                           appState.theme === "light"
@@ -1328,8 +2461,34 @@
                                 }">
                                     <span class="w-4 h-4">${
                                       Icons.User
-                                    }</span> ${post.authorName || "Anonymous"}
+                                    }</span> <span class="font-bold cursor-pointer hover:underline" data-user-id="${
+                                post.authorId
+                              }">${post.authorName || "Anonymous"}</span>
                                 </span>
+                                ${
+                                  !isAuthorCurrentUsers && appState.userId
+                                    ? `
+                                    <button id="follow-author-btn" class="px-2 py-1 rounded-full text-xs font-semibold
+                                        ${
+                                          isFollowingAuthor
+                                            ? "bg-gray-300 text-gray-800 hover:bg-gray-400"
+                                            : "bg-blue-100 text-blue-700 hover:bg-blue-200"
+                                        }
+                                        dark:${
+                                          isFollowingAuthor
+                                            ? "bg-gray-600 text-white hover:bg-gray-700"
+                                            : "bg-blue-900 text-blue-200 hover:bg-blue-800"
+                                        }
+                                        transition-colors transform active:scale-95">
+                                        ${
+                                          isFollowingAuthor
+                                            ? `<i class="fas fa-check"></i> Unfollow`
+                                            : `<i class="fas fa-user-plus"></i> Follow`
+                                        }
+                                    </button>
+                                `
+                                    : ""
+                                }
                                 ${
                                   post.createdAt
                                     ? `<span class="flex items-center gap-1 ${
@@ -1338,15 +2497,13 @@
                                           : "text-gray-300"
                                       }">
                                     <span class="mx-1">•</span>
-                                    ${new Date(
-                                      post.createdAt.toDate()
-                                    ).toLocaleString()}
+                                    ${formattedTime}
                                 </span>`
                                     : ""
                                 }
                                 ${
                                   post.isResolved
-                                    ? `<span class="flex items-center gap-1 text-green-600 font-semibold px-2 py-1 bg-green-100 rounded-full dark:bg-green-900 dark:text-green-200">
+                                    ? `<span class="flex items-center gap-1 text-green-600 font-semibold px-2 py-1 bg-green-100 dark:bg-green-900 dark:text-green-200 rounded-full">
                                     <span class="w-4 h-4">${Icons.CheckCircle}</span> Resolved
                                 </span>`
                                     : ""
@@ -1550,6 +2707,26 @@
         document.getElementById("downvote-btn").onclick = () =>
           updatePostVotes(post.id, "down");
 
+        // Make author name clickable
+        const authorNameSpan = mainContent.querySelector(
+          `span[data-user-id="${post.authorId}"]`
+        );
+        if (authorNameSpan) {
+          authorNameSpan.onclick = (e) => {
+            e.stopPropagation();
+            navigateTo("profile", { targetUserId: post.authorId });
+          };
+        }
+
+        // Attach event listener for the new follow button on post detail page
+        const followAuthorBtn = document.getElementById("follow-author-btn");
+        if (followAuthorBtn) {
+          followAuthorBtn.onclick = (e) => {
+            e.stopPropagation();
+            toggleFollow(post.authorId);
+          };
+        }
+
         if (post.authorId === appState.userId) {
           const resolveBtn = document.getElementById("resolve-btn");
           if (resolveBtn) {
@@ -1734,15 +2911,19 @@
           // Apply ml-8 only if it's a reply
           const indentClasses = isReply ? "ml-8" : "";
 
+          const isAuthorCurrentUsers =
+            appState.userId && comment.authorId === appState.userId;
+          const isFollowingAuthor = appState.userProfile?.following?.includes(
+            comment.authorId
+          );
+          const formattedTime = formatRelativeTime(comment.createdAt);
+
           const commentDiv = document.createElement("div");
           commentDiv.className = `p-4 rounded-xl shadow-sm mb-3 ${
             appState.theme === "light"
               ? "bg-white border border-gray-100"
               : "bg-gray-800 border border-gray-700"
           } ${indentClasses}`;
-          const createdAtDate = comment.createdAt
-            ? new Date(comment.createdAt.toDate()).toLocaleString()
-            : "N/A";
 
           let repliedToHtml = "";
           if (isReply) {
@@ -1761,13 +2942,40 @@
                           appState.theme === "light"
                             ? "text-gray-800"
                             : "text-gray-200"
-                        }">${comment.authorName || "Anonymous"}</span>
+                        } cursor-pointer hover:underline" data-user-id="${
+            comment.authorId
+          }">${comment.authorName || "Anonymous"}</span>
+                        ${
+                          !isAuthorCurrentUsers && appState.userId
+                            ? `
+                            <button class="ml-2 px-2 py-1 rounded-full text-xs font-semibold
+                                ${
+                                  isFollowingAuthor
+                                    ? "bg-gray-300 text-gray-800 hover:bg-gray-400"
+                                    : "bg-gray-600 text-white hover:bg-gray-700"
+                                }
+                                dark:${
+                                  isFollowingAuthor
+                                    ? "bg-gray-600 text-white hover:bg-gray-700"
+                                    : "bg-blue-900 text-blue-200 hover:bg-blue-800"
+                                }
+                                transition-colors transform active:scale-95 follow-button-comment"
+                                data-target-user-id="${comment.authorId}">
+                                ${
+                                  isFollowingAuthor
+                                    ? `<i class="fas fa-check"></i> Unfollow`
+                                    : `<i class="fas fa-user-plus"></i> Follow`
+                                }
+                            </button>
+                        `
+                            : ""
+                        }
                         <span class="${
                           appState.theme === "light"
                             ? "text-gray-500"
                             : "text-gray-400"
                         }">
-                            ${createdAtDate}
+                            ${formattedTime}
                         </span>
                     </div>
                     ${
@@ -1913,6 +3121,28 @@
                     </div>
                 `;
           containerElement.appendChild(commentDiv);
+
+          // Make author name clickable in comments
+          const commentAuthorNameSpan = commentDiv.querySelector(
+            `span[data-user-id="${comment.authorId}"]`
+          );
+          if (commentAuthorNameSpan) {
+            commentAuthorNameSpan.onclick = (e) => {
+              e.stopPropagation();
+              navigateTo("profile", { targetUserId: comment.authorId });
+            };
+          }
+
+          // Attach event listener for the new follow button in comments
+          const followCommentAuthorBtn = commentDiv.querySelector(
+            `.follow-button-comment`
+          );
+          if (followCommentAuthorBtn) {
+            followCommentAuthorBtn.onclick = (e) => {
+              e.stopPropagation();
+              toggleFollow(comment.authorId);
+            };
+          }
 
           // Attach event listeners for comment actions
           document.getElementById(
@@ -2103,6 +3333,7 @@
                                     ? "text-gray-700"
                                     : "text-gray-300"
                                 }">Content</label>
+                                <!-- Rich Text Editor Placeholder -->
                                 <textarea id="post-content" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
                                   appState.theme === "light"
                                     ? "border-gray-200 bg-gray-50 text-gray-900"
@@ -2113,7 +3344,7 @@
                                     ? "text-gray-500"
                                     : "text-gray-400"
                                 }">
-                                    Share your thoughts, questions, or tips.
+                                    Share your thoughts, questions, or tips. (A rich text editor will be added here soon for better formatting!)
                                 </p>
                             </div>
                             <!-- Image and Video upload fields removed -->
@@ -2237,14 +3468,109 @@
         renderRightSidebar(); // Render the right sidebar for create post view
       }
 
-      function renderUserProfile() {
+      /**
+       * Renders a user's profile page. This function now supports viewing
+       * both the current user's profile and other users' profiles.
+       * @param {string} targetUserId The ID of the user whose profile is to be displayed.
+       */
+      async function renderProfilePage(targetUserId) {
         const mainContent = elements.mainContent;
-        if (!appState.userProfile) {
+        const appId =
+          typeof __app_id !== "undefined"
+            ? __app_id
+            : "ielts-mahir-community-forum";
+
+        let profileData = appState.allUsersProfiles.find(
+          (p) => p.userId === targetUserId
+        );
+        let isCurrentUserProfile = targetUserId === appState.userId;
+
+        // If profileData is not in our local cache, fetch it.
+        if (!profileData) {
+          if (!appState.db) {
+            mainContent.innerHTML = `<div class="flex-1 p-6 flex justify-center items-center ${
+              appState.theme === "light" ? "text-gray-700" : "text-gray-300"
+            }">Database not initialized.</div>`;
+            return;
+          }
           mainContent.innerHTML = `<div class="flex-1 p-6 flex justify-center items-center ${
             appState.theme === "light" ? "text-gray-700" : "text-gray-300"
-          }">Loading user profile...</div>`;
-          return;
+          }">
+                    <div class="flex flex-col items-center">
+                        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mb-4"></div>
+                        <p class="text-lg ${
+                          appState.theme === "light"
+                            ? "text-gray-700"
+                            : "text-gray-300"
+                        }">Loading profile...</p>
+                    </div>
+                </div>`;
+          try {
+            const userRef = doc(
+              appState.db,
+              `artifacts/${appId}/users/${targetUserId}/userProfile/profile`
+            );
+            const userSnap = await getDoc(userRef);
+            if (userSnap.exists()) {
+              profileData = { userId: targetUserId, ...userSnap.data() };
+              // Add to cache
+              const index = appState.allUsersProfiles.findIndex(
+                (p) => p.userId === targetUserId
+              );
+              if (index === -1) {
+                appState.allUsersProfiles.push(profileData);
+              } else {
+                appState.allUsersProfiles[index] = profileData;
+              }
+            } else {
+              mainContent.innerHTML = `<div class="flex-1 p-6 flex justify-center items-center ${
+                appState.theme === "light" ? "text-red-600" : "text-red-400"
+              }">User profile not found.</div>`;
+              return;
+            }
+          } catch (e) {
+            console.error("Error fetching profile:", e);
+            mainContent.innerHTML = `<div class="flex-1 p-6 flex justify-center items-center ${
+              appState.theme === "light" ? "text-red-600" : "text-red-400"
+            }">Error loading profile.</div>`;
+            showToast("Error loading profile. Check console.", "error");
+            return;
+          }
         }
+
+        const profile = profileData;
+        let lastLoginStatus = "N/A";
+        if (profile.lastLogin) {
+          const now = new Date();
+          const lastLoginDate = profile.lastLogin.toDate();
+          const minutesSinceLastLogin = Math.floor(
+            (now - lastLoginDate) / (1000 * 60)
+          );
+
+          if (minutesSinceLastLogin <= 15) {
+            // Consider "active now" if logged in within last 15 minutes
+            lastLoginStatus = "Active Now";
+          } else {
+            lastLoginStatus = `Last Online: ${formatRelativeTime(
+              profile.lastLogin
+            )}`;
+          }
+        }
+
+        // Filter posts created by the current viewed user
+        const userPosts = appState.posts.filter(
+          (post) => post.authorId === targetUserId
+        );
+
+        // Check if current user is following the viewed profile
+        const isFollowing = appState.userProfile?.following?.includes(
+          targetUserId
+        );
+
+        // Calculate followers from the local cache of all users
+        const followersCount = appState.allUsersProfiles.filter((p) =>
+          p.following?.includes(targetUserId)
+        ).length;
 
         mainContent.innerHTML = `
                 <div class="flex-1">
@@ -2262,98 +3588,354 @@
                     }">
                         <div class="flex flex-col sm:flex-row items-center gap-6 mb-6 pb-6 border-b border-gray-200 dark:border-gray-700">
                             <div class="w-28 h-28 rounded-full flex items-center justify-center bg-blue-100 text-blue-600 text-6xl font-anton ring-4 ring-blue-200 dark:ring-blue-700">
-                                ${appState.userProfile.name[0]}
+                                ${
+                                  profile.name
+                                    ? profile.name[0].toUpperCase()
+                                    : Icons.User
+                                }
                             </div>
-                            <div class="text-center sm:text-left">
+                            <div class="text-center sm:text-left flex-1">
                                 <h2 class="text-3xl md:text-4xl font-bold font-anton ${
                                   appState.theme === "light"
                                     ? "text-gray-900"
                                     : "text-white"
-                                }">${appState.userProfile.name}</h2>
+                                }">${profile.name || "Anonymous"}</h2>
                                 <p class="text-md ${
                                   appState.theme === "light"
                                     ? "text-gray-600"
                                     : "text-gray-400"
-                                }">User ID: ${appState.userId}</p>
+                                }">User ID: ${targetUserId}</p>
+                                ${
+                                  profile.lastLogin
+                                    ? `<p class="text-xs ${
+                                        appState.theme === "light"
+                                          ? "text-gray-500"
+                                          : "text-gray-400"
+                                      }">Status: ${lastLoginStatus}</p>`
+                                    : ""
+                                }
+                            </div>
+                            <div class="flex-shrink-0">
+                                ${
+                                  isCurrentUserProfile && appState.userId
+                                    ? appState.editingProfile
+                                      ? `
+                                        <button id="save-profile-btn" class="flex items-center gap-2 px-5 py-2.5 bg-green-600 text-white rounded-xl shadow-md hover:bg-green-700 transition-all text-sm font-semibold transform active:scale-95">
+                                            ${Icons.Save} Save Changes
+                                        </button>
+                                        <button id="cancel-edit-profile-btn" class="flex items-center gap-2 px-5 py-2.5 bg-gray-300 text-gray-800 rounded-xl shadow-md hover:bg-gray-400 transition-all text-sm font-semibold transform active:scale-95 mt-2">
+                                            ${Icons.Cancel} Cancel
+                                        </button>
+                                    `
+                                      : `
+                                        <button id="edit-profile-btn" class="flex items-center gap-2 px-5 py-2.5 bg-blue-600 text-white rounded-xl shadow-md hover:bg-blue-700 transition-all text-sm font-semibold transform active:scale-95">
+                                            ${Icons.Edit} Edit Profile
+                                        </button>
+                                    `
+                                    : // Render Follow/Unfollow button for other users
+                                    appState.userId &&
+                                      targetUserId !== appState.userId
+                                    ? `
+                                        <button id="follow-btn" class="flex items-center gap-2 px-5 py-2.5 rounded-xl shadow-md transition-all text-sm font-semibold transform active:scale-95 ${
+                                          isFollowing
+                                            ? "bg-gray-300 text-gray-800 hover:bg-gray-400"
+                                            : "bg-blue-600 text-white hover:bg-blue-700"
+                                        }">
+                                            ${
+                                              isFollowing
+                                                ? `<i class="fas fa-check"></i> Unfollow`
+                                                : `<i class="fas fa-user-plus"></i> Follow`
+                                            }
+                                        </button>
+                                    `
+                                    : ""
+                                }
                             </div>
                         </div>
 
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                            <div>
-                                <h3 class="text-xl font-semibold font-normal mb-4 ${
-                                  appState.theme === "light"
-                                    ? "text-gray-800"
-                                    : "text-white"
-                                }">Performance & Goals</h3>
-                                <div class="space-y-4">
-                                    <div class="flex items-center gap-3 p-3 rounded-lg ${
+                        ${
+                          isCurrentUserProfile && appState.editingProfile
+                            ? `
+                            <!-- Edit Profile Form -->
+                            <div class="space-y-4">
+                                <div>
+                                    <label for="edit-profile-name" class="block text-sm font-medium mb-1 ${
                                       appState.theme === "light"
-                                        ? "bg-gray-50"
-                                        : "bg-gray-700"
-                                    } shadow-sm">
-                                        <span class="w-5 h-5">${
-                                          Icons.Award
-                                        }</span>
-                                        <span class="font-normal ${
+                                        ? "text-gray-700"
+                                        : "text-gray-300"
+                                    }">Name</label>
+                                    <input type="text" id="edit-profile-name" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                                      appState.theme === "light"
+                                        ? "border-gray-200 bg-gray-50 text-gray-900"
+                                        : "border-gray-700 bg-gray-900 text-white"
+                                    } transition-colors" value="${
+                                profile.name || ""
+                              }" required />
+                                </div>
+                                <div>
+                                    <label for="edit-profile-bio" class="block text-sm font-medium mb-1 ${
+                                      appState.theme === "light"
+                                        ? "text-gray-700"
+                                        : "text-gray-300"
+                                    }">Bio (Optional)</label>
+                                    <textarea id="edit-profile-bio" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                                      appState.theme === "light"
+                                        ? "border-gray-200 bg-gray-50 text-gray-900"
+                                        : "border-gray-700 bg-gray-900 text-white"
+                                    } transition-colors" rows="3" placeholder="Tell us about yourself...">${
+                                profile.bio || ""
+                              }</textarea>
+                                </div>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label for="edit-profile-band-goal" class="block text-sm font-medium mb-1 ${
                                           appState.theme === "light"
                                             ? "text-gray-700"
                                             : "text-gray-300"
-                                        }">
-                                            Reputation Points: <span class="font-bold text-lg">${
-                                              appState.userProfile.reputation
-                                            }</span>
-                                        </span>
+                                        }">Target Band</label>
+                                        <select id="edit-profile-band-goal" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                                          appState.theme === "light"
+                                            ? "border-gray-200 bg-gray-50 text-gray-900"
+                                            : "border-gray-700 bg-gray-900 text-white"
+                                        } transition-colors"></select>
                                     </div>
-                                    <div class="flex items-center gap-3 p-3 rounded-lg ${
-                                      appState.theme === "light"
-                                        ? "bg-gray-50"
-                                        : "bg-gray-700"
-                                    } shadow-sm">
-                                        <span class="w-5 h-5">${
-                                          Icons.Target
-                                        }</span>
-                                        <span class="font-normal ${
+                                    <div>
+                                        <label for="edit-profile-prep-status" class="block text-sm font-medium mb-1 ${
                                           appState.theme === "light"
                                             ? "text-gray-700"
                                             : "text-gray-300"
-                                        }">
-                                            Target Band: <span class="font-bold text-lg">${
-                                              appState.userProfile.bandGoal
-                                            }</span>
-                                        </span>
+                                        }">Preparation Status</label>
+                                        <select id="edit-profile-prep-status" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                                          appState.theme === "light"
+                                            ? "border-gray-200 bg-gray-50 text-gray-900"
+                                            : "border-gray-700 bg-gray-900 text-white"
+                                        } transition-colors"></select>
                                     </div>
-                                    <div class="flex items-center gap-3 p-3 rounded-lg ${
-                                      appState.theme === "light"
-                                        ? "bg-gray-50"
-                                        : "bg-gray-700"
-                                    } shadow-sm">
-                                        <span class="w-5 h-5">${
-                                          Icons.Activity
-                                        }</span>
-                                        <span class="font-normal ${
+                                    <div>
+                                        <label for="edit-profile-country" class="block text-sm font-medium mb-1 ${
                                           appState.theme === "light"
                                             ? "text-gray-700"
                                             : "text-gray-300"
-                                        }">
-                                            Preparation Status: <span class="font-bold text-lg">${
-                                              appState.userProfile
-                                                .preparationStatus
-                                            }</span>
-                                        </span>
+                                        }">Country</label>
+                                        <select id="edit-profile-country" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                                          appState.theme === "light"
+                                            ? "border-gray-200 bg-gray-50 text-gray-900"
+                                            : "border-gray-700 bg-gray-900 text-white"
+                                        } transition-colors"></select>
+                                    </div>
+                                    <div>
+                                        <label for="edit-profile-ielts-experience" class="block text-sm font-medium mb-1 ${
+                                          appState.theme === "light"
+                                            ? "text-gray-700"
+                                            : "text-gray-300"
+                                        }">IELTS Experience</label>
+                                        <select id="edit-profile-ielts-experience" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                                          appState.theme === "light"
+                                            ? "border-gray-200 bg-gray-50 text-gray-900"
+                                            : "border-gray-700 bg-gray-900 text-white"
+                                        } transition-colors"></select>
                                     </div>
                                 </div>
                             </div>
+                        `
+                            : `
+                            <!-- Display Profile -->
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                <div>
+                                    <h3 class="text-xl font-semibold font-normal mb-4 ${
+                                      appState.theme === "light"
+                                        ? "text-gray-800"
+                                        : "text-white"
+                                    }">About Me</h3>
+                                    <div class="space-y-4">
+                                        <div class="flex items-start gap-3 p-3 rounded-lg ${
+                                          appState.theme === "light"
+                                            ? "bg-gray-50"
+                                            : "bg-gray-700"
+                                        } shadow-sm">
+                                            <span class="w-5 h-5 flex-shrink-0">${
+                                              Icons.User
+                                            }</span>
+                                            <p class="font-normal ${
+                                              appState.theme === "light"
+                                                ? "text-gray-700"
+                                                : "text-gray-300"
+                                            }">
+                                                ${
+                                                  profile.bio ||
+                                                  "No bio provided."
+                                                }
+                                            </p>
+                                        </div>
+                                        <div class="flex items-center gap-3 p-3 rounded-lg ${
+                                          appState.theme === "light"
+                                            ? "bg-gray-50"
+                                            : "bg-gray-700"
+                                        } shadow-sm">
+                                            <span class="w-5 h-5">${
+                                              Icons.Award
+                                            }</span>
+                                            <span class="font-normal ${
+                                              appState.theme === "light"
+                                                ? "text-gray-700"
+                                                : "text-gray-300"
+                                            }">
+                                                Reputation Points: <span class="font-bold text-lg">${
+                                                  profile.reputation || 0
+                                                }</span>
+                                            </span>
+                                        </div>
+                                        <div class="flex items-center gap-3 p-3 rounded-lg ${
+                                          appState.theme === "light"
+                                            ? "bg-gray-50"
+                                            : "bg-gray-700"
+                                        } shadow-sm">
+                                            <span class="w-5 h-5">${
+                                              Icons.Users
+                                            }</span>
+                                            <span class="font-normal ${
+                                              appState.theme === "light"
+                                                ? "text-gray-700"
+                                                : "text-gray-300"
+                                            }">
+                                                Followers: <span class="font-bold text-lg">${followersCount}</span>
+                                            </span>
+                                        </div>
+                                        <div class="flex items-center gap-3 p-3 rounded-lg ${
+                                          appState.theme === "light"
+                                            ? "bg-gray-50"
+                                            : "bg-gray-700"
+                                        } shadow-sm">
+                                            <span class="w-5 h-5">${
+                                              Icons.Star
+                                            }</span>
+                                            <span class="font-normal ${
+                                              appState.theme === "light"
+                                                ? "text-gray-700"
+                                                : "text-gray-300"
+                                            }">
+                                                Following: <span class="font-bold text-lg">${
+                                                  (profile.following || [])
+                                                    .length
+                                                }</span>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
 
-                            <div>
-                                <h3 class="text-xl font-semibold font-normal mb-4 ${
-                                  appState.theme === "light"
-                                    ? "text-gray-800"
-                                    : "text-white"
-                                }">Badges</h3>
-                                <div id="badges-container" class="flex flex-wrap gap-3">
-                                    <!-- Badges will be appended here -->
+                                <div>
+                                    <h3 class="text-xl font-semibold font-normal mb-4 ${
+                                      appState.theme === "light"
+                                        ? "text-gray-800"
+                                        : "text-white"
+                                    }">IELTS Journey</h3>
+                                    <div class="space-y-4">
+                                        <div class="flex items-center gap-3 p-3 rounded-lg ${
+                                          appState.theme === "light"
+                                            ? "bg-gray-50"
+                                            : "bg-gray-700"
+                                        } shadow-sm">
+                                            <span class="w-5 h-5">${
+                                              Icons.Target
+                                            }</span>
+                                            <span class="font-normal ${
+                                              appState.theme === "light"
+                                                ? "text-gray-700"
+                                                : "text-gray-300"
+                                            }">
+                                                Target Band: <span class="font-bold text-lg">${
+                                                  profile.bandGoal || "N/A"
+                                                }</span>
+                                            </span>
+                                        </div>
+                                        <div class="flex items-center gap-3 p-3 rounded-lg ${
+                                          appState.theme === "light"
+                                            ? "bg-gray-50"
+                                            : "bg-gray-700"
+                                        } shadow-sm">
+                                            <span class="w-5 h-5">${
+                                              Icons.Activity
+                                            }</span>
+                                            <span class="font-normal ${
+                                              appState.theme === "light"
+                                                ? "text-gray-700"
+                                                : "text-gray-300"
+                                            }">
+                                                Preparation Status: <span class="font-bold text-lg">${
+                                                  profile.preparationStatus ||
+                                                  "New Learner"
+                                                }</span>
+                                            </span>
+                                        </div>
+                                        <div class="flex items-center gap-3 p-3 rounded-lg ${
+                                          appState.theme === "light"
+                                            ? "bg-gray-50"
+                                            : "bg-gray-700"
+                                        } shadow-sm">
+                                            <span class="w-5 h-5">${
+                                              Icons.Link
+                                            }</span>
+                                            <span class="font-normal ${
+                                              appState.theme === "light"
+                                                ? "text-gray-700"
+                                                : "text-gray-300"
+                                            }">
+                                                Country: <span class="font-bold text-lg">${
+                                                  profile.country ||
+                                                  "Not specified"
+                                                }</span>
+                                            </span>
+                                        </div>
+                                        <div class="flex items-center gap-3 p-3 rounded-lg ${
+                                          appState.theme === "light"
+                                            ? "bg-gray-50"
+                                            : "bg-gray-700"
+                                        } shadow-sm">
+                                            <span class="w-5 h-5">${
+                                              Icons.CheckCircle
+                                            }</span>
+                                            <span class="font-normal ${
+                                              appState.theme === "light"
+                                                ? "text-gray-700"
+                                                : "text-gray-300"
+                                            }">
+                                                IELTS Experience: <span class="font-bold text-lg">${
+                                                  profile.ieltsExperience ||
+                                                  "Not specified"
+                                                }</span>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-span-1 md:col-span-2">
+                                    <h3 class="text-xl font-semibold font-normal mb-4 ${
+                                      appState.theme === "light"
+                                        ? "text-gray-800"
+                                        : "text-white"
+                                    }">Badges</h3>
+                                    <div id="badges-container" class="flex flex-wrap gap-3">
+                                        <!-- Badges will be appended here -->
+                                    </div>
                                 </div>
                             </div>
+                        `
+                        }
+                    </div>
+
+                    <!-- User's Posts Section -->
+                    <div class="mt-8 p-6 md:p-8 rounded-2xl shadow-lg transition-colors duration-300 ${
+                      appState.theme === "light" ? "bg-white" : "bg-gray-800"
+                    }">
+                        <h3 class="text-2xl font-bold font-normal mb-4 ${
+                          appState.theme === "light"
+                            ? "text-gray-900"
+                            : "text-white"
+                        }">${profile.name || "This user"}'s Posts (${
+          userPosts.length
+        })</h3>
+                        <div id="user-posts-container" class="space-y-6">
+                            <!-- User's posts will be rendered here -->
                         </div>
                     </div>
                 </div>
@@ -2366,221 +3948,285 @@
         document.getElementById("back-to-home-btn").onclick = () =>
           navigateTo("home");
 
+        // Handle edit/save/cancel buttons ONLY if it's the current user's profile
+        if (isCurrentUserProfile && appState.userId) {
+          if (appState.editingProfile) {
+            const nameInput = document.getElementById("edit-profile-name");
+            const bioTextarea = document.getElementById("edit-profile-bio");
+            const bandGoalSelect = document.getElementById(
+              "edit-profile-band-goal"
+            );
+            const prepStatusSelect = document.getElementById(
+              "edit-profile-prep-status"
+            );
+            const countrySelect = document.getElementById(
+              "edit-profile-country"
+            );
+            const ieltsExperienceSelect = document.getElementById(
+              "edit-profile-ielts-experience"
+            );
+
+            // Populate select options
+            BAND_GOALS.forEach((goal) => {
+              const option = document.createElement("option");
+              option.value = goal;
+              option.textContent = goal;
+              bandGoalSelect.appendChild(option);
+            });
+            bandGoalSelect.value = profile.bandGoal || BAND_GOALS[0];
+
+            PREP_STATUSES.forEach((status) => {
+              const option = document.createElement("option");
+              option.value = status;
+              option.textContent = status;
+              prepStatusSelect.appendChild(option);
+            });
+            prepStatusSelect.value =
+              profile.preparationStatus || PREP_STATUSES[0];
+
+            COUNTRIES.forEach((country) => {
+              const option = document.createElement("option");
+              option.value = country;
+              option.textContent = country;
+              countrySelect.appendChild(option);
+            });
+            countrySelect.value = profile.country || ""; // Set default or current value
+
+            IELTS_EXPERIENCES.forEach((exp) => {
+              const option = document.createElement("option");
+              option.value = exp;
+              option.textContent = exp;
+              ieltsExperienceSelect.appendChild(option);
+            });
+            ieltsExperienceSelect.value =
+              profile.ieltsExperience || IELTS_EXPERIENCES[0];
+
+            document.getElementById("save-profile-btn").onclick = () => {
+              const updatedData = {
+                name: nameInput.value.trim(),
+                bio: bioTextarea.value.trim(),
+                bandGoal: bandGoalSelect.value,
+                preparationStatus: prepStatusSelect.value,
+                country: countrySelect.value,
+                ieltsExperience: ieltsExperienceSelect.value,
+              };
+              if (updatedData.name) {
+                updateUserProfile(updatedData);
+              } else {
+                showToast("Name cannot be empty.", "error");
+              }
+            };
+            document.getElementById("cancel-edit-profile-btn").onclick = () => {
+              appState.editingProfile = false;
+              renderProfilePage(targetUserId); // Re-render without edit mode
+            };
+          } else {
+            document.getElementById("edit-profile-btn").onclick = () => {
+              appState.editingProfile = true;
+              renderProfilePage(targetUserId); // Re-render in edit mode
+            };
+          }
+        } else if (appState.userId && targetUserId !== appState.userId) {
+          // Logic for other users' profiles
+          const followBtn = document.getElementById("follow-btn");
+          if (followBtn) {
+            followBtn.onclick = () => toggleFollow(targetUserId);
+          }
+        }
+
         const badgesContainer = document.getElementById("badges-container");
-        if (
-          appState.userProfile.badges &&
-          appState.userProfile.badges.length > 0
-        ) {
-          appState.userProfile.badges.forEach((badge) => {
-            const badgeSpan = document.createElement("span");
-            badgeSpan.className = `flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium ${
-              appState.theme === "light"
-                ? "bg-yellow-100 text-yellow-800"
-                : "bg-yellow-900 text-yellow-200"
-            } shadow-sm`;
-            badgeSpan.innerHTML = `<span class="w-4 h-4">${Icons.Award}</span> ${badge}`;
-            badgesContainer.appendChild(badgeSpan);
+        if (profile.badges && profile.badges.length > 0) {
+          profile.badges.forEach((badgeId) => {
+            const badge = ALL_BADGES.find((b) => b.id === badgeId);
+            if (badge) {
+              const badgeSpan = document.createElement("span");
+              badgeSpan.className = `flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium ${
+                appState.theme === "light"
+                  ? "bg-yellow-100 text-yellow-800"
+                  : "bg-yellow-900 text-yellow-200"
+              } shadow-sm`;
+              badgeSpan.innerHTML = `<span class="text-lg">${badge.icon}</span> ${badge.name}`;
+              badgesContainer.appendChild(badgeSpan);
+            }
           });
         } else {
           badgesContainer.innerHTML = `<p class="text-md ${
             appState.theme === "light" ? "text-gray-600" : "text-gray-400"
           }">No badges earned yet.</p>`;
         }
-        renderRightSidebar(); // Render the right sidebar for profile view
-      }
 
-      function renderRightSidebar() {
-        const rightSidebar = document.getElementById("right-sidebar");
-        if (!rightSidebar) return; // Only render if sidebar exists (i.e., on larger screens)
-
-        // Clear existing content and set base classes for consistency
-        rightSidebar.innerHTML = "";
-        rightSidebar.className = `w-64 ml-8 p-6 hidden lg:block rounded-2xl shadow-lg ${
-          appState.theme === "light" ? "bg-white" : "bg-gray-800"
-        } flex-shrink-0`;
-
-        // Search Bar Section
-        const searchSection = document.createElement("div");
-        searchSection.className = `mb-8 p-4 rounded-xl ${
-          appState.theme === "light" ? "bg-gray-50" : "bg-gray-700"
-        } shadow-inner`;
-        searchSection.innerHTML = `
-                <h3 class="text-lg font-semibold mb-3 ${
-                  appState.theme === "light" ? "text-gray-800" : "text-white"
-                }">
-                    <i class="fas fa-search mr-2"></i> Search Forum
-                </h3>
-                <div class="relative">
-                    <input type="text" id="sidebar-search-input" placeholder="Search posts..." class="w-full p-2.5 pl-10 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                      appState.theme === "light"
-                        ? "border-gray-200 bg-white text-gray-900"
-                        : "border-gray-600 bg-gray-800 text-white"
-                    } transition-colors">
-                    <span class="absolute left-3 top-1/2 -translate-y-1/2 ${
-                      appState.theme === "light"
-                        ? "text-gray-400"
-                        : "text-gray-300"
-                    }">${Icons.Search}</span>
-                </div>
-                <div id="sidebar-search-results" class="mt-3 max-h-60 overflow-y-auto space-y-2 text-sm"></div>
-            `;
-        rightSidebar.appendChild(searchSection);
-
-        const searchInput = document.getElementById("sidebar-search-input");
-        const searchResultsContainer = document.getElementById(
-          "sidebar-search-results"
+        // Render user's posts
+        const userPostsContainer = document.getElementById(
+          "user-posts-container"
         );
-
-        let searchTimeout;
-        searchInput.oninput = () => {
-          clearTimeout(searchTimeout);
-          searchTimeout = setTimeout(() => {
-            const query = searchInput.value.toLowerCase().trim();
-            searchResultsContainer.innerHTML = ""; // Clear previous results
-
-            if (query.length > 0) {
-              const matchingPosts = appState.posts
-                .filter(
-                  (post) =>
-                    post.title.toLowerCase().includes(query) ||
-                    post.content.toLowerCase().includes(query)
-                )
-                .slice(0, 5); // Limit to top 5 suggestions
-
-              if (matchingPosts.length > 0) {
-                matchingPosts.forEach((post) => {
-                  const resultItem = document.createElement("div");
-                  resultItem.className = `p-2 rounded-lg cursor-pointer ${
-                    appState.theme === "light"
-                      ? "hover:bg-blue-50 text-gray-700"
-                      : "hover:bg-blue-900 text-gray-200"
-                  } transition-colors`;
-                  resultItem.innerHTML = `
-                                    <div class="font-medium ${
-                                      appState.theme === "light"
-                                        ? "text-blue-700"
-                                        : "text-blue-300"
-                                    } line-clamp-1">${post.title}</div>
-                                    <div class="${
-                                      appState.theme === "light"
-                                        ? "text-gray-600"
-                                        : "text-gray-400"
-                                    } line-clamp-2">${post.content}</div>
-                                `;
-                  resultItem.onclick = (e) => {
-                    e.stopPropagation(); // Prevent search input from losing focus immediately
-                    navigateTo("postDetail", { post: post });
-                  };
-                  searchResultsContainer.appendChild(resultItem);
-                });
-              } else {
-                searchResultsContainer.innerHTML = `<p class="p-2 ${
-                  appState.theme === "light" ? "text-gray-500" : "text-gray-400"
-                }">No results found.</p>`;
+        if (userPosts.length === 0) {
+          userPostsContainer.innerHTML = `<p class="text-lg ${
+            appState.theme === "light" ? "text-gray-600" : "text-gray-400"
+          }">There are no posts from this user yet.</p>`;
+        } else {
+          userPosts.forEach((post) => {
+            const postDiv = document.createElement("div");
+            postDiv.className = `p-6 rounded-2xl shadow-lg transition-all duration-200 hover:shadow-xl hover:scale-[1.01] cursor-pointer ${
+              appState.theme === "light" ? "bg-white" : "bg-gray-800"
+            }`;
+            postDiv.addEventListener("click", (e) => {
+              if (
+                e.target.tagName !== "BUTTON" &&
+                e.target.tagName !== "SPAN" &&
+                e.target.tagName !== "A"
+              ) {
+                navigateTo("postDetail", { post: post });
               }
+            });
+
+            const formattedTime = formatRelativeTime(post.createdAt);
+            const commentsCount = (appState.comments[post.id] || []).length;
+            const isAuthorCurrentUsersPost =
+              appState.userId && post.authorId === appState.userId;
+            const isFollowingPostAuthor = appState.userProfile?.following?.includes(
+              post.authorId
+            );
+
+            postDiv.innerHTML = `
+                        <h3 class="text-xl font-semibold font-normal mb-2 ${
+                          appState.theme === "light"
+                            ? "text-blue-700"
+                            : "text-blue-400"
+                        }">
+                            ${post.title}
+                        </h3>
+                        <p class="text-sm ${
+                          appState.theme === "light"
+                            ? "text-gray-600"
+                            : "text-gray-300"
+                        } mb-3 line-clamp-2">
+                            ${post.content}
+                        </p>
+                        <div class="flex items-center justify-between text-xs font-normal ${
+                          appState.theme === "light"
+                            ? "text-gray-500"
+                            : "text-gray-400"
+                        } border-t pt-3 mt-4 ${
+              appState.theme === "light" ? "border-gray-100" : "border-gray-700"
+            }">
+                            <div class="flex items-center gap-2">
+                                <span class="w-4 h-4">${Icons.User}</span>
+                                <span class="font-bold cursor-pointer hover:underline" data-user-id="${targetUserId}">${
+              post.authorName || "Anonymous"
+            }</span>
+                                ${
+                                  !isAuthorCurrentUsersPost && appState.userId
+                                    ? `
+                                    <button class="ml-2 px-2 py-1 rounded-full text-xs font-semibold
+                                        ${
+                                          isFollowingPostAuthor
+                                            ? "bg-gray-300 text-gray-800 hover:bg-gray-400"
+                                            : "bg-blue-100 text-blue-700 hover:bg-blue-200"
+                                        }
+                                        dark:${
+                                          isFollowingPostAuthor
+                                            ? "bg-gray-600 text-white hover:bg-gray-700"
+                                            : "bg-blue-900 text-blue-200 hover:bg-blue-800"
+                                        }
+                                        transition-colors transform active:scale-95 follow-button hidden sm:block"
+                                        data-target-user-id="${post.authorId}">
+                                        ${
+                                          isFollowingPostAuthor
+                                            ? `<i class="fas fa-check"></i> Unfollow`
+                                            : `<i class="fas fa-user-plus"></i> Follow`
+                                        }
+                                    </button>
+                                `
+                                    : ""
+                                }
+                                <span class="mx-1">•</span>
+                                <span>${formattedTime}</span>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <span class="flex items-center gap-1 text-green-500">
+                                    <span class="w-4 h-4">${
+                                      Icons.ThumbsUp
+                                    }</span> ${post.upvotes || 0}
+                                </span>
+                                <span class="flex items-center gap-1 text-red-500">
+                                    <span class="w-4 h-4">${
+                                      Icons.ThumbsDown
+                                    }</span> ${post.downvotes || 0}
+                                </span>
+                                <span class="flex items-center gap-1 text-blue-500">
+                                    <span class="w-4 h-4">${
+                                      Icons.MessageCircleMore
+                                    }</span> ${commentsCount}
+                                </span>
+                                ${
+                                  post.isResolved
+                                    ? `<span class="flex items-center gap-1 text-green-600 font-semibold"> <span class="w-4 h-4">${Icons.CheckCircle}</span> Resolved</span>`
+                                    : ""
+                                }
+                            </div>
+                        </div>
+                        ${
+                          post.category
+                            ? `
+                            <div class="mt-3 flex flex-wrap gap-2">
+                                <span class="px-3 py-1 rounded-full text-xs font-semibold ${
+                                  appState.theme === "light"
+                                    ? "bg-blue-50 text-blue-700"
+                                    : "bg-blue-900 text-blue-200"
+                                }">
+                                    ${post.category}
+                                </span>
+                                ${
+                                  post.subCategory
+                                    ? `<span class="px-3 py-1 rounded-full text-xs font-semibold ${
+                                        appState.theme === "light"
+                                          ? "bg-indigo-50 text-indigo-700"
+                                          : "bg-indigo-900 text-indigo-200"
+                                      }"> ${post.subCategory}</span>`
+                                    : ""
+                                }
+                                ${
+                                  post.tags && post.tags.length > 0
+                                    ? post.tags
+                                        .map(
+                                          (tag) =>
+                                            `<span class="px-3 py-1 rounded-full text-xs font-semibold ${
+                                              appState.theme === "light"
+                                                ? "bg-gray-100 text-gray-600"
+                                                : "bg-gray-700 text-gray-300"
+                                            }">${tag}</span>`
+                                        )
+                                        .join("")
+                                    : ""
+                                }
+                            </div>
+                        `
+                            : ""
+                        }
+                    `;
+            userPostsContainer.appendChild(postDiv);
+
+            const postAuthorNameSpan = postDiv.querySelector(
+              `span[data-user-id="${targetUserId}"]`
+            );
+            if (postAuthorNameSpan) {
+              postAuthorNameSpan.onclick = (e) => {
+                e.stopPropagation();
+                navigateTo("profile", { targetUserId: targetUserId });
+              };
             }
-          }, 300); // Debounce search input
-        };
 
-        // User Stats Section
-        const userStatsSection = document.createElement("div");
-        userStatsSection.className = `mb-8 p-4 rounded-xl ${
-          appState.theme === "light" ? "bg-gray-50" : "bg-gray-700"
-        } shadow-inner`;
-        userStatsSection.innerHTML = `
-                <h3 class="text-lg font-semibold mb-4 ${
-                  appState.theme === "light" ? "text-gray-800" : "text-white"
-                }">
-                    <i class="fas fa-user-circle mr-2"></i> Your Stats
-                </h3>
-                ${
-                  appState.userProfile
-                    ? `
-                    <div class="space-y-3 text-sm">
-                        <div class="flex items-center gap-2 ${
-                          appState.theme === "light"
-                            ? "text-gray-700"
-                            : "text-gray-300"
-                        }">
-                            ${
-                              Icons.Award
-                            } Reputation: <span class="font-bold">${
-                        appState.userProfile.reputation || 0
-                      }</span>
-                        </div>
-                        <div class="flex items-center gap-2 ${
-                          appState.theme === "light"
-                            ? "text-gray-700"
-                            : "text-gray-300"
-                        }">
-                            ${
-                              Icons.Target
-                            } Target Band: <span class="font-bold">${
-                        appState.userProfile.bandGoal || "N/A"
-                      }</span>
-                        </div>
-                        <div class="flex items-center gap-2 ${
-                          appState.theme === "light"
-                            ? "text-gray-700"
-                            : "text-gray-300"
-                        }">
-                            ${Icons.Activity} Status: <span class="font-bold">${
-                        appState.userProfile.preparationStatus || "New Learner"
-                      }</span>
-                        </div>
-                    </div>
-                `
-                    : `<p class="text-sm ${
-                        appState.theme === "light"
-                          ? "text-gray-600"
-                          : "text-gray-400"
-                      }">Sign in to see your stats.</p>`
-                }
-            `;
-        rightSidebar.appendChild(userStatsSection);
-
-        // Quick Links Section
-        const quickLinksSection = document.createElement("div");
-        quickLinksSection.className = `p-4 rounded-xl ${
-          appState.theme === "light" ? "bg-gray-50" : "bg-gray-700"
-        } shadow-inner`;
-        quickLinksSection.innerHTML = `
-                <h3 class="text-lg font-semibold mb-4 ${
-                  appState.theme === "light" ? "text-gray-800" : "text-white"
-                }">
-                    <i class="fas fa-external-link-alt mr-2"></i> Quick Links
-                </h3>
-                <ul class="space-y-3 text-sm">
-                    <li>
-                        <a href="https://www.ielts.org/" target="_blank" rel="noopener noreferrer" class="flex items-center gap-2 ${
-                          appState.theme === "light"
-                            ? "text-blue-600 hover:text-blue-700"
-                            : "text-blue-400 hover:text-blue-300"
-                        } transition-colors">
-                            ${Icons.Link} Official IELTS Website
-                        </a>
-                    </li>
-                    <li>
-                        <a href="https://takeielts.britishcouncil.org/prepare-test/free-ielts-practice-tests" target="_blank" rel="noopener noreferrer" class="flex items-center gap-2 ${
-                          appState.theme === "light"
-                            ? "text-blue-600 hover:text-blue-700"
-                            : "text-blue-400 hover:text-blue-300"
-                        } transition-colors">
-                            ${Icons.Link} Free Practice Tests
-                        </a>
-                    </li>
-                    <li>
-                        <a href="https://www.youtube.com/c/E2IELTS" target="_blank" rel="noopener noreferrer" class="flex items-center gap-2 ${
-                          appState.theme === "light"
-                            ? "text-blue-600 hover:text-blue-700"
-                            : "text-blue-400 hover:text-blue-300"
-                        } transition-colors">
-                            ${Icons.Link} E2 IELTS YouTube
-                        </a>
-                    </li>
-                </ul>
-            `;
-        rightSidebar.appendChild(quickLinksSection);
+            // Attach event listener for the new follow button
+            const followButtonPost = postDiv.querySelector(`.follow-button`);
+            if (followButtonPost) {
+              followButtonPost.onclick = (e) => {
+                e.stopPropagation(); // Prevent the postDiv's click event from firing
+                toggleFollow(post.authorId);
+              };
+            }
+          });
+        }
+        renderRightSidebar(); // Render the right sidebar for profile view
       }
 
       // --- Main Render Loop ---
@@ -2616,7 +4262,8 @@
             renderCreatePostForm();
             break;
           case "profile":
-            renderUserProfile();
+            // Pass the target user ID for rendering
+            renderProfilePage(appState.viewedProfile || appState.userId);
             break;
           default:
             renderPostList();
@@ -2633,19 +4280,20 @@
       // --- Firebase Listener Setup Function ---
       function setupFirestoreListeners() {
         const appId =
-          typeof __app_id !== "undefined" ? __app_id : "default-app-id";
+          typeof __app_id !== "undefined"
+            ? __app_id
+            : "ielts-mahir-community-forum";
 
         // Unsubscribe from previous listeners if they exist
         if (appState.postsUnsubscribe) appState.postsUnsubscribe();
         if (appState.commentsUnsubscribe) appState.commentsUnsubscribe();
+        // Removed appState.userProfilesUnsubscribe as it was causing permission errors
 
-        // Modified: Removed where clauses from Firestore query for posts.
-        // All posts will be fetched, and filtering will happen client-side.
         let postsQueryRef = collection(
           appState.db,
           `artifacts/${appId}/public/data/posts`
         );
-        postsQueryRef = query(postsQueryRef, orderBy("createdAt", "desc")); // Keep orderBy for initial sort
+        postsQueryRef = query(postsQueryRef, orderBy("createdAt", "desc"));
 
         // Set up real-time listener for posts
         appState.postsUnsubscribe = onSnapshot(
@@ -2664,8 +4312,13 @@
                 appState.selectedPost = updatedSelectedPost;
               }
             }
+            updateCachedUserProfiles(); // Call this when posts update
             // Always re-render relevant content after posts update
-            if (appState.view === "home" || appState.view === "postDetail") {
+            if (
+              appState.view === "home" ||
+              appState.view === "postDetail" ||
+              appState.view === "profile"
+            ) {
               renderMainContent();
             }
           },
@@ -2697,7 +4350,7 @@
             });
 
             appState.comments = commentsByPost;
-
+            updateCachedUserProfiles(); // Call this when comments update
             // Re-render relevant content based on current view
             if (appState.view === "home") {
               renderPostList(); // To update comment counts on posts in home view
@@ -2715,6 +4368,62 @@
         );
       }
 
+      // New function to update the cache of user profiles from posts and comments
+      async function updateCachedUserProfiles() {
+        if (!appState.db) return;
+        const appId =
+          typeof __app_id !== "undefined"
+            ? __app_id
+            : "ielts-mahir-community-forum";
+
+        const uniqueUserIds = new Set();
+        // Add current user to ensure their profile is always in cache
+        if (appState.userId) {
+          uniqueUserIds.add(appState.userId);
+        }
+        appState.posts.forEach((post) => uniqueUserIds.add(post.authorId));
+        Object.values(appState.comments)
+          .flat()
+          .forEach((comment) => uniqueUserIds.add(comment.authorId));
+
+        const newAllUsersProfiles = [];
+        for (const userId of uniqueUserIds) {
+          // Check if profile is already in cache to avoid re-fetching unnecessarily
+          const existingProfile = appState.allUsersProfiles.find(
+            (p) => p.userId === userId
+          );
+          if (existingProfile) {
+            newAllUsersProfiles.push(existingProfile);
+            continue; // Skip fetching if already cached
+          }
+
+          const profileRef = doc(
+            appState.db,
+            `artifacts/${appId}/users/${userId}/userProfile/profile`
+          );
+          try {
+            const profileSnap = await getDoc(profileRef);
+            if (profileSnap.exists()) {
+              newAllUsersProfiles.push({
+                userId: userId,
+                ...profileSnap.data(),
+              });
+            }
+          } catch (e) {
+            console.warn(
+              `Could not fetch profile for user ${userId} during cache update (might be deleted or permission issue for specific user):`,
+              e
+            );
+          }
+        }
+        appState.allUsersProfiles = newAllUsersProfiles;
+
+        // Trigger re-render for views that depend on allUsersProfiles
+        if (appState.view === "profile" || appState.view === "home") {
+          renderMainContent();
+        }
+      }
+
       // --- Firebase Initialization and Listeners ---
       document.addEventListener("DOMContentLoaded", async () => {
         elements.header = document.getElementById("app-header");
@@ -2730,12 +4439,13 @@
         };
 
         // Define default Firebase config and app ID for local development
-        const defaultAppId = "ielts-mahir-community-forum"; // User's actual project ID is used as default app ID
+        // IMPORTANT: These have been updated with your provided details
+        const defaultAppId = "ielts-mahir-community-forum";
         const defaultFirebaseConfig = {
           apiKey: "AIzaSyAxsd0CnLsh7t7yFy3ZPp6saGD_YpLL1mY",
           authDomain: "ielts-mahir-community-forum.firebaseapp.com",
           projectId: "ielts-mahir-community-forum",
-          storageBucket: "ielts-mahir-community-forum.firebasestorage.app", // This will be unused
+          storageBucket: "ielts-mahir-community-forum.firebase-storage.app", // This will be unused
           messagingSenderId: "1036043607546",
           appId: "1:1036043607546:web:bd217e04cc0ec5f296d843",
           measurementId: "G-YC4CG1WKD3",
@@ -2751,12 +4461,13 @@
           const app = initializeApp(firebaseConfig);
           appState.db = getFirestore(app);
           appState.auth = getAuth(app);
-          // appState.storage = getStorage(app); // Storage initialization removed
 
           // Listen for auth state changes
           onAuthStateChanged(appState.auth, async (user) => {
             if (user) {
               appState.userId = user.uid;
+              appState.viewedProfile = user.uid; // Default to current user's profile on auth success
+
               // Fetch or create user profile
               const userRef = doc(
                 appState.db,
@@ -2765,27 +4476,79 @@
               const userSnap = await getDoc(userRef);
               if (userSnap.exists()) {
                 appState.userProfile = userSnap.data();
+                // Ensure following array exists
+                if (!appState.userProfile.following) {
+                  await updateDoc(userRef, { following: [] });
+                  appState.userProfile.following = [];
+                }
+                // Ensure badges array exists
+                if (!appState.userProfile.badges) {
+                  // Check if they earned the first_post badge only if they've made posts.
+                  // This is a simplified check. A proper system would check total posts count.
+                  const userPostsQuery = query(
+                    collection(
+                      appState.db,
+                      `artifacts/${appId}/public/data/posts`
+                    ),
+                    where("authorId", "==", user.uid)
+                  );
+                  const userPostsSnap = await getDocs(userPostsQuery);
+                  if (userPostsSnap.empty) {
+                    // No posts yet, so just "first_post"
+                    await updateDoc(userRef, { badges: ["first_post"] });
+                    appState.userProfile.badges = ["first_post"];
+                  } else if (
+                    !userPostsSnap.empty &&
+                    !(userSnap.data().badges || []).includes("first_post")
+                  ) {
+                    // If posts exist but badge isn't there, add it.
+                    await updateDoc(userRef, {
+                      badges: arrayUnion("first_post"),
+                    });
+                    appState.userProfile.badges = [
+                      ...(userSnap.data().badges || []),
+                      "first_post",
+                    ];
+                  } else {
+                    appState.userProfile.badges = userSnap.data().badges || [];
+                  }
+                }
               } else {
                 const newUserProfile = {
                   name: `User-${user.uid.substring(0, 5)}`,
                   bandGoal: "N/A",
                   preparationStatus: "New Learner",
                   reputation: 0,
-                  badges: [],
+                  badges: ["first_post"], // Give new users a "first post" badge by default
                   createdAt: serverTimestamp(),
                   userId: user.uid,
+                  bio: "",
+                  country: "",
+                  ieltsExperience: "",
+                  following: [], // Initialize following list
                 };
                 await setDoc(userRef, newUserProfile);
                 appState.userProfile = newUserProfile;
               }
+              // Update lastLogin timestamp
+              await updateDoc(userRef, { lastLogin: serverTimestamp() });
             } else {
-              // Sign in anonymously if no token is provided
+              // Sign in anonymously if no token is provided or custom token fails
               const initialAuthToken =
                 typeof __initial_auth_token !== "undefined"
                   ? __initial_auth_token
                   : null;
-              if (initialAuthToken) {
-                await signInWithCustomToken(appState.auth, initialAuthToken);
+
+              if (initialAuthToken && initialAuthToken.length > 0) {
+                try {
+                  await signInWithCustomToken(appState.auth, initialAuthToken);
+                } catch (customTokenError) {
+                  console.warn(
+                    "Custom token sign-in failed, falling back to anonymous:",
+                    customTokenError
+                  );
+                  await signInAnonymously(appState.auth);
+                }
               } else {
                 await signInAnonymously(appState.auth);
               }
@@ -2798,10 +4561,10 @@
         } catch (error) {
           console.error("Error initializing Firebase or signing in:", error);
           showToast(
-            "Failed to initialize app. Check console for Firebase config errors.",
+            "Failed to initialize app. Check console for Firebase configuration and network issues.",
             "error"
           );
-          appState.isAuthReady = true; // Ensure UI unblocks
+          appState.isAuthReady = true; // Ensure UI unblocks even on error
           renderApp();
         }
       });
