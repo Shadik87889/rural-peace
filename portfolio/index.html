@@ -1,0 +1,1769 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Senior Developer Portfolio - John Doe</title>
+    <!-- Tailwind CSS CDN for a sleek, modern foundation -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      /* Import premium fonts: 'Anton' for bold headings, 'Inter' for clean body text */
+      @import url("https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@300;400;700&display=swap");
+
+      :root {
+        /* Define a consistent, bold color palette with CSS variables */
+        --dark: #08080c;
+        --light: #f0f0f0;
+        --accent: #00e0ff; /* Neon blue for a futuristic contrast */
+        --dark-glass: rgba(8, 8, 12, 0.8);
+      }
+
+      body {
+        background-color: var(--dark);
+        color: var(--light);
+        font-family: "Inter", sans-serif;
+        overflow-x: hidden;
+        cursor: none; /* Hide default cursor to use a custom cursor */
+      }
+
+      /* The Three.js canvas that provides the immersive background */
+      #three-canvas {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -1; /* Ensure it stays behind all content */
+        mix-blend-mode: screen;
+      }
+
+      /* Custom Cursor - a subtle pointer for the interactive elements */
+      #custom-cursor {
+        width: 20px;
+        height: 20px;
+        border: 2px solid var(--accent);
+        border-radius: 50%;
+        position: fixed;
+        top: 0;
+        left: 0;
+        pointer-events: none;
+        z-index: 9999;
+        opacity: 0;
+        transform: translate(-50%, -50%);
+        mix-blend-mode: exclusion;
+        transition: width 0.3s cubic-bezier(0.19, 1, 0.22, 1),
+          height 0.3s cubic-bezier(0.19, 1, 0.22, 1),
+          border-color 0.3s cubic-bezier(0.19, 1, 0.22, 1), opacity 0.5s ease;
+      }
+      .cursor-expand {
+        width: 80px !important;
+        height: 80px !important;
+        border-color: var(--light) !important;
+        opacity: 1 !important;
+      }
+      .cursor-click {
+        animation: cursorClickScale 0.4s ease-out forwards;
+      }
+      @keyframes cursorClickScale {
+        0% {
+          transform: translate(-50%, -50%) scale(1);
+          opacity: 1;
+        }
+        50% {
+          transform: translate(-50%, -50%) scale(0.5);
+          opacity: 0.8;
+        }
+        100% {
+          transform: translate(-50%, -50%) scale(1.2);
+          opacity: 0;
+        }
+      }
+
+      /* Header state on scroll */
+      .header-scrolled {
+        background-color: var(--dark-glass);
+        backdrop-filter: blur(12px);
+        border-bottom: 1px solid rgba(0, 224, 255, 0.1);
+        transition: all 0.5s ease-in-out;
+      }
+
+      /* Glitch effect on hover for work cards */
+      .work-card:hover h3 {
+        animation: glitch 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) both
+          infinite;
+      }
+      @keyframes glitch {
+        0% {
+          transform: translate(0, 0);
+        }
+        20% {
+          transform: translate(-3px, 3px);
+        }
+        40% {
+          transform: translate(-3px, -3px);
+        }
+        60% {
+          transform: translate(3px, 3px);
+        }
+        80% {
+          transform: translate(3px, -3px);
+        }
+        100% {
+          transform: translate(0, 0);
+        }
+      }
+      .magnetic-button {
+        transition: transform 0.3s ease-out;
+      }
+      .magnetic-button:hover {
+        transform: translate(
+          var(--magnetic-x, 0),
+          var(--magnetic-y, 0)
+        ) !important;
+      }
+
+      /* Custom message box styling */
+      #message-box {
+        position: fixed;
+        bottom: 2rem;
+        right: 2rem;
+        z-index: 10000;
+        transform: translateX(120%);
+        transition: transform 0.5s ease-in-out;
+      }
+      #message-box.show {
+        transform: translateX(0);
+      }
+    </style>
+  </head>
+  <body class="bg-[var(--dark)] text-[var(--light)]">
+    <!-- The Three.js canvas for the interactive particle background -->
+    <canvas id="three-canvas"></canvas>
+
+    <!-- Custom Cursor - marked as aria-hidden to prevent screen readers from announcing it -->
+    <div id="custom-cursor" aria-hidden="true"></div>
+
+    <!-- Message Box for form submission -->
+    <div
+      id="message-box"
+      class="rounded-lg p-6 max-w-sm border-2 text-[var(--light)]"
+    >
+      <p id="message-content"></p>
+    </div>
+
+    <!-- GSAP, ScrollTrigger, and Lenis CDNs -->
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+    <script src="https://unpkg.com/@studio-freight/lenis@1.0.39/dist/lenis.min.js"></script>
+    <!-- Three.js CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+    <!-- Main Content Wrapper -->
+    <main>
+      <!-- Dynamic Header -->
+      <header
+        id="main-header"
+        class="fixed top-0 left-0 w-full z-50 p-8 md:px-16 flex justify-between items-center transition-all duration-500 ease-in-out"
+      >
+        <a
+          href="#"
+          class="text-xl md:text-2xl font-bold uppercase font-['Anton'] tracking-widest text-[var(--accent)] hover:text-[var(--light)] transition-colors nav-link"
+          >John Doe.</a
+        >
+        <nav>
+          <a
+            href="#work"
+            class="mr-6 md:mr-12 text-md md:text-lg hover:text-[var(--accent)] transition-colors nav-link"
+            >Work</a
+          >
+          <a
+            href="#about"
+            class="mr-6 md:mr-12 text-md md:text-lg hover:text-[var(--accent)] transition-colors nav-link"
+            >About</a
+          >
+          <a
+            href="#services"
+            class="mr-6 md:mr-12 text-md md:text-lg hover:text-[var(--accent)] transition-colors nav-link"
+            >Services</a
+          >
+          <a
+            href="#contact"
+            class="text-md md:text-lg hover:text-[var(--accent)] transition-colors nav-link"
+            >Contact</a
+          >
+        </nav>
+      </header>
+
+      <!-- Hero Section -->
+      <section
+        id="hero"
+        class="relative min-h-screen flex flex-col justify-end pb-24 md:pb-32 px-8 md:px-16 overflow-hidden"
+      >
+        <h1
+          id="hero-title"
+          class="text-[5rem] md:text-[12rem] lg:text-[15rem] leading-none font-['Anton'] uppercase break-words z-20"
+        >
+          Digital Artistry. Kinetic Code.
+        </h1>
+        <p
+          class="text-xl md:text-2xl mt-4 z-20 hero-tagline text-[var(--accent)]"
+        >
+          Crafting unforgettable interactive experiences.
+        </p>
+      </section>
+
+      <!-- About Section -->
+      <section
+        id="about"
+        class="min-h-screen p-8 md:p-16 flex flex-col justify-center relative bg-[var(--dark)] z-10"
+      >
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+          <div class="space-y-8">
+            <h2
+              class="text-5xl md:text-7xl font-['Anton'] uppercase about-heading"
+            >
+              A developer who crafts, not just codes.
+            </h2>
+            <p class="text-lg md:text-xl leading-relaxed reveal-text-p">
+              My journey began with a single line of code and a fascination for
+              the digital ether. It has evolved into a relentless pursuit of
+              creating experiences that transcend the screen. I believe in the
+              subtle power of interaction, the elegance of motion, and the
+              impact of a story told through pixels. I'm a senior web developer,
+              but my title is 'digital artist' in my mind.
+            </p>
+            <p class="text-lg md:text-xl leading-relaxed reveal-text-p">
+              I've spent years honing my craft, working with global brands and
+              innovative startups to build websites that are more than just
+              interfaces—they are destinations. I specialize in merging
+              cutting-edge technology with thoughtful design, pushing the
+              boundaries of what's possible on the web.
+            </p>
+          </div>
+          <div
+            class="relative w-full h-[500px] rounded-lg overflow-hidden reveal-image-container"
+          >
+            <div
+              class="absolute inset-0 bg-[var(--accent)] z-10 about-image-mask"
+            ></div>
+            <img
+              src="https://placehold.co/1200x800/222/fff?text=Artistic+Portrait"
+              alt="Portrait"
+              class="absolute inset-0 w-full h-full object-cover"
+            />
+          </div>
+        </div>
+      </section>
+
+      <!-- Services Section -->
+      <section id="services" class="py-16 md:py-32 bg-[var(--dark)] z-10">
+        <h2
+          class="text-5xl md:text-7xl font-['Anton'] text-center mb-16 uppercase reveal-text"
+        >
+          Services
+        </h2>
+        <div class="container mx-auto px-8 md:px-16">
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <!-- Service Card 1 -->
+            <div
+              class="service-card reveal-service bg-gray-900 rounded-lg p-8 group overflow-hidden relative border border-gray-800 transition-all duration-500 ease-in-out hover:border-[var(--accent)]"
+            >
+              <div
+                class="absolute inset-0 bg-[var(--accent)] opacity-0 transition-opacity duration-500 group-hover:opacity-10"
+              ></div>
+              <h3
+                class="text-4xl font-['Anton'] uppercase mb-4 group-hover:text-[var(--accent)] transition-colors"
+              >
+                Creative Direction
+              </h3>
+              <p class="text-lg text-gray-400">
+                Guiding your project from concept to launch with a focus on
+                unique, user-centric experiences and innovative digital
+                storytelling.
+              </p>
+            </div>
+            <!-- Service Card 2 -->
+            <div
+              class="service-card reveal-service bg-gray-900 rounded-lg p-8 group overflow-hidden relative border border-gray-800 transition-all duration-500 ease-in-out hover:border-[var(--accent)]"
+            >
+              <div
+                class="absolute inset-0 bg-[var(--accent)] opacity-0 transition-opacity duration-500 group-hover:opacity-10"
+              ></div>
+              <h3
+                class="text-4xl font-['Anton'] uppercase mb-4 group-hover:text-[var(--accent)] transition-colors"
+              >
+                Front-End Development
+              </h3>
+              <p class="text-lg text-gray-400">
+                Expert development of stunning, high-performance websites and
+                web applications using modern frameworks and cutting-edge
+                libraries.
+              </p>
+            </div>
+            <!-- Service Card 3 -->
+            <div
+              class="service-card reveal-service bg-gray-900 rounded-lg p-8 group overflow-hidden relative border border-gray-800 transition-all duration-500 ease-in-out hover:border-[var(--accent)]"
+            >
+              <div
+                class="absolute inset-0 bg-[var(--accent)] opacity-0 transition-opacity duration-500 group-hover:opacity-10"
+              ></div>
+              <h3
+                class="text-4xl font-['Anton'] uppercase mb-4 group-hover:text-[var(--accent)] transition-colors"
+              >
+                Interactive Experiences
+              </h3>
+              <p class="text-lg text-gray-400">
+                Building immersive 3D, WebGL, and motion graphics experiences
+                that captivate audiences and leave a lasting impression.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Work Section -->
+      <section id="work" class="py-16 md:py-32 bg-[var(--dark)] z-10">
+        <h2
+          class="text-5xl md:text-7xl font-['Anton'] text-center mb-16 uppercase reveal-text"
+        >
+          Selected Work
+        </h2>
+
+        <div class="container mx-auto px-8 md:px-16 space-y-24">
+          <!-- Project Card 1 -->
+          <div class="work-card-container">
+            <a
+              href="#"
+              class="block group work-card relative overflow-hidden rounded-lg work-card-inner"
+            >
+              <img
+                src="https://placehold.co/1600x900/333/fff?text=Project+1+Placeholder"
+                alt="Project 1"
+                class="w-full h-full object-cover"
+              />
+              <div
+                class="overlay absolute inset-0 bg-black/50 transition-all duration-700"
+              ></div>
+              <div class="absolute inset-0 flex items-center justify-center">
+                <h3
+                  class="text-5xl md:text-8xl font-['Anton'] uppercase text-white tracking-widest"
+                >
+                  Project Echo
+                </h3>
+              </div>
+            </a>
+          </div>
+
+          <!-- Project Card 2 -->
+          <div class="work-card-container">
+            <a
+              href="#"
+              class="block group work-card relative overflow-hidden rounded-lg work-card-inner"
+            >
+              <img
+                src="https://placehold.co/1600x900/333/fff?text=Project+2+Placeholder"
+                alt="Project 2"
+                class="w-full h-full object-cover"
+              />
+              <div
+                class="overlay absolute inset-0 bg-black/50 transition-all duration-700"
+              ></div>
+              <div class="absolute inset-0 flex items-center justify-center">
+                <h3
+                  class="text-5xl md:text-8xl font-['Anton'] uppercase text-white tracking-widest"
+                >
+                  Kinetic Forms
+                </h3>
+              </div>
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <!-- Testimonials Section -->
+      <section id="testimonials" class="py-16 md:py-32 bg-[var(--dark)] z-10">
+        <h2
+          class="text-5xl md:text-7xl font-['Anton'] text-center mb-16 uppercase reveal-text"
+        >
+          Kind Words
+        </h2>
+        <div class="container mx-auto px-8 md:px-16 space-y-12">
+          <!-- Testimonial 1 -->
+          <div
+            class="testimonial-card reveal-testimonial relative p-8 md:p-12 rounded-lg bg-gray-900 border border-gray-800"
+          >
+            <p
+              class="text-2xl md:text-4xl font-['Anton'] uppercase text-gray-600 mb-4 tracking-wider"
+            >
+              "An absolute game-changer."
+            </p>
+            <p class="text-lg md:text-xl leading-relaxed">
+              "John's work transformed our online presence. The level of detail
+              and interactivity he brought to the project was beyond our wildest
+              expectations. He's not just a developer; he's a true artist."
+            </p>
+            <div class="mt-8 flex items-center">
+              <img
+                src="https://placehold.co/64x64/444/fff?text=AB"
+                alt="Client Name"
+                class="w-12 h-12 rounded-full mr-4"
+              />
+              <div>
+                <p class="font-bold text-lg">Alex B.</p>
+                <p class="text-gray-400">CEO, Tech Innovators</p>
+              </div>
+            </div>
+          </div>
+          <!-- Testimonial 2 -->
+          <div
+            class="testimonial-card reveal-testimonial relative p-8 md:p-12 rounded-lg bg-gray-900 border border-gray-800"
+          >
+            <p
+              class="text-2xl md:text-4xl font-['Anton'] uppercase text-gray-600 mb-4 tracking-wider"
+            >
+              "The best I've ever worked with."
+            </p>
+            <p class="text-lg md:text-xl leading-relaxed">
+              "His ability to take a vague concept and turn it into a beautiful,
+              functional reality is unmatched. Our new website has received
+              incredible feedback, all thanks to his expertise and creative
+              vision."
+            </p>
+            <div class="mt-8 flex items-center">
+              <img
+                src="https://placehold.co/64x64/444/fff?text=JL"
+                alt="Client Name"
+                class="w-12 h-12 rounded-full mr-4"
+              />
+              <div>
+                <p class="font-bold text-lg">Jessica L.</p>
+                <p class="text-gray-400">Founder, Future Brands</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Contact Section -->
+      <section
+        id="contact"
+        class="min-h-screen flex flex-col justify-center items-center p-8 md:p-16 bg-[var(--dark)] z-10"
+      >
+        <h2
+          class="text-5xl md:text-7xl font-['Anton'] mb-12 uppercase text-center reveal-text"
+        >
+          Let's build something unforgettable.
+        </h2>
+        <form
+          id="contact-form"
+          class="w-full max-w-lg space-y-8"
+          onsubmit="event.preventDefault(); handleFormSubmit(this);"
+        >
+          <div
+            class="relative border-b-2 border-[var(--light)] focus-within:border-[var(--accent)] transition-colors contact-field-wrapper"
+          >
+            <input
+              type="text"
+              id="name"
+              name="name"
+              required
+              class="block w-full bg-transparent border-none focus:outline-none py-2 text-lg md:text-2xl peer"
+            />
+            <label
+              for="name"
+              class="absolute left-0 top-2 text-lg md:text-2xl transition-all peer-placeholder-shown:top-2 peer-focus:top-[-1.5rem] peer-focus:text-sm"
+              >Your Name</label
+            >
+          </div>
+          <div
+            class="relative border-b-2 border-[var(--light)] focus-within:border-[var(--accent)] transition-colors contact-field-wrapper"
+          >
+            <input
+              type="email"
+              id="email"
+              name="email"
+              required
+              class="block w-full bg-transparent border-none focus:outline-none py-2 text-lg md:text-2xl peer"
+            />
+            <label
+              for="email"
+              class="absolute left-0 top-2 text-lg md:text-2xl transition-all peer-placeholder-shown:top-2 peer-focus:top-[-1.5rem] peer-focus:text-sm"
+              >Your Email</label
+            >
+          </div>
+          <div
+            class="relative border-b-2 border-[var(--light)] focus-within:border-[var(--accent)] transition-colors contact-field-wrapper"
+          >
+            <textarea
+              id="message"
+              name="message"
+              rows="4"
+              required
+              class="block w-full bg-transparent border-none focus:outline-none py-2 text-lg md:text-2xl peer"
+            ></textarea>
+            <label
+              for="message"
+              class="absolute left-0 top-2 text-lg md:text-2xl transition-all peer-placeholder-shown:top-2 peer-focus:top-[-1.5rem] peer-focus:text-sm"
+              >Your Message</label
+            >
+          </div>
+          <button
+            type="submit"
+            class="magnetic-button w-full md:w-auto mt-8 px-10 py-4 border-2 border-[var(--accent)] text-[var(--accent)] uppercase font-bold text-lg md:text-xl rounded-full tracking-widest transition-all hover:bg-[var(--accent)] hover:text-[var(--dark)] relative overflow-hidden contact-button"
+          >
+            <span class="relative z-10">Send Message</span>
+          </button>
+        </form>
+      </section>
+    </main>
+
+    <!-- Professional Footer -->
+    <footer
+      class="bg-[var(--dark)] text-[var(--light)] py-12 md:py-16 border-t border-[var(--accent)] z-10"
+    >
+      <div
+        class="container mx-auto px-8 md:px-16 flex flex-col md:flex-row justify-between items-center text-center md:text-left space-y-8 md:space-y-0"
+      >
+        <div class="flex-1">
+          <p
+            class="text-xl md:text-2xl font-['Anton'] uppercase font-bold text-[var(--accent)]"
+          >
+            John Doe.
+          </p>
+          <p class="mt-2 text-sm md:text-base text-[var(--light)]/70">
+            Creative Developer & Digital Artist
+          </p>
+          <p class="mt-1 text-sm md:text-base text-[var(--light)]/50">
+            &copy; 2024. All Rights Reserved.
+          </p>
+        </div>
+        <div class="flex-1 flex flex-col items-center md:items-end space-y-4">
+          <p class="text-md md:text-lg font-bold">Connect with me:</p>
+          <div class="flex space-x-6">
+            <a
+              href="https://linkedin.com"
+              target="_blank"
+              class="text-xl md:text-2xl hover:text-[var(--accent)] transition-colors"
+              aria-label="LinkedIn"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="1em"
+                height="1em"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+              >
+                <path
+                  d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.765s.784-1.765 1.75-1.765 1.75.79 1.75 1.765-.783 1.765-1.75 1.765zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"
+                />
+              </svg>
+            </a>
+            <a
+              href="https://github.com"
+              target="_blank"
+              class="text-xl md:text-2xl hover:text-[var(--accent)] transition-colors"
+              aria-label="GitHub"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="1em"
+                height="1em"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+              >
+                <path
+                  d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.304.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.468-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.046.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.6.8.576 4.765-1.589 8.197-6.091 8.197-11.386 0-6.627-5.373-12-12-12z"
+                />
+              </svg>
+            </a>
+            <a
+              href="https://twitter.com"
+              target="_blank"
+              class="text-xl md:text-2xl hover:text-[var(--accent)] transition-colors"
+              aria-label="X (formerly Twitter)"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="1em"
+                height="1em"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+              >
+                <path
+                  d="M12 0c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm6.066 9.645c.183 4.04-2.83 8.544-8.164 8.544-1.622 0-3.131-.476-4.402-1.291 1.524.18 3.045-.244 4.252-1.705-1.146-.041-2.097-.784-2.428-1.832.308.056.619.088.941.088.472 0 .93-.065 1.364-.183-1.21-.24-2.097-1.302-2.097-2.553v-.048c.328.18.694.288 1.077.3-1.127-.633-1.86-1.543-1.86-2.613 0-.528.16-.99.438-1.398 1.629 2.001 4.05 3.323 6.773 3.467-.042-.18-.069-.367-.069-.554 0-1.332 1.08-2.413 2.41-2.413 1.034 0 1.966.422 2.625 1.104.81-.155 1.582-.455 2.26-.862-.274.857-.852 1.574-1.614 2.022.763-.09 1.48-.293 2.144-.576-.51.859-1.164 1.586-1.921 2.129z"
+                />
+              </svg>
+            </a>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      window.onload = function () {
+        // --- 1. GSAP, ScrollTrigger, and Lenis Initialization ---
+        // Register GSAP plugins
+        gsap.registerPlugin(ScrollTrigger);
+
+        // Initialize Lenis for buttery-smooth scrolling
+        const lenis = new Lenis({
+          duration: 1.5,
+          easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+          orientation: "vertical",
+          gestureOrientation: "vertical",
+          smoothWheel: true,
+          touchMultiplier: 2,
+        });
+
+        // Frame update function for Lenis and GSAP
+        function raf(time) {
+          lenis.raf(time);
+          requestAnimationFrame(raf);
+        }
+        requestAnimationFrame(raf);
+
+        // Sync Lenis with ScrollTrigger
+        lenis.on("scroll", ScrollTrigger.update);
+        gsap.ticker.add((time) => {
+          lenis.raf(time * 1000);
+        });
+        gsap.ticker.lagSmoothing(0);
+
+        // --- 2. Custom Cursor - the dynamic glowing blob ---
+        const cursor = document.getElementById("custom-cursor");
+        const interactiveElements = document.querySelectorAll(
+          "a, button, .work-card-inner, .contact-field-wrapper, .service-card"
+        );
+        let mouseX = 0,
+          mouseY = 0;
+
+        document.addEventListener("mousemove", (e) => {
+          mouseX = e.clientX;
+          mouseY = e.clientY;
+          gsap.to(cursor, {
+            x: mouseX,
+            y: mouseY,
+            duration: 0.3,
+            ease: "power2.out",
+            opacity: 1,
+          });
+        });
+        document.addEventListener("mousedown", () =>
+          cursor.classList.add("cursor-click")
+        );
+        document.addEventListener("mouseup", () =>
+          cursor.classList.remove("cursor-click")
+        );
+
+        interactiveElements.forEach((el) => {
+          el.addEventListener("mouseenter", () =>
+            cursor.classList.add("cursor-expand")
+          );
+          el.addEventListener("mouseleave", () =>
+            cursor.classList.remove("cursor-expand")
+          );
+        });
+
+        document.addEventListener("mouseleave", () =>
+          gsap.to(cursor, { opacity: 0, duration: 0.3 })
+        );
+        document.addEventListener("mouseenter", () =>
+          gsap.to(cursor, { opacity: 1, duration: 0.3 })
+        );
+
+        // --- 3. Dynamic Header on scroll ---
+        const header = document.getElementById("main-header");
+        ScrollTrigger.create({
+          trigger: "body",
+          start: "top -5%",
+          onEnter: () => header.classList.add("header-scrolled"),
+          onLeaveBack: () => header.classList.remove("header-scrolled"),
+        });
+
+        // --- 4. Hero Section Animations (no SplitType) ---
+        const tlHero = gsap.timeline({ defaults: { ease: "power4.out" } });
+        tlHero
+          .from("#hero-title", {
+            y: 100,
+            opacity: 0,
+            duration: 1,
+          })
+          .from(
+            ".hero-tagline",
+            {
+              y: 20,
+              opacity: 0,
+              duration: 1.2,
+            },
+            "-=0.8"
+          );
+
+        // --- 5. Scroll-triggered animations for all sections ---
+        const sectionAnimations = [
+          {
+            trigger: "#about",
+            start: "top 85%",
+            targets: ".about-heading, .reveal-text-p",
+            from: { y: 50, opacity: 0, stagger: 0.2 },
+          },
+          {
+            trigger: "#about",
+            start: "top 75%",
+            targets: ".about-image-mask",
+            from: {
+              clipPath: "polygon(0% 100%, 100% 100%, 100% 100%, 0% 100%)",
+            },
+            to: {
+              clipPath: "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)",
+              duration: 1.8,
+              ease: "power3.inOut",
+            },
+          },
+          {
+            trigger: "#about",
+            start: "top bottom",
+            end: "bottom top",
+            scrub: true,
+            targets: ".about-image-mask + img",
+            from: { y: -50 },
+            to: { y: 50 },
+          },
+          {
+            trigger: "#services",
+            start: "top 85%",
+            targets: ".reveal-service",
+            from: { y: 100, opacity: 0, stagger: 0.2 },
+          },
+          {
+            trigger: "#work",
+            start: "top 85%",
+            targets: ".work-card-container",
+            from: { y: 100, opacity: 0, stagger: 0.3 },
+          },
+          {
+            trigger: "#work",
+            start: "top bottom",
+            end: "bottom top",
+            scrub: true,
+            targets: ".work-card-inner",
+            from: { yPercent: 10 },
+            to: { yPercent: -10 },
+          },
+          {
+            trigger: "#testimonials",
+            start: "top 85%",
+            targets: ".reveal-testimonial",
+            from: { opacity: 0, x: -100, stagger: 0.3 },
+          },
+          {
+            trigger: "#contact",
+            start: "top 85%",
+            targets: "#contact h2, .contact-field-wrapper, .contact-button",
+            from: { y: 50, opacity: 0, stagger: 0.2 },
+          },
+        ];
+
+        // Apply all GSAP scroll-triggered animations
+        sectionAnimations.forEach((anim) => {
+          const targets = document.querySelectorAll(anim.targets);
+          if (targets.length > 0) {
+            const scrollTriggerConfig = {
+              trigger: anim.trigger,
+              start: anim.start,
+              end: anim.end,
+              scrub: anim.scrub,
+            };
+
+            if (anim.to) {
+              gsap.fromTo(targets, anim.from, {
+                ...anim.to,
+                scrollTrigger: scrollTriggerConfig,
+              });
+            } else {
+              gsap.from(targets, {
+                ...anim.from,
+                scrollTrigger: scrollTriggerConfig,
+              });
+            }
+          }
+        });
+
+        // --- 6. Magnetic Button Effect for Contact Form ---
+        const magneticButton = document.querySelector(".magnetic-button");
+        const magneticEffect = (event) => {
+          const rect = magneticButton.getBoundingClientRect();
+          const x = event.clientX - rect.left - rect.width / 2;
+          const y = event.clientY - rect.top - rect.height / 2;
+          gsap.to(magneticButton, {
+            x: x * 0.4,
+            y: y * 0.4,
+            ease: "power2.out",
+            duration: 0.6,
+          });
+          magneticButton.style.setProperty("--magnetic-x", `${x * 0.4}px`);
+          magneticButton.style.setProperty("--magnetic-y", `${y * 0.4}px`);
+        };
+
+        const resetMagnetic = () => {
+          gsap.to(magneticButton, {
+            x: 0,
+            y: 0,
+            ease: "elastic.out(1, 0.3)",
+            duration: 1.2,
+          });
+          magneticButton.style.setProperty("--magnetic-x", `0px`);
+          magneticButton.style.setProperty("--magnetic-y", `0px`);
+        };
+
+        magneticButton.addEventListener("mousemove", magneticEffect);
+        magneticButton.addEventListener("mouseleave", resetMagnetic);
+
+        // --- 7. Contact Form Submission (Simulated) ---
+        async function handleFormSubmit(form) {
+          const messageBox = document.getElementById("message-box");
+          const messageContent = document.getElementById("message-content");
+          const formData = new FormData(form);
+
+          // Simulate a network request
+          try {
+            messageContent.textContent = "Sending message...";
+            messageBox.style.borderColor = "var(--accent)";
+            messageBox.style.backgroundColor = "var(--dark)";
+            messageBox.classList.add("show");
+
+            // Mock a delay
+            await new Promise((resolve) => setTimeout(resolve, 2000));
+
+            // Log the form data to the console for demonstration
+            console.log("Form Data:", Object.fromEntries(formData));
+
+            messageContent.textContent = "Message sent successfully! 🚀";
+            messageBox.style.borderColor = "#4ade80"; // Green for success
+            form.reset();
+          } catch (error) {
+            console.error("Error submitting form:", error);
+            messageContent.textContent =
+              "Failed to send message. Please try again.";
+            messageBox.style.borderColor = "#ef4444"; // Red for error
+          } finally {
+            setTimeout(() => {
+              messageBox.classList.remove("show");
+            }, 5000); // Hide message after 5 seconds
+          }
+        }
+        window.handleFormSubmit = handleFormSubmit; // Make function globally accessible
+
+        // --- 8. Three.js Particle System Background (Enhanced) ---
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(
+          75,
+          window.innerWidth / window.innerHeight,
+          0.1,
+          1000
+        );
+        const renderer = new THREE.WebGLRenderer({
+          canvas: document.getElementById("three-canvas"),
+          alpha: true,
+        });
+        renderer.setPixelRatio(window.devicePixelRatio);
+        renderer.setSize(window.innerWidth, window.innerHeight);
+
+        // Create a custom shader material for the particles
+        const particleCount = 60000;
+        const positions = new Float32Array(particleCount * 3);
+        const randomSpeeds = new Float32Array(particleCount * 3);
+        const randomValues = new Float32Array(particleCount);
+
+        // Generate initial particle positions and speeds
+        for (let i = 0; i < particleCount; i++) {
+          const x = (Math.random() - 0.5) * 200;
+          const y = (Math.random() - 0.5) * 200;
+          const z = (Math.random() - 0.5) * 200;
+
+          positions[i * 3] = x;
+          positions[i * 3 + 1] = y;
+          positions[i * 3 + 2] = z;
+
+          randomSpeeds[i * 3] = (Math.random() - 0.5) * 0.005;
+          randomSpeeds[i * 3 + 1] = (Math.random() - 0.5) * 0.005;
+          randomSpeeds[i * 3 + 2] = (Math.random() - 0.5) * 0.005;
+
+          randomValues[i] = Math.random() * 2;
+        }
+
+        const geometry = new THREE.BufferGeometry();
+        geometry.setAttribute(
+          "position",
+          new THREE.BufferAttribute(positions, 3)
+        );
+        geometry.setAttribute(
+          "randomValue",
+          new THREE.BufferAttribute(randomValues, 1)
+        );
+
+        // Corrected Vertex Shader - A standard Simplex Noise implementation is used here
+        const vertexShader = `
+          uniform float u_time;
+          uniform vec3 u_mouse_pos;
+          uniform float u_repel_strength;
+          attribute float randomValue;
+
+          // A more robust Simplex Noise implementation
+          vec3 mod289(vec3 x) {
+            return x - floor(x * (1.0 / 289.0)) * 289.0;
+          }
+          vec4 mod289(vec4 x) {
+            return x - floor(x * (1.0 / 289.0)) * 289.0;
+          }
+          vec4 permute(vec4 x) {
+               return mod289(((x*34.0)+1.0)*x);
+          }
+          vec4 taylorInvSqrt(vec4 r) {
+            return 1.79284291400159 - 0.85373472095314 * r;
+          }
+
+          float snoise(vec3 v) {
+            const vec2  C = vec2(1.0/6.0, 1.0/3.0);
+            
+            // First corner
+            vec3 i = floor(v + dot(v, C.yyy));
+            vec3 x0 = v - i + dot(i, C.xxx);
+            
+            // Other corners
+            vec3 g = step(x0.yzx, x0.xyz);
+            vec3 l = 1.0 - g;
+            vec3 i1 = min( g.xyz, l.zxy );
+            vec3 i2 = max( g.xyz, l.zxy );
+            
+            vec3 x1 = x0 - i1 + C.xxx;
+            vec3 x2 = x0 - i2 + 2.0 * C.xxx;
+            vec3 x3 = x0 - 1.0 + 3.0 * C.xxx;
+            
+            i = mod289(i);
+            vec4 p = permute( permute( permute( 
+                       i.z + vec4(0.0, i1.z, i2.z, 1.0 ))
+                     + i.y + vec4(0.0, i1.y, i2.y, 1.0 )) 
+                     + i.x + vec4(0.0, i1.x, i2.x, 1.0 )) ;
+            
+            // Gradients
+            vec4 ox = mod(p, 8.0);
+            vec4 oy = floor(p/8.0);
+            vec4 oz = floor(p/64.0);
+            
+            vec3 g0 = vec3(ox.x, oy.x, oz.x) * 2.0 - 1.0;
+            vec3 g1 = vec3(ox.y, oy.y, oz.y) * 2.0 - 1.0;
+            vec3 g2 = vec3(ox.z, oy.z, oz.z) * 2.0 - 1.0;
+            vec3 g3 = vec3(ox.w, oy.w, oz.w) * 2.0 - 1.0;
+
+            // Normalise gradients
+            vec4 norm = taylorInvSqrt(vec4(dot(g0,g0), dot(g1,g1), dot(g2,g2), dot(g3,g3)));
+            g0 *= norm.x;
+            g1 *= norm.y;
+            g2 *= norm.z;
+            g3 *= norm.w;
+            
+            // Interpolation
+            vec4 h = max(0.6 - vec4(dot(x0,x0), dot(x1,x1), dot(x2,x2), dot(x3,x3)), 0.0);
+            vec4 n = h * h * h * h;
+            vec4 d = vec4(dot(g0, x0), dot(g1, x1), dot(g2, x2), dot(g3, x3));
+            
+            return 32.0 * dot(n, d);
+          }
+          
+          void main() {
+              vec3 newPosition = position;
+              // Add a subtle organic drift using simplex noise
+              float noiseX = snoise(vec3(position.x * 0.01, position.y * 0.01, u_time * 0.1 + randomValue * 10.0));
+              float noiseY = snoise(vec3(position.y * 0.01, position.z * 0.01, u_time * 0.1 + randomValue * 10.0));
+              float noiseZ = snoise(vec3(position.z * 0.01, position.x * 0.01, u_time * 0.1 + randomValue * 10.0));
+
+              newPosition.x += noiseX * 1.5;
+              newPosition.y += noiseY * 1.5;
+              newPosition.z += noiseZ * 1.5;
+
+              // Mouse repulsion effect
+              vec2 repelDir = newPosition.xy - u_mouse_pos.xy;
+              float dist = length(repelDir);
+              float influence = smoothstep(20.0, 0.0, dist); // Repel only within a certain radius
+              newPosition.xy += normalize(repelDir) * influence * u_repel_strength * 2.0;
+
+              gl_Position = projectionMatrix * modelViewMatrix * vec4(newPosition, 1.0);
+              gl_PointSize = 1.0;
+          }
+        `;
+
+        // Fragment Shader - for the particle's appearance
+        const fragmentShader = `
+          void main() {
+              gl_FragColor = vec4(0.0, 0.88, 1.0, 1.0); // Neon blue glow
+          }
+        `;
+
+        const material = new THREE.ShaderMaterial({
+          uniforms: {
+            u_time: { value: 0.0 },
+            u_mouse_pos: { value: new THREE.Vector3(1000, 1000, 1000) }, // Default to off-screen
+            u_repel_strength: { value: 1.0 },
+          },
+          vertexShader: vertexShader,
+          fragmentShader: fragmentShader,
+          blending: THREE.AdditiveBlending, // Makes the particles glow
+          transparent: true,
+        });
+
+        const particles = new THREE.Points(geometry, material);
+        scene.add(particles);
+
+        camera.position.z = 80;
+
+        // Update mouse position for the shader
+        window.addEventListener("mousemove", (event) => {
+          // Convert screen coordinates to a range that makes sense for the 3D scene
+          const x = (event.clientX / window.innerWidth) * 200 - 100;
+          const y = -(event.clientY / window.innerHeight) * 200 + 100;
+          material.uniforms.u_mouse_pos.value.set(x, y, 0);
+        });
+
+        // Animation loop
+        const clock = new THREE.Clock();
+        const animate = () => {
+          requestAnimationFrame(animate);
+          material.uniforms.u_time.value = clock.getElapsedTime();
+          particles.rotation.y += 0.0002; // Gentle rotation
+          particles.rotation.x += 0.0001;
+          renderer.render(scene, camera);
+        };
+
+        // Handle window resize
+        window.addEventListener("resize", () => {
+          camera.aspect = window.innerWidth / window.innerHeight;
+          camera.updateProjectionMatrix();
+          renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        animate(); // Start the animation loop
+      };
+    </script>
+  </body>
+</html>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>John Doe — Experiential Creative Developer</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Google Fonts: Poppins -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      /* * ====================================================================================================
+         * AWWWARDS-LEVEL STYLING
+         * This section contains advanced CSS for creating a top-tier visual experience.
+         * ====================================================================================================
+        */
+      body {
+        font-family: "Poppins", sans-serif;
+        background-color: #000000;
+        color: #ffffff;
+        overflow-x: hidden;
+        cursor: none; /* Hide default cursor */
+      }
+
+      /* Lenis smooth scroll styles */
+      html.lenis {
+        height: auto;
+      }
+      .lenis.lenis-smooth {
+        scroll-behavior: auto !important;
+      }
+      .lenis.lenis-stopped {
+        overflow: hidden;
+      }
+
+      /* Custom Cursor */
+      .cursor {
+        position: fixed;
+        top: 0;
+        left: 0;
+        pointer-events: none;
+        z-index: 9999;
+      }
+      .cursor__ball {
+        position: fixed;
+        width: 30px;
+        height: 30px;
+        background-color: white;
+        border-radius: 50%;
+        mix-blend-mode: difference;
+        transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      }
+      .cursor__ball--small {
+        width: 8px;
+        height: 8px;
+        background-color: white;
+        transition: transform 0.1s ease-out;
+      }
+
+      /* WebGL Canvas */
+      #webgl-canvas {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -1; /* Place it behind all content */
+        opacity: 0.5;
+      }
+
+      /* Preloader */
+      #preloader {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: #000;
+        z-index: 10000;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: #fff;
+        font-size: 1.5rem;
+        font-weight: 500;
+      }
+      .preloader-counter {
+        display: flex;
+        align-items: baseline;
+      }
+      #counter {
+        font-size: 8vw;
+        font-weight: 700;
+      }
+
+      /* Text & Image Reveal Utilities */
+      .line-wrapper {
+        overflow: hidden;
+        height: 1.2em;
+      }
+      .image-reveal {
+        clip-path: polygon(0 100%, 100% 100%, 100% 100%, 0 100%);
+        visibility: hidden;
+      }
+
+      /* Magnetic Effect */
+      .magnetic-item {
+        transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+      }
+
+      /* Horizontal Scroll Section */
+      .work-section {
+        /* We need to define a height for the pinning to work correctly */
+        height: 400vh;
+        position: relative;
+      }
+      .work-sticky-container {
+        position: sticky;
+        top: 0;
+        height: 100vh;
+        width: 100%;
+        overflow: hidden;
+      }
+      .work-container {
+        display: flex;
+        height: 100%;
+        width: 400%; /* 100% for each panel */
+      }
+      .project-panel {
+        width: 100%; /* Each panel takes up a quarter of the container */
+        height: 100%;
+        will-change: transform; /* Performance optimization */
+      }
+      .project-image-wrapper {
+        overflow: hidden;
+        border-radius: 1.5rem;
+      }
+      .project-image {
+        transition: transform 1s cubic-bezier(0.165, 0.84, 0.44, 1) !important;
+      }
+
+      /* Marquee */
+      .marquee {
+        overflow: hidden;
+        white-space: nowrap;
+      }
+      .marquee-content {
+        display: inline-block;
+        animation: marquee 40s linear infinite;
+        will-change: transform;
+      }
+      @keyframes marquee {
+        from {
+          transform: translateX(0%);
+        }
+        to {
+          transform: translateX(-50%);
+        }
+      }
+    </style>
+  </head>
+  <body class="antialiased">
+    <!-- Custom Cursor -->
+    <div class="cursor">
+      <div class="cursor__ball cursor__ball--small"></div>
+      <div class="cursor__ball cursor__ball--large"></div>
+    </div>
+
+    <!-- Preloader -->
+    <div id="preloader">
+      <div class="preloader-counter">
+        <span id="counter">0</span><span>%</span>
+      </div>
+    </div>
+
+    <!-- WebGL Background -->
+    <canvas id="webgl-canvas"></canvas>
+
+    <!-- Main Content Wrapper -->
+    <div id="main-content" class="opacity-0">
+      <!-- Header -->
+      <header
+        class="fixed top-0 left-0 w-full p-6 md:p-8 z-50 flex justify-between items-center text-white mix-blend-difference"
+      >
+        <div class="logo magnetic-item text-2xl font-bold tracking-tighter">
+          JD.
+        </div>
+        <nav class="hidden md:flex items-center space-x-10 font-medium text-lg">
+          <a href="#about" class="magnetic-item nav-link"><span>About</span></a>
+          <a href="#work" class="magnetic-item nav-link"><span>Work</span></a>
+          <a href="#contact" class="magnetic-item nav-link"
+            ><span>Contact</span></a
+          >
+        </nav>
+        <div class="menu-button magnetic-item md:hidden text-lg font-bold">
+          Menu
+        </div>
+      </header>
+
+      <!-- Hero Section -->
+      <section
+        id="hero"
+        class="h-screen w-full flex flex-col justify-center items-center relative text-center px-4"
+      >
+        <div class="relative z-10">
+          <h1
+            class="text-6xl md:text-9xl lg:text-[10rem] font-extrabold tracking-tighter leading-none"
+          >
+            <div class="line-wrapper"><div class="line">Experiential</div></div>
+            <div class="line-wrapper"><div class="line">Developer</div></div>
+          </h1>
+          <p class="mt-6 text-lg md:text-xl max-w-3xl mx-auto hero-subtext">
+            I design and build immersive digital realities that defy
+            expectations and connect with people on a deeper level.
+          </p>
+        </div>
+      </section>
+
+      <!-- About Section -->
+      <section id="about" class="py-24 md:py-48 px-6 md:px-12">
+        <div
+          class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-5 gap-16 items-center"
+        >
+          <div class="md:col-span-2">
+            <div class="w-full aspect-[3/4] rounded-2xl overflow-hidden">
+              <img
+                src="https://images.unsplash.com/photo-1557862921-37829c790f19?q=80&w=1200&auto=format&fit=crop"
+                alt="John Doe Portrait"
+                class="object-cover w-full h-full image-reveal"
+                onerror="this.onerror=null;this.src='https://placehold.co/800x1000/111111/ffffff?text=Portrait';"
+              />
+            </div>
+          </div>
+          <div class="md:col-span-3">
+            <h2
+              class="text-5xl md:text-7xl font-bold tracking-tighter mb-8 about-title"
+            >
+              Blurring the line between code and art.
+            </h2>
+            <p
+              class="text-xl md:text-2xl text-gray-300 leading-relaxed about-text"
+            >
+              I'm John, a developer obsessed with motion, interactivity, and the
+              magic of WebGL. My passion lies in creating fluid, engaging, and
+              emotionally resonant experiences that push the boundaries of
+              what's possible on the web.
+            </p>
+            <a
+              href="#contact"
+              class="magnetic-item inline-block mt-12 bg-white text-black font-semibold py-4 px-10 rounded-full text-xl hover:bg-gray-200 transition-all duration-300 about-button"
+            >
+              Start a Project
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <!-- Horizontal Work Section -->
+      <section id="work" class="work-section">
+        <div class="work-sticky-container">
+          <div class="work-container">
+            <!-- Project 1 -->
+            <div
+              class="project-panel flex-shrink-0 w-1/4 h-full flex items-center justify-center bg-black px-4 md:px-12"
+            >
+              <div class="max-w-5xl mx-auto text-center">
+                <h3 class="text-4xl md:text-6xl font-bold tracking-tighter">
+                  Project Cygnus
+                </h3>
+                <p class="mt-3 text-xl text-gray-400">
+                  WebGL Data Visualization
+                </p>
+                <div class="mt-10 w-full aspect-video project-image-wrapper">
+                  <img
+                    src="https://images.unsplash.com/photo-1555940280-66e4f7bb7e47?q=80&w=1920&auto=format&fit=crop"
+                    alt="Project One"
+                    class="project-image object-cover w-full h-full"
+                    onerror="this.onerror=null;this.src='https://placehold.co/1920x1080/2a2a2a/e0e0e0?text=Project+1';"
+                  />
+                </div>
+              </div>
+            </div>
+            <!-- Project 2 -->
+            <div
+              class="project-panel flex-shrink-0 w-1/4 h-full flex items-center justify-center bg-black px-4 md:px-12"
+            >
+              <div class="max-w-5xl mx-auto text-center">
+                <h3 class="text-4xl md:text-6xl font-bold tracking-tighter">
+                  Aether Interactive
+                </h3>
+                <p class="mt-3 text-xl text-gray-400">Immersive E-commerce</p>
+                <div class="mt-10 w-full aspect-video project-image-wrapper">
+                  <img
+                    src="https://images.unsplash.com/photo-1501426026826-31c667bdf23d?q=80&w=1920&auto=format&fit=crop"
+                    alt="Project Two"
+                    class="project-image object-cover w-full h-full"
+                    onerror="this.onerror=null;this.src='https://placehold.co/1920x1080/1a1a1a/e0e0e0?text=Project+2';"
+                  />
+                </div>
+              </div>
+            </div>
+            <!-- Project 3 -->
+            <div
+              class="project-panel flex-shrink-0 w-1/4 h-full flex items-center justify-center bg-black px-4 md:px-12"
+            >
+              <div class="max-w-5xl mx-auto text-center">
+                <h3 class="text-4xl md:text-6xl font-bold tracking-tighter">
+                  Momentum
+                </h3>
+                <p class="mt-3 text-xl text-gray-400">Kinetic Branding</p>
+                <div class="mt-10 w-full aspect-video project-image-wrapper">
+                  <img
+                    src="https://images.unsplash.com/photo-1558655146-d09347e92766?q=80&w=1920&auto=format&fit=crop"
+                    alt="Project Three"
+                    class="project-image object-cover w-full h-full"
+                    onerror="this.onerror=null;this.src='https://placehold.co/1920x1080/3a3a3a/e0e0e0?text=Project+3';"
+                  />
+                </div>
+              </div>
+            </div>
+            <!-- Project 4 (Title Card) -->
+            <div
+              class="project-panel flex-shrink-0 w-1/4 h-full flex items-center justify-center bg-black px-4 md:px-12"
+            >
+              <div class="max-w-5xl mx-auto text-left">
+                <h3 class="text-6xl md:text-8xl font-bold tracking-tighter">
+                  Selected Works
+                </h3>
+                <p class="mt-4 text-2xl text-gray-400">2020 - 2024</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Marquee / Skills Section -->
+      <section
+        class="py-20 md:py-32 bg-black border-t border-b border-gray-800"
+      >
+        <div
+          class="marquee text-6xl md:text-9xl font-bold tracking-tighter text-gray-800"
+        >
+          <div class="marquee-content">
+            <span>Three.js</span><span class="px-8">&mdash;</span>
+            <span>WebGL</span><span class="px-8">&mdash;</span> <span>GSAP</span
+            ><span class="px-8">&mdash;</span> <span>React</span
+            ><span class="px-8">&mdash;</span> <span>GLSL</span
+            ><span class="px-8">&mdash;</span> <span>Framer Motion</span
+            ><span class="px-8">&mdash;</span> <span>Interaction Design</span
+            ><span class="px-8">&mdash;</span>
+            <!-- Duplicate for seamless loop -->
+            <span>Three.js</span><span class="px-8">&mdash;</span>
+            <span>WebGL</span><span class="px-8">&mdash;</span> <span>GSAP</span
+            ><span class="px-8">&mdash;</span> <span>React</span
+            ><span class="px-8">&mdash;</span> <span>GLSL</span
+            ><span class="px-8">&mdash;</span> <span>Framer Motion</span
+            ><span class="px-8">&mdash;</span> <span>Interaction Design</span
+            ><span class="px-8">&mdash;</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Contact Section -->
+      <footer id="contact" class="py-24 md:py-48 px-6 md:px-12 text-center">
+        <h2
+          class="text-6xl md:text-9xl lg:text-[10rem] font-extrabold tracking-tighter mb-4"
+        >
+          <span class="line-wrapper"><div class="line">Let's Create</div></span>
+          <span class="line-wrapper"><div class="line">Together</div></span>
+        </h2>
+        <a
+          href="mailto:hello@johndoe.com"
+          class="magnetic-item text-5xl md:text-8xl lg:text-9xl font-extrabold tracking-tighter text-gray-600 hover:text-white transition-colors duration-500 inline-block contact-link"
+        >
+          hello@johndoe.com
+        </a>
+        <div class="mt-24 text-gray-500 footer-bottom">
+          <p>&copy; 2025 John Doe. All Rights Reserved.</p>
+          <div class="flex justify-center space-x-8 mt-6">
+            <a href="#" class="hover:text-white transition-colors">Twitter</a>
+            <a href="#" class="hover:text-white transition-colors">LinkedIn</a>
+            <a href="#" class="hover:text-white transition-colors">Github</a>
+          </div>
+        </div>
+      </footer>
+    </div>
+
+    <!-- Core Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <script src="https://unpkg.com/lenis@1.0.45/dist/lenis.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        gsap.registerPlugin(ScrollTrigger);
+
+        // --- 1. LENIS SMOOTH SCROLL ---
+        const lenis = new Lenis();
+        lenis.on("scroll", ScrollTrigger.update);
+        gsap.ticker.add((time) => lenis.raf(time * 1000));
+        gsap.ticker.lagSmoothing(0);
+
+        // --- 2. CUSTOM CURSOR ---
+        const cursorBalls = document.querySelectorAll(".cursor__ball");
+        const largeBall = cursorBalls[1];
+        const smallBall = cursorBalls[0];
+        let mouseX = 0,
+          mouseY = 0;
+        let lastX = 0,
+          lastY = 0;
+        let isHovering = false;
+
+        gsap.set(largeBall, { xPercent: -50, yPercent: -50 });
+        gsap.set(smallBall, { xPercent: -50, yPercent: -50 });
+
+        window.addEventListener("mousemove", (e) => {
+          mouseX = e.clientX;
+          mouseY = e.clientY;
+        });
+
+        function animateCursor() {
+          let dt = 1.0 - Math.pow(1.0 - 0.1, gsap.ticker.deltaRatio());
+          lastX += (mouseX - lastX) * dt;
+          lastY += (mouseY - lastY) * dt;
+          gsap.to(largeBall, { duration: 0, x: lastX, y: lastY });
+          gsap.to(smallBall, { duration: 0, x: mouseX, y: mouseY });
+          requestAnimationFrame(animateCursor);
+        }
+        animateCursor();
+
+        document.querySelectorAll("a, button, .magnetic-item").forEach((el) => {
+          el.addEventListener("mouseenter", () => {
+            gsap.to(largeBall, { duration: 0.3, scale: 3 });
+          });
+          el.addEventListener("mouseleave", () => {
+            gsap.to(largeBall, { duration: 0.3, scale: 1 });
+          });
+        });
+
+        // --- 3. MAGNETIC ITEMS ---
+        document.querySelectorAll(".magnetic-item").forEach((item) => {
+          item.addEventListener("mousemove", function (e) {
+            const rect = this.getBoundingClientRect();
+            const x = e.clientX - rect.left - rect.width / 2;
+            const y = e.clientY - rect.top - rect.height / 2;
+            gsap.to(this, {
+              x: x * 0.2,
+              y: y * 0.4,
+              duration: 1,
+              ease: "power4.out",
+            });
+          });
+          item.addEventListener("mouseleave", function () {
+            gsap.to(this, {
+              x: 0,
+              y: 0,
+              duration: 1,
+              ease: "elastic.out(1, 0.3)",
+            });
+          });
+        });
+
+        // --- 4. THREE.JS WEBGL BACKGROUND ---
+        let scene, camera, renderer, particles, clock;
+
+        function initWebGL() {
+          scene = new THREE.Scene();
+          clock = new THREE.Clock();
+          camera = new THREE.PerspectiveCamera(
+            75,
+            window.innerWidth / window.innerHeight,
+            0.1,
+            1000
+          );
+          camera.position.z = 50;
+
+          renderer = new THREE.WebGLRenderer({
+            canvas: document.getElementById("webgl-canvas"),
+            alpha: true,
+          });
+          renderer.setSize(window.innerWidth, window.innerHeight);
+          renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+          const particleCount = 5000;
+          const positions = new Float32Array(particleCount * 3);
+          for (let i = 0; i < particleCount * 3; i++) {
+            positions[i] = (Math.random() - 0.5) * 200;
+          }
+
+          const particlesGeometry = new THREE.BufferGeometry();
+          particlesGeometry.setAttribute(
+            "position",
+            new THREE.BufferAttribute(positions, 3)
+          );
+
+          const particlesMaterial = new THREE.PointsMaterial({
+            color: 0xffffff,
+            size: 0.1,
+            blending: THREE.AdditiveBlending,
+            transparent: true,
+            sizeAttenuation: true,
+          });
+
+          particles = new THREE.Points(particlesGeometry, particlesMaterial);
+          scene.add(particles);
+
+          window.addEventListener("resize", onWindowResize, false);
+          animateWebGL();
+        }
+
+        function onWindowResize() {
+          camera.aspect = window.innerWidth / window.innerHeight;
+          camera.updateProjectionMatrix();
+          renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        let mouseTarget = new THREE.Vector2();
+        window.addEventListener("mousemove", (event) => {
+          mouseTarget.x = (event.clientX / window.innerWidth) * 2 - 1;
+          mouseTarget.y = -(event.clientY / window.innerHeight) * 2 + 1;
+        });
+
+        function animateWebGL() {
+          const elapsedTime = clock.getElapsedTime();
+          particles.rotation.y = elapsedTime * 0.05;
+          particles.rotation.x = elapsedTime * 0.02;
+
+          // Animate camera to follow mouse
+          camera.position.x += (mouseTarget.x * 5 - camera.position.x) * 0.05;
+          camera.position.y += (mouseTarget.y * 5 - camera.position.y) * 0.05;
+          camera.lookAt(scene.position);
+
+          renderer.render(scene, camera);
+          requestAnimationFrame(animateWebGL);
+        }
+
+        initWebGL();
+
+        // --- 5. MASTER TIMELINE & PRELOADER ---
+        const masterTl = gsap.timeline();
+        const counter = { value: 0 };
+
+        function updateCounter() {
+          document.getElementById("counter").innerText = Math.round(
+            counter.value
+          );
+        }
+
+        masterTl
+          .to(counter, {
+            value: 100,
+            duration: 2.5,
+            ease: "power2.out",
+            onUpdate: updateCounter,
+          })
+          .to(
+            ".preloader-counter",
+            {
+              y: -30,
+              opacity: 0,
+              duration: 0.5,
+              ease: "power2.in",
+            },
+            "-=0.5"
+          )
+          .to("#preloader", {
+            y: "-100%",
+            duration: 1.2,
+            ease: "power3.inOut",
+          })
+          .to(
+            "#main-content",
+            {
+              opacity: 1,
+              duration: 0.1,
+            },
+            "-=1.2"
+          )
+          .add(initPageAnimations, "-=1");
+
+        // --- 6. PAGE LOAD ANIMATIONS ---
+        function initPageAnimations() {
+          const heroTl = gsap.timeline();
+          heroTl
+            .from("#hero .line", {
+              y: "110%",
+              stagger: 0.1,
+              duration: 1.5,
+              ease: "power4.out",
+            })
+            .from(
+              ".hero-subtext",
+              {
+                y: 50,
+                opacity: 0,
+                duration: 1,
+                ease: "power3.out",
+              },
+              "-=1"
+            )
+            .from(
+              "header",
+              {
+                y: -100,
+                opacity: 0,
+                duration: 1,
+                ease: "power3.out",
+              },
+              "-=1.2"
+            );
+        }
+
+        // --- 7. SCROLL-TRIGGERED ANIMATIONS ---
+
+        // About Section Reveal
+        const aboutTl = gsap.timeline({
+          scrollTrigger: {
+            trigger: "#about",
+            start: "top 70%",
+          },
+        });
+        aboutTl
+          .to("#about .image-reveal", {
+            clipPath: "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)",
+            visibility: "visible",
+            duration: 1.5,
+            ease: "power4.inOut",
+          })
+          .from(
+            ".about-title",
+            { y: 50, opacity: 0, duration: 1, ease: "power3.out" },
+            "-=1.2"
+          )
+          .from(
+            ".about-text",
+            { y: 50, opacity: 0, duration: 1, ease: "power3.out" },
+            "-=0.8"
+          )
+          .from(
+            ".about-button",
+            { y: 50, opacity: 0, duration: 1, ease: "power3.out" },
+            "-=0.6"
+          );
+
+        // Horizontal Work Section
+        let workPanels = gsap.utils.toArray(".project-panel");
+        gsap.to(workPanels, {
+          xPercent: -100 * (workPanels.length - 1),
+          ease: "none",
+          scrollTrigger: {
+            trigger: ".work-section",
+            pin: ".work-sticky-container",
+            scrub: 1,
+            snap: 1 / (workPanels.length - 1),
+            end: () =>
+              "+=" +
+              (document.querySelector(".work-container").offsetWidth -
+                window.innerWidth),
+          },
+        });
+
+        // Project Image Parallax on Scroll
+        workPanels.forEach((panel) => {
+          const image = panel.querySelector(".project-image");
+          gsap.fromTo(
+            image,
+            { y: "-10vh" },
+            {
+              y: "10vh",
+              ease: "none",
+              scrollTrigger: {
+                trigger: panel,
+                containerAnimation: gsap.getTweensOf(workPanels)[0],
+                scrub: 1,
+                // FIX: Define explicit start/end points for horizontal scrolling.
+                // This ensures the parallax effect is active ONLY when the panel is crossing the viewport.
+                start: "left right", // Starts when the left edge of the panel hits the right edge of the viewport.
+                end: "right left", // Ends when the right edge of the panel hits the left edge of the viewport.
+                markers: true,
+              },
+            }
+          );
+        });
+
+        // Contact Section Reveal
+        const contactTl = gsap.timeline({
+          scrollTrigger: {
+            trigger: "#contact",
+            start: "top 60%",
+          },
+        });
+        contactTl
+          .from("#contact .line", {
+            y: "110%",
+            stagger: 0.1,
+            duration: 1.5,
+            ease: "power4.out",
+          })
+          .from(
+            ".contact-link",
+            { y: 50, opacity: 0, duration: 1.2, ease: "power3.out" },
+            "-=1"
+          )
+          .from(
+            ".footer-bottom",
+            { opacity: 0, duration: 1, ease: "power2.out" },
+            "-=0.5"
+          );
+      });
+    </script>
+  </body>
+</html>

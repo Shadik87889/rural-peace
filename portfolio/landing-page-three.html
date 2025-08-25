@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>VOID - Brutalist Design</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg-color: #f0f0f0;
+        --text-color: #101010;
+        --accent-color: #ff0000;
+        --border-color: #101010;
+      }
+
+      body {
+        font-family: "Inter", sans-serif;
+        background-color: var(--bg-color);
+        color: var(--text-color);
+        overflow-x: hidden;
+      }
+
+      h1,
+      h2,
+      h3,
+      h4 {
+        font-family: "Archivo Black", sans-serif;
+        font-weight: 400;
+      }
+
+      ::selection {
+        background: var(--accent-color);
+        color: var(--bg-color);
+      }
+
+      .line-break {
+        border-bottom: 2px solid var(--border-color);
+      }
+
+      .button-style {
+        border: 2px solid var(--border-color);
+        transition: background-color 0.3s, color 0.3s, transform 0.3s;
+      }
+
+      .button-style:hover {
+        background-color: var(--accent-color);
+        color: var(--bg-color);
+        transform: translateY(-4px);
+      }
+
+      .nav-item {
+        transition: transform 0.3s, color 0.3s;
+      }
+
+      .nav-item:hover {
+        transform: translateX(10px);
+        color: var(--accent-color);
+      }
+
+      .work-item {
+        border-bottom: 2px solid var(--border-color);
+        cursor: pointer;
+        transition: background-color 0.3s;
+      }
+
+      .work-item:hover {
+        background-color: var(--border-color);
+        color: var(--bg-color);
+      }
+
+      .work-item:hover .work-title {
+        color: var(--bg-color);
+      }
+
+      .work-item-image {
+        transition: transform 0.5s ease-out;
+      }
+      .work-item:hover .work-item-image {
+        transform: scale(1.05);
+      }
+    </style>
+  </head>
+  <body class="antialiased">
+    <header
+      class="fixed top-0 left-0 w-full z-50 p-6 flex justify-between items-center"
+    >
+      <div class="text-2xl font-heading">VOID.</div>
+      <button
+        id="menu-toggle"
+        class="text-xl font-heading button-style px-4 py-2"
+      >
+        MENU
+      </button>
+    </header>
+
+    <div
+      id="nav-overlay"
+      class="fixed inset-0 bg-black text-white z-40 hidden flex-col justify-center items-center"
+    >
+      <div class="absolute top-6 right-6">
+        <button
+          id="close-menu"
+          class="text-xl font-heading button-style px-4 py-2 text-white border-white"
+        >
+          CLOSE
+        </button>
+      </div>
+      <nav class="text-center space-y-4">
+        <a href="#" class="block text-4xl md:text-6xl nav-item font-heading"
+          >WORK</a
+        >
+        <a href="#" class="block text-4xl md:text-6xl nav-item font-heading"
+          >ABOUT</a
+        >
+        <a href="#" class="block text-4xl md:text-6xl nav-item font-heading"
+          >CONTACT</a
+        >
+      </nav>
+    </div>
+
+    <main class="container mx-auto px-6 pt-32 pb-16">
+      <section
+        class="min-h-screen flex flex-col justify-center items-center text-center"
+      >
+        <h1
+          class="text-6xl md:text-8xl lg:text-[10rem] leading-none uppercase font-heading"
+        >
+          RADICAL IDEAS FOR A
+          <span
+            class="text-6xl md:text-8xl lg:text-[10rem] text-[var(--accent-color)]"
+            >CHAOTIC</span
+          >
+          WORLD.
+        </h1>
+        <p class="mt-8 text-xl max-w-2xl">
+          We are a design agency that crafts digital experiences with purpose,
+          precision, and an unyielding commitment to excellence. We don't just
+          build, we redefine.
+        </p>
+        <a href="#" class="mt-12 text-xl button-style px-6 py-3"
+          >LET'S CONNECT</a
+        >
+      </section>
+
+      <section class="py-20 md:py-32 line-break">
+        <h2 class="text-4xl md:text-6xl font-heading mb-8">Capabilities</h2>
+        <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div
+            class="border-2 border-dashed border-gray-400 p-6 h-64 flex flex-col justify-between"
+          >
+            <h3 class="text-2xl font-heading">BRAND STRATEGY</h3>
+            <p class="text-sm">
+              We define your identity and position you for success.
+            </p>
+          </div>
+          <div
+            class="border-2 border-dashed border-gray-400 p-6 h-64 flex flex-col justify-between"
+          >
+            <h3 class="text-2xl font-heading">DIGITAL PRODUCTS</h3>
+            <p class="text-sm">
+              Creating intuitive websites and apps that users love.
+            </p>
+          </div>
+          <div
+            class="border-2 border-dashed border-gray-400 p-6 h-64 flex flex-col justify-between"
+          >
+            <h3 class="text-2xl font-heading">MOTION & 3D</h3>
+            <p class="text-sm">
+              Bringing your brand to life with dynamic motion.
+            </p>
+          </div>
+          <div
+            class="border-2 border-dashed border-gray-400 p-6 h-64 flex flex-col justify-between"
+          >
+            <h3 class="text-2xl font-heading">CAMPAIGNS</h3>
+            <p class="text-sm">Strategic campaigns that drive real results.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="py-20 md:py-32">
+        <h2 class="text-4xl md:text-6xl font-heading mb-8">Work</h2>
+        <div class="space-y-4">
+          <div
+            class="work-item py-8 md:py-16 px-4 md:px-8 flex flex-col md:flex-row justify-between items-start md:items-center"
+          >
+            <div class="flex-grow">
+              <h3 class="text-3xl md:text-5xl font-heading work-title">
+                PROJECT ATLAS
+              </h3>
+              <p class="text-sm md:text-base mt-2">BRANDING / WEB DESIGN</p>
+            </div>
+            <div class="md:w-1/2 mt-4 md:mt-0 md:ml-8">
+              <img
+                src="https://images.unsplash.com/photo-1528642474498-1af0c17fd8c3?q=80&w=2069&auto=format&fit=crop"
+                alt="Project Atlas"
+                class="w-full h-auto object-cover work-item-image"
+              />
+            </div>
+          </div>
+          <div
+            class="work-item py-8 md:py-16 px-4 md:px-8 flex flex-col md:flex-row justify-between items-start md:items-center"
+          >
+            <div class="flex-grow">
+              <h3 class="text-3xl md:text-5xl font-heading work-title">
+                ZENITH MOBILE
+              </h3>
+              <p class="text-sm md:text-base mt-2">UI/UX / DEVELOPMENT</p>
+            </div>
+            <div class="md:w-1/2 mt-4 md:mt-0 md:ml-8">
+              <img
+                src="https://images.unsplash.com/photo-1656835125181-fc85c0ec92d4?q=80&w=1074&auto=format&fit=crop"
+                alt="Zenith Mobile"
+                class="w-full h-auto object-cover work-item-image"
+              />
+            </div>
+          </div>
+          <div
+            class="work-item py-8 md:py-16 px-4 md:px-8 flex flex-col md:flex-row justify-between items-start md:items-center"
+          >
+            <div class="flex-grow">
+              <h3 class="text-3xl md:text-5xl font-heading work-title">
+                CONNECTIVE
+              </h3>
+              <p class="text-sm md:text-base mt-2">STRATEGY / E-COMMERCE</p>
+            </div>
+            <div class="md:w-1/2 mt-4 md:mt-0 md:ml-8">
+              <img
+                src="https://images.unsplash.com/photo-1556742502-ec7c0e9f34b1?q=80&w=1887&auto=format&fit=crop"
+                alt="Connective"
+                class="w-full h-auto object-cover work-item-image"
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+    <footer class="py-12 px-6 border-t-2 border-gray-800">
+      <div
+        class="container mx-auto flex flex-col md:flex-row justify-between items-center text-sm md:text-base"
+      >
+        <div class="text-center md:text-left mb-4 md:mb-0">
+          <p>&copy; 2025 VOID. All Rights Reserved.</p>
+        </div>
+        <div class="flex space-x-4 md:space-x-8">
+          <a href="#" class="hover:text-gray-600 transition-colors">TWITTER</a>
+          <a href="#" class="hover:text-gray-600 transition-colors"
+            >INSTAGRAM</a
+          >
+          <a href="#" class="hover:text-gray-600 transition-colors">LINKEDIN</a>
+        </div>
+      </div>
+    </footer>
+    <script>
+      const menuToggle = document.getElementById("menu-toggle");
+      const closeMenu = document.getElementById("close-menu");
+      const navOverlay = document.getElementById("nav-overlay");
+
+      menuToggle.addEventListener("click", () => {
+        navOverlay.style.display = "flex";
+      });
+
+      closeMenu.addEventListener("click", () => {
+        navOverlay.style.display = "none";
+      });
+    </script>
+  </body>
+</html>

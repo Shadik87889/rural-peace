@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Immersive Hero Experience</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Syne:wght@400;800&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      /* Custom styles for the hero section */
+      body {
+        font-family: "Syne", sans-serif;
+        background-color: #000000;
+        color: #e0e0e0;
+        overflow: hidden; /* Disable scrolling */
+        height: 100vh; /* Ensure body takes full viewport height */
+      }
+
+      .hero-canvas {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100vh;
+        z-index: 1; /* Behind content but above background color */
+        opacity: 0.7;
+      }
+
+      #preloader {
+        background-color: #000;
+      }
+
+      .loader-text .char {
+        display: inline-block;
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      .content-wrapper {
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        position: relative;
+        z-index: 10;
+        margin-top: -4vw;
+      }
+
+      .hero-title {
+        font-size: clamp(3rem, 14vw, 12rem);
+        font-weight: 800;
+        line-height: 0.9;
+        text-transform: uppercase;
+        margin: 0;
+        will-change: transform;
+      }
+
+      /* Styling for the text animation spans */
+      .hero-title .line {
+        display: inline-block;
+        overflow: hidden;
+      }
+
+      .hero-title .line .char {
+        display: inline-block;
+        transform: translateY(115%);
+        transition: transform 0.5s cubic-bezier(0.76, 0, 0.24, 1);
+      }
+
+      nav,
+      .nav-item {
+        /* transform: translateY(-30px); */
+        opacity: 1;
+      }
+
+      /* --- New Nav Link Hover Effect --- */
+      .links a {
+        position: relative;
+        padding-bottom: 0.5rem; /* 8px space for the line */
+        text-decoration: none;
+      }
+
+      .links a::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 1px;
+        background-color: #e0e0e0;
+        transform: scaleX(0); /* Initially hidden */
+        transform-origin: bottom right;
+        transition: transform 0.5s cubic-bezier(0.76, 0, 0.24, 1);
+      }
+
+      .links a:hover::after {
+        transform: scaleX(1); /* Animate to full width */
+        transform-origin: bottom left;
+      }
+    </style>
+  </head>
+  <body class="antialiased">
+    <!-- Preloader -->
+    <div
+      id="preloader"
+      class="fixed inset-0 flex justify-center items-center z-50"
+    >
+      <div
+        class="loader-text text-white text-2xl font-bold uppercase tracking-widest"
+        data-splitting
+      >
+        Loading
+      </div>
+    </div>
+
+    <!-- Navigation Bar -->
+    <nav class="top-0 left-0 w-full p-6 md:p-8 z-20">
+      <div class="container mx-auto flex justify-between items-center">
+        <div class="logo font-extrabold text-2xl nav-item">AURA</div>
+        <div class="links flex gap-6 md:gap-10 text-md">
+          <!-- Removed old hover classes to use the new CSS effect -->
+          <a href="#" class="nav-item">Work</a>
+          <a href="#" class="nav-item">Studio</a>
+          <a href="#" class="nav-item">Contact</a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- WebGL Canvas for the distortion effect -->
+    <canvas class="hero-canvas"></canvas>
+
+    <!-- Main Content -->
+    <main>
+      <section class="content-wrapper">
+        <h1 class="hero-title" data-splitting>
+          <span class="line">Immersive</span>
+          <br />
+          <span class="line">Worlds</span>
+        </h1>
+        <p
+          class="mt-8 max-w-xl text-lg text-gray-400 opacity-0"
+          data-animation="fade-up"
+        >
+          Crafting award-winning digital experiences that blend artistry with
+          technology, creating unforgettable journeys for users.
+        </p>
+      </section>
+    </main>
+
+    <!-- Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://unpkg.com/splitting/dist/splitting.min.js"></script>
+
+    <!-- GLSL Shaders -->
+    <script type="x-shader/x-vertex" id="vertexShader">
+      varying vec2 vUv;
+      void main() {
+          vUv = uv;
+          gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+      }
+    </script>
+
+    <script type="x-shader/x-fragment" id="fragmentShader">
+      uniform sampler2D uTexture;
+      uniform vec2 uMouse;
+      uniform float uTime;
+      uniform float uVelo;
+
+      varying vec2 vUv;
+
+      // 2D Noise function for organic distortion
+      float noise(vec2 st) {
+          return fract(sin(dot(st.xy, vec2(12.9898, 78.233))) * 43758.5453123);
+      }
+
+      void main() {
+          vec2 uv = vUv;
+
+          // Add a persistent, slow-moving distortion for a more dynamic feel
+          float persistentDistortion = noise(uv * 8.0 + uTime * 0.4) * 0.02;
+
+          // Calculate distance from mouse to current pixel
+          float dist = distance(uv, uMouse);
+
+          // Create a more pronounced ripple effect based on mouse velocity
+          float ripple = max(0.0, 1.0 - dist * 4.0) * uVelo * 0.2;
+
+          // Combine effects for displacement
+          vec2 displacement = vec2(persistentDistortion) + vec2(ripple);
+
+          // Add chromatic aberration for a high-end, cinematic look
+          float aberrationAmount = (persistentDistortion + ripple) * 0.4;
+          vec4 redChannel = texture2D(uTexture, uv + displacement + vec2(aberrationAmount, 0.0));
+          vec4 greenChannel = texture2D(uTexture, uv + displacement);
+          vec4 blueChannel = texture2D(uTexture, uv + displacement - vec2(aberrationAmount, 0.0));
+
+          // Combine the color channels
+          vec4 finalColor = vec4(redChannel.r, greenChannel.g, blueChannel.b, greenChannel.a);
+
+          gl_FragColor = finalColor;
+      }
+    </script>
+
+    <script type="module">
+      // --- Initialize Splitting.js for text animations ---
+      Splitting();
+
+      // --- Preloader Animation ---
+      const preloader = document.getElementById("preloader");
+      const loaderChars = document.querySelectorAll(".loader-text .char");
+      const loadingManager = new THREE.LoadingManager();
+
+      const preloaderTimeline = gsap.timeline();
+      preloaderTimeline.to(loaderChars, {
+        opacity: 1,
+        y: 0,
+        stagger: 0.1,
+        repeat: -1,
+        yoyo: true,
+        ease: "power1.inOut",
+      });
+
+      // --- three.js Scene Setup ---
+      class WebGLScene {
+        constructor() {
+          this.container = document.querySelector(".hero-canvas");
+          this.scene = new THREE.Scene();
+          this.camera = new THREE.PerspectiveCamera(
+            75,
+            window.innerWidth / window.innerHeight,
+            0.1,
+            1000
+          );
+          this.renderer = new THREE.WebGLRenderer({
+            canvas: this.container,
+            alpha: true,
+          });
+          this.renderer.setSize(window.innerWidth, window.innerHeight);
+          this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+          this.mouse = new THREE.Vector2();
+          this.prevMouse = new THREE.Vector2();
+          this.velocity = 0;
+
+          loadingManager.onLoad = () => {
+            // --- Start main animations once image is loaded ---
+            this.initAnimations();
+          };
+
+          this.init();
+          this.addEventListeners();
+          this.animate();
+        }
+
+        init() {
+          const imageUrl =
+            "https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=2564&auto=format&fit=crop";
+          const textureLoader = new THREE.TextureLoader(loadingManager); // Use the loading manager
+          const texture = textureLoader.load(imageUrl);
+
+          this.geometry = new THREE.PlaneGeometry(2, 2, 32, 32);
+          this.material = new THREE.ShaderMaterial({
+            uniforms: {
+              uTime: { value: 0 },
+              uTexture: { value: texture },
+              uMouse: { value: new THREE.Vector2(0.5, 0.5) },
+              uVelo: { value: 0.0 },
+            },
+            vertexShader: document.getElementById("vertexShader").textContent,
+            fragmentShader: document.getElementById("fragmentShader")
+              .textContent,
+          });
+
+          this.mesh = new THREE.Mesh(this.geometry, this.material);
+          // Scale mesh to cover the viewport
+          const aspect = window.innerWidth / window.innerHeight;
+          this.mesh.scale.set(aspect, 1, 1);
+          this.scene.add(this.mesh);
+
+          this.camera.position.z = 1;
+        }
+
+        initAnimations() {
+          const mainTimeline = gsap.timeline();
+
+          // Animate preloader out
+          mainTimeline.to(preloader, {
+            opacity: 0,
+            duration: 1.2,
+            ease: "power3.inOut",
+            onComplete: () => (preloader.style.display = "none"),
+          });
+
+          // Animate title characters into view
+          mainTimeline.to(
+            ".hero-title .char",
+            {
+              y: 0,
+              stagger: 0.05,
+              duration: 1.5,
+              ease: "power4.out",
+            },
+            "-=0.8"
+          ); // Overlap with preloader exit
+
+          // Animate nav items
+          mainTimeline.to(
+            ".nav-item",
+            {
+              y: 0,
+              opacity: 1,
+              stagger: 0.1,
+              duration: 1,
+              ease: "power3.out",
+            },
+            "-=1.2"
+          );
+
+          // Animate paragraph
+          mainTimeline.to(
+            '[data-animation="fade-up"]',
+            {
+              opacity: 1,
+              y: 0,
+              duration: 1,
+              ease: "power3.out",
+            },
+            "-=0.8"
+          );
+        }
+
+        addEventListeners() {
+          window.addEventListener("resize", this.onWindowResize.bind(this));
+          window.addEventListener("mousemove", this.onMouseMove.bind(this));
+        }
+
+        onWindowResize() {
+          this.camera.aspect = window.innerWidth / window.innerHeight;
+          this.camera.updateProjectionMatrix();
+          this.renderer.setSize(window.innerWidth, window.innerHeight);
+          this.mesh.scale.set(this.camera.aspect, 1, 1);
+        }
+
+        onMouseMove(event) {
+          this.mouse.x = event.clientX / window.innerWidth;
+          this.mouse.y = 1.0 - event.clientY / window.innerHeight;
+          this.material.uniforms.uMouse.value.copy(this.mouse);
+        }
+
+        animate() {
+          requestAnimationFrame(this.animate.bind(this));
+
+          const dx = this.mouse.x - this.prevMouse.x;
+          const dy = this.mouse.y - this.prevMouse.y;
+          this.velocity = Math.sqrt(dx * dx + dy * dy);
+          this.prevMouse.copy(this.mouse);
+
+          this.material.uniforms.uTime.value += 0.01;
+          this.material.uniforms.uVelo.value +=
+            (this.velocity - this.material.uniforms.uVelo.value) * 0.05;
+
+          this.renderer.render(this.scene, this.camera);
+        }
+      }
+
+      new WebGLScene();
+    </script>
+  </body>
+</html>

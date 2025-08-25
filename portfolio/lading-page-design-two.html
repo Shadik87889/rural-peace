@@ -1,0 +1,1105 @@
+<!--
+    This is a refined, Awwwards-ready HTML canvas.
+    It's built with modern design principles and fluid animations to create a polished, immersive experience.
+    Feel free to modify and expand upon this foundation.
+-->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>VOID — Radical Design Agency</title>
+
+    <!-- Tailwind (CDN) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Meta / SEO -->
+    <meta name="theme-color" content="#0a0a0a" />
+    <meta
+      name="description"
+      content="VOID is a radical design studio crafting kinetic brands, immersive websites, and high-conversion digital experiences."
+    />
+
+    <style>
+      /* --- Custom CSS Variables & Base Styles --- */
+      :root {
+        --bg: #0a0a0a;
+        --fg: #eaeaea;
+        --acc: #00ff6a;
+        --mut: #9ca3af;
+        --grid: rgba(255, 255, 255, 0.05);
+      }
+      html,
+      body {
+        height: 100%;
+      }
+      body {
+        font-family: Inter, system-ui, Segoe UI, Roboto, Helvetica, Arial,
+          sans-serif;
+        background: var(--bg);
+        color: var(--fg);
+        overflow-x: hidden;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+      .font-heading {
+        font-family: "Archivo Black", sans-serif;
+      }
+      ::selection {
+        background: var(--acc);
+        color: #000;
+      }
+
+      /* --- GSAP / Lenis Smooth Scroll Integration --- */
+      html.lenis {
+        height: auto;
+      }
+      .lenis.lenis-smooth {
+        scroll-behavior: auto;
+      }
+      .lenis.lenis-stopped {
+        overflow: hidden;
+      }
+      .lenis.lenis-smooth [data-lenis-prevent] {
+        overscroll-behavior: contain;
+      }
+
+      /* --- Visual Overlays & Cursor --- */
+      .grid-lines {
+        position: fixed;
+        inset: 0;
+        display: grid;
+        grid-template-columns: repeat(12, 1fr);
+        pointer-events: none;
+        z-index: 1;
+      }
+      .grid-line {
+        border-left: 1px solid var(--grid);
+      }
+      .noise {
+        pointer-events: none;
+        position: fixed;
+        inset: 0;
+        background-image: url("https://grainy-gradients.vercel.app/noise.png");
+        opacity: 0.06;
+        mix-blend-mode: soft-light;
+        z-index: 2;
+      }
+      .cursor {
+        position: fixed;
+        z-index: 50;
+        pointer-events: none;
+        transform: translate(-50%, -50%);
+      }
+      .cursor-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: var(--acc);
+        mix-blend-mode: difference;
+        transition: transform 0.18s ease, opacity 0.2s;
+      }
+      .cursor-ring {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 44px;
+        height: 44px;
+        margin-left: -17px;
+        margin-top: -17px;
+        border: 1px solid var(--fg);
+        border-radius: 9999px;
+        opacity: 0.25;
+        transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.3s;
+      }
+      .cursor.-hover .cursor-ring {
+        transform: scale(1.8);
+        opacity: 0.6;
+      }
+
+      /* --- Loader --- */
+      .loader {
+        position: fixed;
+        inset: 0;
+        background: var(--bg);
+        z-index: 60;
+        display: grid;
+        place-items: center;
+      }
+      .loader__wrap {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.75rem;
+      }
+      .loader__word {
+        letter-spacing: 0.06em;
+      }
+      .loader__bar {
+        width: min(60vw, 520px);
+        height: 3px;
+        background: rgba(255, 255, 255, 0.08);
+        overflow: hidden;
+        border-radius: 9999px;
+      }
+      .loader__bar > span {
+        display: block;
+        height: 100%;
+        width: 0;
+        background: var(--acc);
+      }
+      .loader__perc {
+        font-variant-numeric: tabular-nums;
+      }
+
+      /* --- Navigation & Menu --- */
+      .nav {
+        position: fixed;
+        inset: 0 0 auto 0;
+        z-index: 40;
+      }
+      .nav__glass {
+        backdrop-filter: saturate(1.2) blur(8px);
+        background: rgba(10, 10, 10, 0.35);
+      }
+      .menu-overlay {
+        position: fixed;
+        inset: 0;
+        background: var(--bg);
+        z-index: 30;
+        transform: translateY(-100%);
+        visibility: hidden;
+      }
+      .link-item {
+        transform: translateY(120%);
+        opacity: 0;
+      }
+
+      /* --- Hero Section --- */
+      .hero {
+        position: relative;
+        min-height: 100svh;
+        display: grid;
+        place-items: center;
+      }
+      .hero__bg {
+        position: absolute;
+        inset: 0;
+      }
+      .hero__video {
+        object-fit: cover;
+        opacity: 0.4;
+        filter: grayscale(30%) contrast(120%);
+      }
+      .kinetic .char {
+        display: inline-block;
+        will-change: transform;
+      }
+
+      /* --- SVG Circular Mask --- */
+      .mask-title {
+        --size: min(22vw, 18rem);
+      }
+      .mask-title svg {
+        width: var(--size);
+        height: var(--size);
+      }
+
+      /* --- General Section Styling --- */
+      .section {
+        padding-block: 6rem;
+      }
+
+      /* --- Work Grid & Hover Effects --- */
+      .work-card {
+        position: relative;
+        overflow: hidden;
+        border-radius: 1.25rem;
+      }
+      .work-card img {
+        transform: scale(1.08);
+        filter: grayscale(100%);
+        transition: transform 1.1s cubic-bezier(0.19, 1, 0.22, 1),
+          filter 0.8s ease;
+      }
+      .work-card:hover img {
+        transform: scale(1);
+        filter: grayscale(0%);
+      }
+      .work-meta {
+        position: absolute;
+        inset: auto 0 0 0;
+        padding: 1rem 1.25rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: end;
+        background: linear-gradient(
+          180deg,
+          rgba(10, 10, 10, 0) 0%,
+          rgba(10, 10, 10, 0.7) 100%
+        );
+      }
+
+      /* --- Marquee Animation --- */
+      .marquee {
+        border-block: 1px solid rgba(255, 255, 255, 0.08);
+        white-space: nowrap;
+        overflow: hidden;
+      }
+      .marquee__track {
+        display: inline-block;
+        padding-block: 1rem;
+      }
+
+      /* --- Sticky Horizontal Scroll --- */
+      .hscroll {
+        background: var(--bg);
+        color: var(--fg);
+      }
+      .hscroll__inner {
+        height: 100svh;
+        display: flex;
+        align-items: center;
+      }
+      .cap-tile {
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 1.25rem;
+        padding: 1.5rem;
+      }
+
+      /* --- Insights --- */
+      .insight img {
+        transition: transform 0.7s cubic-bezier(0.19, 1, 0.22, 1);
+      }
+      .insight:hover img {
+        transform: scale(1.06);
+      }
+
+      /* --- Magnetic CTA --- */
+      .magnet {
+        position: relative;
+        display: inline-grid;
+        place-items: center;
+        isolation: isolate;
+      }
+      .magnet__bg {
+        position: absolute;
+        inset: 0;
+        border-radius: 9999px;
+        transform: scale(1);
+        transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+      }
+      .magnet:hover .magnet__bg {
+        transform: scale(1.06);
+      }
+
+      /* --- Reduced Motion Check --- */
+      @media (prefers-reduced-motion: reduce) {
+        * {
+          animation: none !important;
+          transition: none !important;
+        }
+      }
+    </style>
+  </head>
+  <body class="antialiased">
+    <!-- --- VISUAL OVERLAYS (Grid, Noise, Cursor) --- -->
+    <div class="grid-lines">
+      <div class="grid-line"></div>
+      <div class="grid-line"></div>
+      <div class="grid-line"></div>
+      <div class="grid-line"></div>
+      <div class="grid-line"></div>
+      <div class="grid-line"></div>
+      <div class="grid-line"></div>
+      <div class="grid-line"></div>
+      <div class="grid-line"></div>
+      <div class="grid-line"></div>
+      <div class="grid-line"></div>
+      <div class="grid-line"></div>
+    </div>
+    <div class="noise" aria-hidden="true"></div>
+    <div class="cursor" aria-hidden="true">
+      <div class="cursor-ring"></div>
+      <div class="cursor-dot"></div>
+    </div>
+
+    <!-- --- LOADER (Pre-loading assets for a smooth intro) --- -->
+    <div class="loader" id="loader" role="status" aria-live="polite">
+      <div class="loader__wrap">
+        <h1 class="loader__word font-heading text-4xl tracking-wider">VOID</h1>
+        <div class="loader__bar"><span id="loadbar"></span></div>
+        <div class="loader__perc text-sm text-zinc-400">
+          <span id="loadperc">0</span>%
+        </div>
+      </div>
+    </div>
+
+    <!-- --- NAVIGATION --- -->
+    <header class="nav">
+      <div
+        class="nav__glass px-5 md:px-8 py-4 flex items-center justify-between"
+      >
+        <a href="#home" class="font-heading tracking-wide text-xl">VOID.</a>
+        <button
+          id="menuBtn"
+          class="uppercase font-heading text-sm tracking-widest"
+        >
+          Menu
+        </button>
+      </div>
+      <nav class="menu-overlay" id="menu">
+        <div class="h-full w-full grid place-items-center">
+          <ul class="text-center space-y-6">
+            <li>
+              <a
+                class="text-5xl md:text-7xl font-heading inline-block link-item"
+                href="#work"
+                >Work</a
+              >
+            </li>
+            <li>
+              <a
+                class="text-5xl md:text-7xl font-heading inline-block link-item"
+                href="#about"
+                >About</a
+              >
+            </li>
+            <li>
+              <a
+                class="text-5xl md:text-7xl font-heading inline-block link-item"
+                href="#insights"
+                >Insights</a
+              >
+            </li>
+            <li>
+              <a
+                class="text-5xl md:text-7xl font-heading inline-block link-item"
+                href="#contact"
+                >Contact</a
+              >
+            </li>
+          </ul>
+        </div>
+      </nav>
+    </header>
+
+    <main id="home">
+      <!-- --- HERO SECTION --- -->
+      <section class="hero relative">
+        <div class="hero__bg">
+          <video
+            class="hero__video w-full h-full"
+            autoplay
+            muted
+            loop
+            playsinline
+            poster="https://images.unsplash.com/photo-1549880338-65ddcdfd017b?q=80&w=1600&auto=format&fit=crop"
+            preload="auto"
+          >
+            <source
+              src="https://videos.pexels.com/video-files/854145/854145-hd_1280_720_25fps.mp4"
+              type="video/mp4"
+            />
+          </video>
+          <!-- Subtle gradient wash -->
+          <div
+            class="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/60"
+          ></div>
+        </div>
+        <div class="relative z-10 text-center px-6">
+          <h1
+            class="kinetic font-heading uppercase leading-[.8] tracking-tight text-[11vw] md:text-[9vw] select-none"
+          >
+            <span class="block">Radical</span>
+            <span class="block">Ideas</span>
+          </h1>
+          <div class="mt-8 mask-title mx-auto">
+            <!-- SVG circular mask with animated noise displacement -->
+            <svg viewBox="0 0 200 200" aria-hidden="true">
+              <defs>
+                <filter
+                  id="distort"
+                  x="-50%"
+                  y="-50%"
+                  width="200%"
+                  height="200%"
+                >
+                  <feTurbulence
+                    baseFrequency="0.012"
+                    numOctaves="3"
+                    seed="2"
+                    type="fractalNoise"
+                    result="noise"
+                  />
+                  <feDisplacementMap
+                    in="SourceGraphic"
+                    in2="noise"
+                    scale="12"
+                    xChannelSelector="R"
+                    yChannelSelector="G"
+                  />
+                </filter>
+              </defs>
+              <g filter="url(#distort)">
+                <circle
+                  cx="100"
+                  cy="100"
+                  r="90"
+                  fill="none"
+                  stroke="white"
+                  stroke-width="2"
+                />
+                <text
+                  x="50%"
+                  y="50%"
+                  dominant-baseline="middle"
+                  text-anchor="middle"
+                  font-size="20"
+                  class="font-heading tracking-widest"
+                >
+                  VOID STUDIO
+                </text>
+              </g>
+            </svg>
+          </div>
+          <p class="mt-6 max-w-2xl mx-auto text-zinc-300">
+            We craft kinetic brands and high-performing digital products for the
+            bold. Scroll — the magic reacts to you.
+          </p>
+        </div>
+        <div class="absolute bottom-8 inset-x-0 flex justify-center">
+          <span class="text-xs uppercase tracking-[.25em] text-zinc-400"
+            >Scroll</span
+          >
+        </div>
+      </section>
+
+      <!-- --- MARQUEE --- -->
+      <section class="marquee" aria-label="Capabilities marquee">
+        <div
+          class="marquee__track font-heading text-5xl md:text-7xl will-change-transform"
+          id="marqueeTrack"
+        >
+          &nbsp;Branding&nbsp;•&nbsp;Web&nbsp;Design&nbsp;•&nbsp;Development&nbsp;•&nbsp;Strategy&nbsp;•&nbsp;Motion&nbsp;•&nbsp;3D&nbsp;•&nbsp;Branding&nbsp;•&nbsp;Web&nbsp;Design&nbsp;•&nbsp;Development&nbsp;•&nbsp;Strategy&nbsp;•&nbsp;Motion&nbsp;•&nbsp;3D
+        </div>
+      </section>
+
+      <!-- --- ABOUT SECTION --- -->
+      <section id="about" class="section px-6 md:px-10">
+        <div class="max-w-5xl">
+          <p
+            class="about-copy text-2xl md:text-4xl leading-tight text-zinc-200"
+          >
+            We are a design agency that believes in the power of
+            <span class="px-2 rounded bg-[var(--acc)] text-black font-heading"
+              >bold</span
+            >
+            ideas. We challenge conventions and build work that is meaningful,
+            memorable and measurable.
+          </p>
+        </div>
+      </section>
+
+      <!-- --- HORIZONTAL CAPABILITIES (sticky) --- -->
+      <section class="hscroll" aria-labelledby="capabilities">
+        <div class="hscroll__pin">
+          <div class="hscroll__inner px-6 items-center" id="hscrollInner">
+            <!-- Slide 1 -->
+            <div
+              class="w-screen flex-shrink-0 grid place-items-center text-center px-6"
+            >
+              <h2 id="capabilities" class="font-heading text-5xl md:text-8xl">
+                Capabilities
+              </h2>
+              <p class="max-w-xl text-zinc-400 mt-4">
+                Strategy × Design × Engineering — tightly fused to ship bolder
+                outcomes.
+              </p>
+            </div>
+            <!-- Slide 2 -->
+            <div class="w-screen flex-shrink-0">
+              <div
+                class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-6xl mx-auto"
+              >
+                <div class="cap-tile">
+                  <h3 class="font-heading text-3xl">Brand Strategy</h3>
+                  <p class="text-zinc-400 mt-2">
+                    Positioning, messaging, architecture, names that stick.
+                  </p>
+                </div>
+                <div class="cap-tile">
+                  <h3 class="font-heading text-3xl">Digital Products</h3>
+                  <p class="text-zinc-400 mt-2">
+                    Websites, apps, design systems and front-ends that convert.
+                  </p>
+                </div>
+                <div class="cap-tile">
+                  <h3 class="font-heading text-3xl">Motion & SVG</h3>
+                  <p class="text-zinc-400 mt-2">
+                    Scroll-reactive stories, kinetic typography and
+                    micro-interactions.
+                  </p>
+                </div>
+                <div class="cap-tile">
+                  <h3 class="font-heading text-3xl">Content & Campaigns</h3>
+                  <p class="text-zinc-400 mt-2">
+                    From awareness to action — launch with intent.
+                  </p>
+                </div>
+              </div>
+            </div>
+            <!-- Slide 3 CTA -->
+            <div class="w-screen flex-shrink-0 grid place-items-center">
+              <a href="#contact" class="magnet">
+                <span
+                  class="magnet__bg bg-[var(--acc)] blur-xl opacity-60"
+                ></span>
+                <span
+                  class="relative z-10 px-8 py-4 rounded-full bg-black/60 border border-white/10 font-heading uppercase tracking-wider"
+                  >Start a Project</span
+                >
+              </a>
+            </div>
+            <!-- Slide 4 — Image Sequence Showcase -->
+            <div class="w-screen flex-shrink-0 grid place-items-center">
+              <canvas
+                id="seq"
+                width="1280"
+                height="720"
+                class="w-[80vw] max-w-5xl rounded-xl border border-white/10"
+              ></canvas>
+              <p class="text-zinc-500 mt-4">Scroll to scrub prototype motion</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- --- WORK SECTION --- -->
+      <section id="work" class="section px-6 md:px-10">
+        <div class="flex items-end justify-between">
+          <h2 class="font-heading text-5xl md:text-7xl">Selected Work</h2>
+          <a href="#" class="underline text-zinc-400 hover:text-white"
+            >All projects</a
+          >
+        </div>
+        <div class="grid md:grid-cols-2 gap-6 mt-10">
+          <!-- Card 1 -->
+          <article class="work-card group">
+            <img
+              loading="lazy"
+              src="https://images.unsplash.com/photo-1528642474498-1af0c17fd8c3?q=80&w=1600&auto=format&fit=crop"
+              alt="Project Atlas screenshot"
+              class="w-full h-[60svh] object-cover"
+            />
+            <div class="work-meta">
+              <h3 class="font-heading text-3xl">Project Atlas</h3>
+              <p class="text-right text-sm text-zinc-300">Branding · Web</p>
+            </div>
+          </article>
+          <!-- Card 2 -->
+          <article class="work-card group">
+            <img
+              loading="lazy"
+              src="https://images.unsplash.com/photo-1656835125181-fc85c0ec92d4?q=80&w=1600&auto=format&fit=crop"
+              alt="Zenith Mobile app"
+              class="w-full h-[60svh] object-cover"
+            />
+            <div class="work-meta">
+              <h3 class="font-heading text-3xl">Zenith Mobile</h3>
+              <p class="text-right text-sm text-zinc-300">UI/UX · Dev</p>
+            </div>
+          </article>
+          <!-- Card 3 -->
+          <article class="work-card group">
+            <img
+              loading="lazy"
+              src="https://images.unsplash.com/photo-1556742502-ec7c0e9f34b1?q=80&w=1600&auto=format&fit=crop"
+              alt="Connective ecommerce"
+              class="w-full h-[60svh] object-cover"
+            />
+            <div class="work-meta">
+              <h3 class="font-heading text-3xl">Connective</h3>
+              <p class="text-right text-sm text-zinc-300">
+                Strategy · Commerce
+              </p>
+            </div>
+          </article>
+          <!-- Card 4 -->
+          <article class="work-card group">
+            <img
+              loading="lazy"
+              src="https://images.unsplash.com/photo-1512295767273-ac109ac3acfa?q=80&w=1600&auto=format&fit=crop"
+              alt="Monolith brand"
+              class="w-full h-[60svh] object-cover"
+            />
+            <div class="work-meta">
+              <h3 class="font-heading text-3xl">Monolith</h3>
+              <p class="text-right text-sm text-zinc-300">Motion · WebGL</p>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <!-- --- PARTNERS MARQUEE --- -->
+      <section class="section bg-black/40">
+        <div class="text-center mb-6">
+          <h2 class="font-heading text-4xl md:text-6xl">Trusted by the Bold</h2>
+          <p class="text-zinc-400">Startups → Unicorns → Fortune 500</p>
+        </div>
+        <div class="overflow-hidden">
+          <div
+            class="flex gap-16 items-center h-24 will-change-transform"
+            id="logos"
+          >
+            <img
+              alt="Brand A"
+              loading="lazy"
+              class="h-10 opacity-60 hover:opacity-100 transition"
+              src="https://via.placeholder.com/200x80/0A0A0A/e0e0e0?text=Brand+A"
+            />
+            <img
+              alt="Brand B"
+              loading="lazy"
+              class="h-10 opacity-60 hover:opacity-100 transition"
+              src="https://via.placeholder.com/200x80/0A0A0A/e0e0e0?text=Brand+B"
+            />
+            <img
+              alt="Brand C"
+              loading="lazy"
+              class="h-10 opacity-60 hover:opacity-100 transition"
+              src="https://via.placeholder.com/200x80/0A0A0A/e0e0e0?text=Brand+C"
+            />
+            <img
+              alt="Brand D"
+              loading="lazy"
+              class="h-10 opacity-60 hover:opacity-100 transition"
+              src="https://via.placeholder.com/200x80/0A0A0A/e0e0e0?text=Brand+D"
+            />
+            <img
+              alt="Brand E"
+              loading="lazy"
+              class="h-10 opacity-60 hover:opacity-100 transition"
+              src="https://via.placeholder.com/200x80/0A0A0A/e0e0e0?text=Brand+E"
+            />
+            <img
+              alt="Brand F"
+              loading="lazy"
+              class="h-10 opacity-60 hover:opacity-100 transition"
+              src="https://via.placeholder.com/200x80/0A0A0A/e0e0e0?text=Brand+F"
+            />
+          </div>
+        </div>
+      </section>
+
+      <!-- --- INSIGHTS --- -->
+      <section id="insights" class="section px-6 md:px-10">
+        <h2 class="font-heading text-5xl md:text-7xl">Latest Insights</h2>
+        <div class="grid md:grid-cols-3 gap-8 mt-10">
+          <a href="#" class="insight group">
+            <div class="overflow-hidden rounded-xl">
+              <img
+                loading="lazy"
+                src="https://images.unsplash.com/photo-1627384113972-f4c0392fe5aa?q=80&w=1170&auto=format&fit=crop"
+                class="w-full h-64 object-cover"
+                alt="The Future of Digital Branding"
+              />
+            </div>
+            <p class="text-zinc-500 mt-4">March 15, 2025</p>
+            <h3 class="font-heading text-3xl mt-1 group-hover:underline">
+              The Future of Digital Branding
+            </h3>
+          </a>
+          <a href="#" class="insight group">
+            <div class="overflow-hidden rounded-xl">
+              <img
+                loading="lazy"
+                src="https://images.unsplash.com/photo-1531403009284-440f080d1e12?q=80&w=1170&auto=format&fit=crop"
+                class="w-full h-64 object-cover"
+                alt="Optimize your UX"
+              />
+            </div>
+            <p class="text-zinc-500 mt-4">March 10, 2025</p>
+            <h3 class="font-heading text-3xl mt-1 group-hover:underline">
+              5 Ways to Optimize Your UX for Conversions
+            </h3>
+          </a>
+          <a href="#" class="insight group">
+            <div class="overflow-hidden rounded-xl">
+              <img
+                loading="lazy"
+                src="https://images.unsplash.com/photo-1620907329188-043c2b496ff5?q=80&w=1050&auto=format&fit=crop"
+                class="w-full h-64 object-cover"
+                alt="Strategic Motion Design"
+              />
+            </div>
+            <p class="text-zinc-500 mt-4">March 01, 2025</p>
+            <h3 class="font-heading text-3xl mt-1 group-hover:underline">
+              The Power of Strategic Motion Design
+            </h3>
+          </a>
+        </div>
+      </section>
+
+      <!-- --- CONTACT / FOOTER CTA --- -->
+      <section id="contact" class="section px-6 md:px-10 bg-black/50">
+        <div
+          class="flex flex-col md:flex-row md:items-end md:justify-between gap-6"
+        >
+          <div>
+            <h2 class="font-heading text-5xl md:text-8xl">Let's Talk.</h2>
+            <a
+              href="mailto:hello@void.agency"
+              class="inline-block mt-3 underline text-2xl"
+              >hello@void.agency</a
+            >
+          </div>
+          <div class="space-y-2 text-zinc-400">
+            <p class="font-semibold">Location</p>
+            <address class="not-italic">
+              123 Design St. • Creative City • CC 12345
+            </address>
+            <div class="flex gap-4">
+              <a href="#" class="hover:underline">Twitter</a
+              ><a href="#" class="hover:underline">Instagram</a
+              ><a href="#" class="hover:underline">LinkedIn</a>
+            </div>
+          </div>
+        </div>
+        <div
+          class="mt-10 pt-6 text-center text-zinc-500 border-t border-white/10"
+        >
+          © 2025 VOID. All Rights Reserved.
+        </div>
+      </section>
+    </main>
+
+    <!-- --- JAVASCRIPT & LIBRARIES --- -->
+    <!-- GSAP / Lenis / SplitType -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.27/bundled/lenis.min.js"></script>
+    <script src="https://unpkg.com/split-type"></script>
+
+    <script>
+      // ===== Boot & Utility =====
+      // Add a class to the HTML element to enable Lenis smooth scrolling
+      document.documentElement.classList.add("lenis");
+      // Register GSAP plugins
+      gsap.registerPlugin(ScrollTrigger);
+
+      // Smooth scroll using Lenis
+      const lenis = new Lenis({ lerp: 0.12, smoothWheel: true });
+      function raf(time) {
+        lenis.raf(time);
+        requestAnimationFrame(raf);
+      }
+      requestAnimationFrame(raf);
+      // Connect GSAP's ScrollTrigger to Lenis's scroll updates
+      lenis.on("scroll", ScrollTrigger.update);
+
+      // Custom cursor with magnetic hover effect
+      const $cursor = document.querySelector(".cursor");
+      const hoverables = ["a", "button", ".work-card", ".magnet", ".link-item"];
+      window.addEventListener("mousemove", (e) => {
+        gsap.to($cursor, {
+          x: e.clientX,
+          y: e.clientY,
+          duration: 0.15,
+          ease: "power3.out",
+        });
+      });
+      hoverables.forEach((sel) =>
+        document.querySelectorAll(sel).forEach((el) => {
+          el.addEventListener("mouseenter", () =>
+            $cursor.classList.add("-hover")
+          );
+          el.addEventListener("mouseleave", () =>
+            $cursor.classList.remove("-hover")
+          );
+        })
+      );
+
+      // --- LOADER (Pre-loading assets for a smooth intro) ---
+      const loader = document.getElementById("loader");
+      const bar = document.getElementById("loadbar");
+      const perc = document.getElementById("loadperc");
+      // List all assets that need to be preloaded
+      const preloadables = Array.from(document.images)
+        .map((img) => img.src)
+        .concat(
+          Array.from(document.querySelectorAll("video source")).map(
+            (v) => v.src
+          )
+        );
+      let loaded = 0;
+      const total = preloadables.length || 1;
+      function updateLoader() {
+        const p = Math.round((loaded / total) * 100);
+        perc.textContent = p;
+        bar.style.width = p + "%";
+        if (p >= 100) {
+          // Fade out loader once all assets are loaded
+          gsap.to(loader, {
+            autoAlpha: 0,
+            duration: 0.8,
+            ease: "power2.out",
+            onComplete: () => loader.remove(),
+          });
+          // Animate the hero section after the loader is gone
+          animateHero();
+        }
+      }
+      // Load assets one by one
+      preloadables.forEach((src) => {
+        const ext = src.split("?")[0].split(".").pop();
+        if (["mp4", "webm", "mov"].includes(ext)) {
+          const v = document.createElement("video");
+          v.src = src;
+          v.oncanplaythrough = () => {
+            loaded++;
+            updateLoader();
+          };
+          v.onerror = () => {
+            loaded++;
+            updateLoader();
+          };
+        } else {
+          const i = new Image();
+          i.src = src;
+          i.onload = () => {
+            loaded++;
+            updateLoader();
+          };
+          i.onerror = () => {
+            loaded++;
+            updateLoader();
+          };
+        }
+      });
+      // Fallback for cached assets, ensures the loader disappears
+      setTimeout(() => {
+        if (loaded === 0) {
+          loaded = total;
+          updateLoader();
+        }
+      }, 1200);
+
+      // --- ANIMATION TIMELINES ---
+      // Menu overlay timeline for a smooth open/close
+      const menu = document.getElementById("menu");
+      const menuBtn = document.getElementById("menuBtn");
+      const menuTL = gsap.timeline({ paused: true });
+      menuTL
+        .to(menu, {
+          yPercent: 100,
+          visibility: "visible",
+          duration: 1,
+          ease: "power4.inOut",
+        })
+        .from(
+          menu.querySelectorAll(".link-item"),
+          {
+            yPercent: 120,
+            opacity: 0,
+            stagger: 0.08,
+            duration: 0.9,
+            ease: "power4.out",
+          },
+          "-=.5"
+        );
+      let open = false;
+      menuBtn.addEventListener("click", () => {
+        open = !open;
+        menuBtn.textContent = open ? "Close" : "Menu";
+        open ? menuTL.play() : menuTL.reverse();
+      });
+
+      // Hero section animation
+      function animateHero() {
+        // Kinetic typography effect on hero headline
+        const kinetic = new SplitType(".kinetic", { types: "chars" });
+        gsap.from(kinetic.chars, {
+          y: 120,
+          rotateX: 90,
+          opacity: 0,
+          transformOrigin: "50% 100% -20",
+          stagger: { each: 0.035, from: "random" },
+          duration: 1.4,
+          ease: "power4.out",
+        });
+        // Distortion wiggle on SVG label
+        gsap.to("#distort feTurbulence", {
+          attr: { baseFrequency: 0.018 },
+          duration: 5,
+          repeat: -1,
+          yoyo: true,
+          ease: "sine.inOut",
+        });
+      }
+
+      // Marquee speed control based on scroll velocity
+      const mTrack = document.getElementById("marqueeTrack");
+      let mTween = gsap.to(mTrack, {
+        xPercent: -50,
+        repeat: -1,
+        ease: "none",
+        duration: 20,
+      });
+      ScrollTrigger.create({
+        start: 0,
+        end: 99999,
+        onUpdate: (self) => {
+          mTween.timeScale(1 + self.getVelocity() / 1000);
+        },
+      });
+
+      // About copy word fade on scroll
+      const aboutSplit = new SplitType(".about-copy", { types: "words" });
+      gsap.from(aboutSplit.words, {
+        opacity: 0.05,
+        y: 8,
+        stagger: 0.03,
+        ease: "power2.out",
+        scrollTrigger: {
+          trigger: ".about-copy",
+          start: "top 80%",
+          end: "bottom 60%",
+          scrub: true,
+        },
+      });
+
+      // Sticky horizontal scroll
+      const inner = document.getElementById("hscrollInner");
+      const hst = gsap.to(inner, {
+        x: () => -(inner.scrollWidth - window.innerWidth),
+        ease: "none",
+        scrollTrigger: {
+          trigger: inner.parentElement,
+          pin: true,
+          scrub: 1,
+          end: () => "+=" + (inner.scrollWidth - window.innerWidth),
+          invalidateOnRefresh: true,
+        },
+      });
+
+      // Horizontal slides reveal
+      document.querySelectorAll(".cap-tile").forEach((tile) => {
+        gsap.from(tile, {
+          opacity: 0,
+          y: 30,
+          duration: 1,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: tile,
+            containerAnimation: hst,
+            start: "left 80%",
+          },
+        });
+      });
+
+      // Partners marquee
+      const logos = document.getElementById("logos");
+      logos.innerHTML += logos.innerHTML; // duplicate for infinite loop
+      gsap.to(logos, {
+        x: -logos.scrollWidth / 2,
+        repeat: -1,
+        ease: "none",
+        duration: 30,
+      });
+
+      // Work section parallax + reveal
+      document.querySelectorAll(".work-card").forEach((card) => {
+        const img = card.querySelector("img");
+        gsap.fromTo(
+          img,
+          { clipPath: "inset(0% 0% 100% 0%)" },
+          {
+            clipPath: "inset(0% 0% 0% 0%)",
+            duration: 1.2,
+            ease: "power4.out",
+            scrollTrigger: { trigger: card, start: "top 75%" },
+          }
+        );
+      });
+
+      // Magnetic CTA
+      document.querySelectorAll(".magnet").forEach((mag) => {
+        const bg = mag.querySelector(".magnet__bg");
+        mag.addEventListener("mousemove", (e) => {
+          const r = mag.getBoundingClientRect();
+          const x = (e.clientX - r.left - r.width / 2) * 0.2;
+          const y = (e.clientY - r.top - r.height / 2) * 0.2;
+          gsap.to(mag, { x, y, duration: 0.6, ease: "power3.out" });
+          gsap.to(bg, {
+            x: x * 0.2,
+            y: y * 0.2,
+            duration: 0.8,
+            ease: "power3.out",
+          });
+        });
+        mag.addEventListener("mouseleave", () => {
+          gsap.to([mag, bg], {
+            x: 0,
+            y: 0,
+            duration: 1,
+            ease: "elastic.out(1, .4)",
+          });
+        });
+      });
+
+      // Image Sequence (lightweight) — 40 frames placeholder gradients
+      const canvas = document.getElementById("seq");
+      const ctx = canvas.getContext("2d");
+      const frames = 40;
+      const images = [];
+      for (let i = 0; i < frames; i++) {
+        const off = document.createElement("canvas");
+        off.width = 1280;
+        off.height = 720;
+        const c = off.getContext("2d");
+        // Create a gradient for each frame
+        const g = c.createLinearGradient(0, 0, 1280, 720);
+        g.addColorStop(0, `hsl(${(i / frames) * 360}, 80%, 60%)`);
+        g.addColorStop(1, `hsl(${((i + 10) / frames) * 360}, 80%, 40%)`);
+        c.fillStyle = g;
+        c.fillRect(0, 0, 1280, 720);
+        c.fillStyle = "rgba(0,0,0,.25)";
+        c.fillRect(0, 0, 1280, 720);
+        c.fillStyle = "white";
+        c.font = "900 120px Archivo Black, sans-serif";
+        c.textAlign = "center";
+        c.textBaseline = "middle";
+        c.fillText("VOID", 640, 360);
+        images.push(off);
+      }
+      function draw(i) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(images[i | 0], 0, 0, canvas.width, canvas.height);
+      }
+      draw(0);
+      ScrollTrigger.create({
+        trigger: canvas,
+        start: "left 80%",
+        end: "right 20%",
+        scrub: true,
+        containerAnimation: hst,
+        onUpdate: (self) => {
+          draw(self.progress * (frames - 1));
+        },
+      });
+
+      // Respect reduced motion for marquees / sequences
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        mTween.timeScale(0);
+        ScrollTrigger.getAll().forEach((st) => st.disable());
+      }
+    </script>
+  </body>
+</html>
