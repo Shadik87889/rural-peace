@@ -528,6 +528,72 @@
       .footer-link:hover::after {
         transform: scaleX(1);
       }
+
+      /* Horizontal Gallery Specific Styles */
+      .horizontal-gallery-container {
+        position: relative;
+        overflow: hidden;
+        width: 100%;
+        height: 100vh;
+      }
+      .horizontal-gallery {
+        display: flex;
+        flex-direction: row;
+        width: 400vw;
+        height: 100%;
+        position: relative;
+      }
+      .gallery-item {
+        width: 100vw;
+        height: 100vh;
+        flex-shrink: 0;
+        position: relative;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      .gallery-item-content {
+        position: relative;
+        width: 90%;
+        height: 90%;
+        border-radius: 12px;
+        overflow: hidden;
+      }
+      .gallery-item-content img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        position: absolute;
+        top: 0;
+        left: 0;
+        will-change: transform;
+      }
+      .item-overlay {
+        position: absolute;
+        inset: 0;
+        background: #0a0a0a89;
+        opacity: 0;
+        transition: opacity 0.5s ease;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        align-items: flex-start;
+        padding: 4rem;
+        z-index: 10;
+        cursor: pointer;
+      }
+      .gallery-item:hover .item-overlay {
+        opacity: 1;
+      }
+      .item-overlay h3,
+      .item-overlay p {
+        transform: translateY(10px);
+        transition: transform 0.5s ease;
+      }
+      .gallery-item:hover .item-overlay h3,
+      .gallery-item:hover .item-overlay p {
+        transform: translateY(0);
+      }
     </style>
   </head>
   <body class="antialiased">
@@ -572,8 +638,16 @@
     </header>
 
     <main>
-      <section class="h-screen flex items-center justify-center relative">
-        <div class="relative z-10 text-center px-4">
+      <section
+        class="h-screen flex items-center justify-center relative p-4 md:p-8"
+      >
+        <div class="relative z-10 text-center flex flex-col items-center">
+          <!-- Profile Picture Placeholder -->
+          <img
+            src="my-pic.jpg"
+            alt="Shadik Hossain's Profile Picture"
+            class="w-40 h-40 rounded-full mb-8 ring-4 ring-gray-600 object-cover"
+          />
           <h1
             class="hero-title text-6xl md:text-9xl lg:text-[10rem] font-heading uppercase leading-none text-white"
             data-lag="0.1"
@@ -693,7 +767,102 @@
           </div>
         </div>
       </section>
-
+      <!-- Horizontal Gallery Section -->
+      <section
+        class="horizontal-gallery-container my-16"
+        id="horizontal-scroll-section"
+      >
+        <div class="horizontal-gallery" id="horizontal-gallery">
+          <!-- Gallery Item 1 -->
+          <div class="gallery-item">
+            <div class="gallery-item-content">
+              <img
+                src="ruralpeace.png"
+                alt="Fashion designer at work"
+                class="parallax-image"
+                onerror="this.onerror=null;this.src='https://placehold.co/1200x800/1a1a1a/a8a8a8?text=Image+1';"
+              />
+              <div class="item-overlay">
+                <h3 class="font-heading text-4xl font-semibold mb-2">
+                  The Sketch
+                </h3>
+                <p
+                  class="font-body text-[var(--secondary-text)] text-sm max-w-sm"
+                >
+                  Our designs are born from a moment of pure inspiration,
+                  meticulously refined on paper.
+                </p>
+              </div>
+            </div>
+          </div>
+          <!-- Gallery Item 2 -->
+          <div class="gallery-item">
+            <div class="gallery-item-content">
+              <img
+                src="novofit.png"
+                alt="Fashion studio"
+                class="parallax-image"
+                onerror="this.onerror=null;this.src='https://placehold.co/1200x800/1a1a1a/a8a8a8?text=Image+2';"
+              />
+              <div class="item-overlay">
+                <h3 class="font-heading text-4xl font-semibold mb-2">
+                  The Studio
+                </h3>
+                <p
+                  class="font-body text-[var(--secondary-text)] text-sm max-w-sm"
+                >
+                  Where concepts are brought to life, filled with fabric,
+                  patterns, and passion.
+                </p>
+              </div>
+            </div>
+          </div>
+          <!-- Gallery Item 3 -->
+          <div class="gallery-item">
+            <div class="gallery-item-content">
+              <img
+                src="zestcorp.png"
+                alt="Fashion model"
+                class="parallax-image"
+                onerror="this.onerror=null;this.src='https://placehold.co/1200x800/1a1a1a/a8a8a8?text=Image+3';"
+              />
+              <div class="item-overlay">
+                <h3 class="font-heading text-4xl font-semibold mb-2">
+                  The Creation
+                </h3>
+                <p
+                  class="font-body text-[var(--secondary-text)] text-sm max-w-sm"
+                >
+                  Every stitch and seam is a testament to our commitment to
+                  quality and elegance.
+                </p>
+              </div>
+            </div>
+          </div>
+          <!-- Gallery Item 4 -->
+          <div class="gallery-item">
+            <div class="gallery-item-content">
+              <img
+                src="ielts-mahir.png"
+                alt="Textile production"
+                class="parallax-image"
+                onerror="this.onerror=null;this.src='https://placehold.co/1200x800/1a1a1a/a8a8a8?text=Image+4';"
+              />
+              <div class="item-overlay">
+                <h3 class="font-heading text-4xl font-semibold mb-2">
+                  The Legacy
+                </h3>
+                <p
+                  class="font-body text-[var(--secondary-text)] text-sm max-w-sm"
+                >
+                  Timeless designs, crafted to be cherished for generations to
+                  come.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
       <!-- BEAUTIFIED: My Process -->
       <section class="py-20 md:py-40 px-4 md:px-8 bg-[#151515] overflow-hidden">
         <div class="container mx-auto">
@@ -844,40 +1013,28 @@
             Project Archive
           </h2>
           <div class="archive-container">
-            <div
-              class="archive-item"
-              data-image="https://images.unsplash.com/photo-1523240795612-9a054b0db644?q=80&w=2070&auto=format&fit=crop"
-            >
-              <a href="#">
-                <h3 class="font-heading">Project Cygnus</h3>
-                <p class="text-lg text-gray-400">Brand Identity</p>
-              </a>
-            </div>
-            <div
-              class="archive-item"
-              data-image="https://images.unsplash.com/photo-1558655146-d09347e92766?q=80&w=1964&auto=format&fit=crop"
-            >
-              <a href="#">
-                <h3 class="font-heading">Nova App</h3>
+            <div class="archive-item" data-image="ruralpeace.png">
+              <a href="https://www.ruralpeace.org/">
+                <h3 class="font-heading">Org Web</h3>
                 <p class="text-lg text-gray-400">UI/UX Design</p>
               </a>
             </div>
-            <div
-              class="archive-item"
-              data-image="https://images.unsplash.com/photo-1557862921-37829c790f19?q=80&w=2071&auto=format&fit=crop"
-            >
-              <a href="#">
-                <h3 class="font-heading">Helios Launch</h3>
+            <div class="archive-item" data-image="zestcorp.png">
+              <a href="https://www.zestcorporationltd.com/">
+                <h3 class="font-heading">Brand</h3>
+                <p class="text-lg text-gray-400">UI/UX Design</p>
+              </a>
+            </div>
+            <div class="archive-item" data-image="ielts-mahir.png">
+              <a href="https://www.ieltsmahir.com">
+                <h3 class="font-heading">Edu Web</h3>
                 <p class="text-lg text-gray-400">Web Development</p>
               </a>
             </div>
-            <div
-              class="archive-item"
-              data-image="https://images.unsplash.com/photo-1519389950473-47ba0277781c?q=80&w=2070&auto=format&fit=crop"
-            >
-              <a href="#">
-                <h3 class="font-heading">Orion Platform</h3>
-                <p class="text-lg text-gray-400">Digital Strategy</p>
+            <div class="archive-item" data-image="novofit.png">
+              <a href="https://www.novofitbd.com/">
+                <h3 class="font-heading">E-commerce</h3>
+                <p class="text-lg text-gray-400">Web Development</p>
               </a>
             </div>
           </div>
@@ -942,10 +1099,10 @@
               Get In Touch.
             </h2>
             <a
-              href="mailto:hello@shadik.io"
+              href="mailto:shadikworld@gmail.com"
               class="footer-link text-2xl md:text-4xl mt-8 inline-block relative"
             >
-              <span>hello@shadik.io</span>
+              <span>shadikworld@gmail.com</span>
             </a>
           </div>
           <div
@@ -1468,6 +1625,53 @@
             },
           });
         }
+        // ---------------------------------------------------------------------------------------
+        // REFINED HORIZONTAL GALLERY SCROLL ANIMATION
+        // ---------------------------------------------------------------------------------------
+        const gallery = document.getElementById("horizontal-gallery");
+        const scrollableWidth = gallery.scrollWidth - window.innerWidth;
+
+        // Create the main horizontal tween for the gallery
+        const horizontalTween = gsap.to(gallery, {
+          x: -scrollableWidth,
+          ease: "none",
+        });
+
+        // Create a ScrollTrigger that pins the container and links to the horizontal tween
+        ScrollTrigger.create({
+          trigger: ".horizontal-gallery-container",
+          pin: true,
+          scrub: 1,
+          start: "top top",
+          end: `+=${scrollableWidth}`,
+          animation: horizontalTween,
+        });
+
+        // Parallax effect for gallery images - linked to the main horizontal scroll
+        const galleryItems = gsap.utils.toArray(".gallery-item");
+        galleryItems.forEach((item, i) => {
+          const image = item.querySelector(".parallax-image");
+          // Using `fromTo` for more control and a percentage-based `xPercent` for responsiveness.
+          // This ensures the animation is consistent and clearly visible on every image.
+          gsap.fromTo(
+            image,
+            {
+              xPercent: -15, // Starts the image shifted to the left by 15% of its own width
+            },
+            {
+              xPercent: 15, // Ends the animation shifted to the right by 15%
+              ease: "none",
+              scrollTrigger: {
+                trigger: item,
+                start: "left right",
+                end: "right left",
+                containerAnimation: horizontalTween,
+                scrub: true,
+              },
+            }
+          );
+        });
+        // ---------------------------------------------------------------------------------------
       });
     </script>
   </body>
