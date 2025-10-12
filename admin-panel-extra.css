@@ -1,0 +1,740 @@
+/* Ensure html and body take full viewport height */
+html,
+body {
+  height: 100%;
+  margin: 0; /* Remove default body margin */
+  padding: 0; /* Remove default body padding */
+}
+body {
+  font-family: "Inter", sans-serif;
+  background-color: #f8fafc; /* Light background */
+  display: flex; /* Make body a flex container */
+  flex-direction: row; /* Arrange sidebar and main content side-by-side */
+  overflow: hidden; /* Prevent overall body scroll, allow inner elements to scroll */
+}
+/* Custom scrollbar for content area */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 10px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+/* Hide scrollbar for sidebar */
+.sidebar-menu::-webkit-scrollbar {
+  display: none;
+}
+.sidebar-menu {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+/* Responsive sidebar for mobile */
+.sidebar-hidden {
+  transform: translateX(-100%);
+  transition: transform 0.3s ease-in-out;
+}
+.sidebar-visible {
+  transform: translateX(0);
+}
+/* Overlay for mobile sidebar */
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 40; /* Below sidebar, above content */
+}
+
+/* Custom styles for Testimonial Cards (mimicking homepage CSS) */
+/* Styles for Admin Testimonial Cards */
+.testimonials-section-admin {
+  background-color: #f5f5f5;
+  border-radius: 1.5rem; /* Equivalent of 1.5vw for larger screens, adjusted for px */
+  overflow: hidden;
+  padding: 2rem; /* Added padding for this section as a whole */
+}
+
+.testimonials-header-admin .label {
+  font-size: 0.9rem; /* Adjusted from vw */
+  letter-spacing: 0.2rem; /* Adjusted from vw */
+  font-weight: 500;
+  color: #6c6c6c;
+  margin-bottom: 1rem; /* Adjusted from vw */
+}
+
+.testimonials-header-admin .main-heading {
+  font-family: "Anton", sans-serif;
+  font-size: 2.8rem; /* Adjusted from vw */
+  font-weight: 600;
+  color: #063956;
+  line-height: 1.3;
+  margin-bottom: 4rem; /* Adjusted from vw */
+  text-transform: uppercase;
+}
+
+.testimonial-card-admin {
+  background-color: white;
+  border-radius: 1rem; /* Adjusted from vw */
+  padding: 2rem; /* Adjusted from vw */
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.06); /* Adjusted from vw */
+  text-align: left;
+  position: relative;
+  height: 30rem; /* Fixed height for consistency, adjust as needed on desktop */
+  overflow: hidden; /* Important for video card and text scrolling */
+  display: flex;
+  flex-direction: column;
+}
+
+.testimonial-card-admin .avatar {
+  width: 3rem; /* Adjusted from vw */
+  height: 3rem; /* Adjusted from vw */
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 1rem; /* Adjusted from vw */
+  flex-shrink: 0;
+}
+
+.testimonial-card-admin .text-content {
+  flex-grow: 1; /* Allow text content to take available space */
+  overflow-y: auto; /* Enable scrolling for long text */
+  padding-right: 0.5rem; /* Space for scrollbar */
+}
+
+.testimonial-card-admin .text {
+  font-size: 1rem; /* Adjusted from vw */
+  color: #333;
+  line-height: 1.6;
+  margin-bottom: 2rem; /* Adjusted from vw */
+}
+
+.testimonial-card-admin .name {
+  font-family: "Dancing Script", cursive;
+  font-size: 1.2rem; /* Adjusted from vw */
+  color: #111;
+  margin: 0;
+}
+
+.testimonial-card-admin .role {
+  font-size: 0.9rem; /* Adjusted from vw */
+  color: #888;
+  margin-top: 0.3rem; /* Adjusted from vw */
+}
+
+/* Video specific styles for Admin */
+.testimonial-card-admin.video-card-admin {
+  padding: 0;
+  text-align: center;
+}
+.testimonial-card-admin .video-avatar {
+  position: absolute;
+  top: 2rem; /* Adjusted from vw */
+  left: 2rem; /* Adjusted from vw */
+  z-index: 10;
+}
+.testimonial-card-admin .tes-video {
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+  position: absolute; /* Position relative to parent card */
+  top: 0;
+  left: 0;
+  border-radius: 1rem; /* Inherit border-radius from card */
+}
+
+.testimonial-card-admin.video-card-admin::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 1rem; /* Inherit border-radius from card */
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.575),
+    rgba(0, 0, 0, 0.45) 40%
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+.testimonial-card-admin .video-name,
+.testimonial-card-admin .video-role {
+  position: absolute;
+  left: 2rem; /* Adjusted from vw */
+  color: #ede9e9;
+  z-index: 10;
+}
+.testimonial-card-admin .video-name {
+  bottom: 3.6rem; /* Adjusted from vw */
+}
+.testimonial-card-admin .video-role {
+  bottom: 2rem; /* Adjusted from vw */
+}
+
+.testimonial-card-admin .play-button,
+.testimonial-card-admin .pause-button {
+  position: absolute;
+  top: 50%; /* Adjusted from 38% for better vertical centering */
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 2.5rem; /* Adjusted from vw */
+  color: white;
+  background-color: rgba(0, 0, 0, 0.4);
+  border-radius: 50%;
+  width: 4rem; /* Adjusted from vw */
+  height: 4rem; /* Adjusted from vw */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 15;
+  transition: background 0.2s;
+}
+.testimonial-card-admin .pause-button {
+  display: none; /* Hidden by default */
+  z-index: 18;
+}
+.testimonial-card-admin .play-button:hover,
+.testimonial-card-admin .pause-button:hover {
+  background: rgba(0, 0, 0, 0.7);
+}
+
+/* Kebab menu specific styles */
+.kebab-menu-container {
+  position: absolute;
+  top: 1rem; /* Adjust as needed */
+  right: 1rem; /* Adjust as needed */
+  z-index: 20; /* Ensure it's above other elements */
+}
+.kebab-button {
+  background: none;
+  border: none;
+  color: #9ca3af; /* Tailwind gray-400 */
+  font-size: 1.5rem; /* Adjust size of the dots */
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 9999px; /* Full rounded */
+  transition: background-color 0.2s ease;
+}
+.kebab-button:hover {
+  background-color: #fee2e2; /* Tailwind red-100 */
+  color: #ef4444; /* Tailwind red-500 */
+}
+.kebab-dropdown {
+  position: absolute;
+  top: 100%; /* Position below the button */
+  right: 0; /* Align to the right of the button */
+  background-color: white;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Larger shadow */
+  min-width: 10rem; /* Ensure enough width for buttons */
+  z-index: 25; /* Above other elements */
+  padding: 0.5rem 0;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(0.5rem);
+  transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s;
+}
+.kebab-dropdown.active {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+.kebab-dropdown button {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem; /* text-sm */
+  color: #4b5563; /* Tailwind gray-700 */
+  text-align: left;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+.kebab-dropdown button:hover {
+  background-color: #f8fafc; /* Tailwind gray-50 */
+  color: #ef4444; /* Tailwind red-500 */
+}
+.kebab-dropdown button i {
+  margin-right: 0.75rem; /* space-x-3 equivalent for icon */
+}
+
+/* Responsive adjustments for Testimonial Cards (Admin) */
+@media (max-width: 1024px) {
+  .testimonials-section-admin {
+    padding: 4vw;
+  }
+  .testimonials-header-admin .label {
+    font-size: 1.5vw;
+    letter-spacing: 0.3vw;
+  }
+  .testimonials-header-admin .main-heading {
+    font-size: 3.8vw;
+    margin-bottom: 5vw;
+  }
+  .testimonial-card-admin {
+    height: auto;
+    min-height: 28rem;
+    padding: 2.5vw;
+    border-radius: 1.5vw;
+  }
+  .testimonial-card-admin.video-card-admin {
+    min-height: 28rem;
+  }
+  .testimonial-card-admin .avatar {
+    width: 4.5vw;
+    height: 4.5vw;
+    margin-bottom: 1.5vw;
+  }
+  .testimonial-card-admin .text {
+    font-size: 1.5vw;
+    margin-bottom: 2.5vw;
+  }
+  .testimonial-card-admin .name {
+    font-size: 1.8vw;
+  }
+  .testimonial-card-admin .role {
+    font-size: 1.3vw;
+    margin-top: 0.5vw;
+  }
+  .testimonial-card-admin .video-avatar {
+    top: 2vw;
+    left: 2vw;
+  }
+  .testimonial-card-admin .video-name {
+    bottom: 4.5vw;
+    font-size: 1.6vw;
+  }
+  .testimonial-card-admin .video-role {
+    bottom: 2vw;
+    font-size: 1.4vw;
+  }
+  .testimonial-card-admin .play-button,
+  .testimonial-card-admin .pause-button {
+    font-size: 3.5vw;
+    width: 6vw;
+    height: 6vw;
+  }
+}
+
+@media (max-width: 768px) {
+  .testimonials-section-admin {
+    padding: 6vw;
+  }
+  .testimonials-header-admin .label {
+    font-size: 2.5vw;
+    letter-spacing: 0.4vw;
+    margin-bottom: 2vw;
+  }
+  .testimonials-header-admin .main-heading {
+    font-size: 6vw;
+    margin-bottom: 8vw;
+  }
+  .testimonial-card-admin {
+    width: 100%;
+    height: auto;
+    min-height: 25rem;
+    padding: 1.5rem;
+    border-radius: 1rem;
+  }
+  .testimonial-card-admin.video-card-admin {
+    min-height: 25rem;
+  }
+  .testimonial-card-admin .avatar {
+    width: 8vw;
+    height: 8vw;
+    margin-bottom: 1rem;
+  }
+  .testimonial-card-admin .text {
+    font-size: 3.5vw;
+    margin-bottom: 1.5rem;
+  }
+  .testimonial-card-admin .name {
+    font-size: 4.5vw;
+  }
+  .testimonial-card-admin .role {
+    font-size: 3vw;
+    margin-top: 0.2rem;
+  }
+  .testimonial-card-admin .video-avatar {
+    top: 1.5rem;
+    left: 1.5rem;
+    width: 8vw;
+    height: 8vw;
+  }
+  .testimonial-card-admin .video-name {
+    bottom: 6vw;
+    left: 1.5rem;
+    font-size: 4vw;
+  }
+  .testimonial-card-admin .video-role {
+    bottom: 2.5vw;
+    left: 1.5rem;
+    font-size: 3vw;
+  }
+  .testimonial-card-admin .play-button,
+  .testimonial-card-admin .pause-button {
+    font-size: 6vw;
+    width: 10vw;
+    height: 10vw;
+  }
+}
+
+@media (max-width: 480px) {
+  .testimonials-header-admin .main-heading {
+    font-size: 7vw;
+    margin-bottom: 7vw;
+  }
+  .testimonial-card-admin .avatar {
+    width: 10vw;
+    height: 10vw;
+  }
+  .testimonial-card-admin .text {
+    font-size: 3.8vw;
+  }
+  .testimonial-card-admin .name {
+    font-size: 5vw;
+  }
+  .testimonial-card-admin .role {
+    font-size: 3.2vw;
+  }
+  .testimonial-card-admin .play-button,
+  .testimonial-card-admin .pause-button {
+    font-size: 7vw;
+    width: 12vw;
+    height: 12vw;
+  }
+  .testimonial-card-admin .video-name {
+    bottom: 8vw;
+    font-size: 4.5vw;
+  }
+  .testimonial-card-admin .video-role {
+    bottom: 3vw;
+    font-size: 3.5vw;
+  }
+}
+
+/* New styles for Homepage Testimonial Cards (reusing similar classes but with 'homepage' prefix for distinction if needed) */
+.testimonials-section {
+  background-color: #ffffff; /* Example: different background for homepage */
+  border-radius: 1rem;
+  overflow: hidden;
+  padding: 2rem;
+}
+
+.testimonials-header .label {
+  font-size: 0.9rem;
+  letter-spacing: 0.2rem;
+  font-weight: 500;
+  color: #6c6c6c;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.testimonials-header .main-heading {
+  font-family: "Anton", sans-serif;
+  font-size: 2.8rem;
+  font-weight: 600;
+  color: #063956;
+  line-height: 1.3;
+  margin-bottom: 4rem;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+.testimonials-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem;
+  justify-items: center;
+  align-items: stretch;
+}
+
+.testimonial-card {
+  background-color: white;
+  border-radius: 1rem;
+  padding: 2rem;
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.06);
+  text-align: left;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* Pushes content to top, name/role to bottom */
+}
+
+.testimonial-card .avatar {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 1rem;
+}
+
+.testimonial-card .text {
+  font-size: 1rem;
+  color: #333;
+  line-height: 1.6;
+  margin-bottom: 1rem; /* Adjust as needed */
+  flex-grow: 1; /* Allow text to take up remaining space */
+}
+
+.testimonial-card .name {
+  font-family: "Dancing Script", cursive;
+  font-size: 1.2rem;
+  color: #111;
+  margin: 0;
+}
+
+.testimonial-card .role {
+  font-size: 0.9rem;
+  color: #888;
+  margin-top: 0.3rem;
+}
+
+/* Video specific styles for Homepage */
+.testimonial-card.video-card {
+  padding: 0;
+  text-align: center;
+  height: 25rem; /* Fixed height for video cards for consistency */
+}
+.testimonial-card .video-avatar {
+  position: absolute;
+  top: 2rem;
+  left: 2rem;
+  z-index: 10;
+}
+.testimonial-card .tes-video {
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+  position: absolute;
+  top: 0;
+  left: 0;
+  border-radius: 1rem;
+}
+
+.testimonial-card.video-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 1rem;
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.575),
+    rgba(0, 0, 0, 0.45) 40%
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+.testimonial-card .video-name,
+.testimonial-card .video-role {
+  position: absolute;
+  left: 2rem;
+  color: #ede9e9;
+  z-index: 10;
+}
+.testimonial-card .video-name {
+  bottom: 3.6rem;
+}
+.testimonial-card .video-role {
+  bottom: 2rem;
+}
+
+.testimonial-card .play-button,
+.testimonial-card .pause-button {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 2.5rem;
+  color: white;
+  background-color: rgba(0, 0, 0, 0.4);
+  border-radius: 50%;
+  width: 4rem;
+  height: 4rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 15;
+  transition: background 0.2s;
+}
+.testimonial-card .pause-button {
+  display: none;
+  z-index: 18;
+}
+.testimonial-card .play-button:hover,
+.testimonial-card .pause-button:hover {
+  background: rgba(0, 0, 0, 0.7);
+}
+
+/* Responsive adjustments for Homepage Testimonial Cards */
+@media (max-width: 1024px) {
+  .testimonials-section {
+    padding: 4vw;
+  }
+  .testimonials-header .label {
+    font-size: 1.5vw;
+    letter-spacing: 0.3vw;
+  }
+  .testimonials-header .main-heading {
+    font-size: 3.8vw;
+    margin-bottom: 5vw;
+  }
+  .testimonial-card {
+    padding: 2.5vw;
+    border-radius: 1.5vw;
+    height: 25rem; /* Keep fixed height for video cards if desired */
+  }
+  .testimonial-card .avatar {
+    width: 4.5vw;
+    height: 4.5vw;
+    margin-bottom: 1.5vw;
+  }
+  .testimonial-card .text {
+    font-size: 1.5vw;
+    margin-bottom: 2.5vw;
+  }
+  .testimonial-card .name {
+    font-size: 1.8vw;
+  }
+  .testimonial-card .role {
+    font-size: 1.3vw;
+    margin-top: 0.5vw;
+  }
+  .testimonial-card.video-card {
+    height: 25rem; /* Keep fixed height for video cards if desired */
+  }
+  .testimonial-card .video-avatar {
+    top: 2vw;
+    left: 2vw;
+  }
+  .testimonial-card .video-name {
+    bottom: 4.5vw;
+    font-size: 1.6vw;
+  }
+  .testimonial-card .video-role {
+    bottom: 2vw;
+    font-size: 1.4vw;
+  }
+  .testimonial-card .play-button,
+  .testimonial-card .pause-button {
+    font-size: 3.5vw;
+    width: 6vw;
+    height: 6vw;
+  }
+}
+
+@media (max-width: 768px) {
+  .testimonials-section {
+    padding: 6vw;
+  }
+  .testimonials-header .label {
+    font-size: 2.5vw;
+    letter-spacing: 0.4vw;
+    margin-bottom: 2vw;
+  }
+  .testimonials-header .main-heading {
+    font-size: 6vw;
+    margin-bottom: 8vw;
+  }
+  .testimonial-card {
+    width: 100%;
+    height: auto;
+    min-height: 20rem; /* Ensure minimum height for smaller screens */
+    padding: 1.5rem;
+    border-radius: 1rem;
+  }
+  .testimonial-card.video-card {
+    height: 22rem; /* Adjusted for mobile */
+  }
+  .testimonial-card .avatar {
+    width: 8vw;
+    height: 8vw;
+    margin-bottom: 1rem;
+  }
+  .testimonial-card .text {
+    font-size: 3.5vw;
+    margin-bottom: 1.5rem;
+  }
+  .testimonial-card .name {
+    font-size: 4.5vw;
+  }
+  .testimonial-card .role {
+    font-size: 3vw;
+    margin-top: 0.2rem;
+  }
+  .testimonial-card .video-avatar {
+    top: 1.5rem;
+    left: 1.5rem;
+    width: 8vw;
+    height: 8vw;
+  }
+  .testimonial-card .video-name {
+    bottom: 6vw;
+    left: 1.5rem;
+    font-size: 4vw;
+  }
+  .testimonial-card .video-role {
+    bottom: 2.5vw;
+    left: 1.5rem;
+    font-size: 3vw;
+  }
+  .testimonial-card .play-button,
+  .testimonial-card .pause-button {
+    font-size: 6vw;
+    width: 10vw;
+    height: 10vw;
+  }
+}
+
+@media (max-width: 480px) {
+  .testimonials-header .main-heading {
+    font-size: 7vw;
+    margin-bottom: 7vw;
+  }
+  .testimonial-card .avatar {
+    width: 10vw;
+    height: 10vw;
+  }
+  .testimonial-card .text {
+    font-size: 3.8vw;
+  }
+  .testimonial-card .name {
+    font-size: 5vw;
+  }
+  .testimonial-card .role {
+    font-size: 3.2vw;
+  }
+  .testimonial-card .play-button,
+  .testimonial-card .pause-button {
+    font-size: 7vw;
+    width: 12vw;
+    height: 12vw;
+  }
+  .testimonial-card .video-name {
+    bottom: 8vw;
+    font-size: 4.5vw;
+  }
+  .testimonial-card .video-role {
+    bottom: 3vw;
+    font-size: 3.5vw;
+  }
+}

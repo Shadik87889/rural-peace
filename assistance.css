@@ -1,0 +1,38 @@
+.text {
+  line-height: 25vw;
+  margin-bottom: 2vw;
+}
+.text .two {
+  font-size: 22vw;
+}
+.img-sect {
+  height: 87vh;
+}
+.img-sect img {
+  object-position: top;
+}
+@media (max-width: 768px) {
+  .sect-two {
+    overflow: hidden;
+  }
+  .text {
+    line-height: 37vw;
+  }
+  .text .one {
+    font-family: "Bebas Neue", sans-serif;
+    color: #ffffff;
+    font-size: 35vw;
+    font-weight: 900;
+    letter-spacing: 0;
+  }
+
+  .text .two {
+    font-family: "Bebas Neue", sans-serif;
+    color: #f93434;
+    font-size: 42vw;
+    margin-top: -3vw;
+    font-weight: 900;
+    margin-bottom: 0;
+    letter-spacing: 0;
+  }
+}

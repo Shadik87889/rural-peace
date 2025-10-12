@@ -1,0 +1,464 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+.total-page {
+  padding: 15vw 15vw;
+}
+
+.name {
+  color: #ffffff;
+}
+
+.total-page .heading .word {
+  font-size: 6.5vw;
+  line-height: 8vw;
+}
+.total-page .heading :nth-child(3) {
+  margin-left: 1vw;
+}
+.total-page .heading :nth-child(4) {
+  margin-right: 1vw;
+  color: #f93434;
+}
+.total-page .heading :nth-child(5) {
+  color: #f93434;
+  margin-right: 1vw;
+}
+.total-page .heading :nth-child(6) {
+  margin-right: 1vw;
+  color: #f93434;
+}
+.total-page .heading :nth-child(7) {
+  margin-right: 1vw;
+  color: #ffffff;
+}
+.total-page .heading :nth-child(8) {
+  margin-right: 1vw;
+  color: #ffffff;
+}
+
+hr {
+  width: 0%;
+  margin-left: 7vw;
+  margin-top: 9vw;
+  color: white;
+}
+.container {
+  background: tansparent;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  bottom: 29.8vw;
+  left: -32vw;
+  opacity: 0;
+  scale: 0;
+}
+
+.press {
+  position: relative;
+  height: 120px;
+  width: 80px;
+  border-left: 2px solid rgb(255, 255, 255);
+  border-right: 2px solid rgb(255, 255, 255);
+  border-bottom: 2px solid rgb(255, 255, 255);
+  border-bottom-left-radius: 7px;
+  border-bottom-right-radius: 7px;
+}
+
+.press::after {
+  content: "";
+  position: absolute;
+  top: -3px;
+  left: -12.5px;
+  transform: rotate(-45deg);
+  width: 10px;
+  aspect-ratio: 1;
+  border-radius: 100%;
+  border-right: 2px solid rgb(255, 255, 255);
+  background: rgb(255, 255, 255);
+}
+
+.press::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  right: -24px;
+  width: 20px;
+  height: 50px;
+  border-top: 4px solid rgb(255, 255, 255);
+  border-right: 4px solid rgb(255, 255, 255);
+  border-bottom: 4px solid rgb(255, 255, 255);
+  border-top-right-radius: 10px;
+  border-bottom-right-radius: 10px;
+}
+
+.lid {
+  position: relative;
+  width: 100%;
+  margin: 0 auto;
+  height: 10px;
+  background: rgb(255, 255, 255);
+  margin-bottom: 5px;
+}
+
+.lid::after {
+  content: "";
+  position: absolute;
+  top: -19px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 110%;
+  height: 20px;
+  background: rgb(255, 255, 255);
+  border-top-left-radius: 50px;
+  border-top-right-radius: 50px;
+}
+
+.stamp {
+  position: relative;
+  width: 90%;
+  margin: 0 auto;
+  height: 8px;
+  background: rgb(255, 255, 255);
+  border-radius: 7px;
+  animation: down 2s infinite;
+}
+
+.stamp::after {
+  content: "";
+  position: absolute;
+  top: -100px;
+  left: 50%;
+  transform: translateX(-50%);
+  height: 100px;
+  width: 3px;
+  background: rgb(255, 255, 255);
+}
+
+.stamp::before {
+  content: "";
+  position: absolute;
+  top: -105px;
+  left: 50%;
+  transform: translateX(-50%);
+  height: 10px;
+  width: 10px;
+  border-radius: 50%;
+  background: rgb(255, 255, 255);
+}
+
+@keyframes down {
+  0% {
+    transform: translateY(0);
+  }
+
+  100% {
+    transform: translateY(700%);
+  }
+}
+.text-big-img {
+  display: flex;
+  justify-content: space-between;
+  padding: 0 10vw;
+  margin-top: -34vw;
+  padding-left: 15vw;
+}
+.text-big-img p {
+  font-family: "Futura";
+  color: #ffffff;
+  font-size: 1.2vw;
+  line-height: 1.6vw;
+}
+.big-image {
+  overflow: hidden;
+}
+.an-img {
+  height: 26vw;
+  width: 20vw;
+  object-fit: cover;
+  position: relative;
+  left: 60vw;
+  bottom: 25vw;
+  overflow: hidden;
+}
+.an-img img {
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+}
+.text-big-img .big-image {
+  height: 61.916vw;
+  width: 53.68vw;
+}
+.text-big-img .big-image img {
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+}
+#page-two {
+  /* min-height: 100vh; */
+  width: 100%;
+  background-color: #131212;
+  padding: 8vw;
+}
+.help-text {
+  font-size: 4vw;
+  font-family: "Fellix";
+  margin-bottom: 4vw;
+  color: #ffff;
+}
+.three-flex-items {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.flex-col {
+  display: flex;
+  flex-direction: column;
+  width: 25vw;
+  font-family: "Fellix";
+  color: #ffff;
+}
+.flex-col h5 {
+  font-family: "Fellix";
+  color: rgb(161, 160, 160);
+  font-size: 1vw;
+}
+.stripe {
+  height: 0.7px;
+  width: 2vw;
+  width: 100%;
+  background-color: #cac3c3;
+  margin: 2vw 0;
+}
+.flex-col h4 {
+  font-size: 2.4vw;
+  font-weight: 100;
+  margin-bottom: 2.4vw;
+}
+.flex-col p {
+  line-height: 1.8vw;
+  font-size: 1.1vw;
+}
+#page-three {
+  height: 102vh;
+  width: 100%;
+  background-color: #1e1d1d;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding: 5vw;
+}
+#page-three .image {
+  height: 40vw;
+  width: 30vw;
+  border-radius: 4px;
+  overflow: hidden;
+
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
+}
+#page-three .image img {
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+}
+.founder-details {
+  height: 35vw;
+  width: 25vw;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  flex-direction: column;
+  gap: 2vw;
+}
+.founder-name {
+  font-family: "Futura";
+  font-size: 3vw;
+  color: #ffffff;
+}
+.title {
+  font-family: "Futura";
+  font-size: 2vw;
+  color: #ffffff;
+}
+.some-words {
+  font-family: "Fellix";
+  line-height: 1.4vw;
+  color: #e7e5e5;
+}
+@media (max-width: 768px) {
+  .total-page {
+    padding: 4vw 4vw;
+    padding-top: 14vw;
+  }
+  .text-big-img {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    width: 100%;
+    padding: 0;
+    margin-top: 1vw;
+    overflow: hidden;
+  }
+  .text-big-img p {
+    font-family: "Bebas Neue";
+    font-size: 9vw;
+    line-height: 9vw;
+    padding: 0 2vw;
+    padding-bottom: 2vw;
+  }
+  .text-big-img .big-image {
+    height: 80vh;
+    width: 100%;
+    padding: 0 4vw;
+  }
+  .text-big-img .big-image img {
+    object-fit: cover;
+  }
+  .an-img {
+    width: 100%;
+    height: auto;
+    position: initial;
+    object-fit: cover;
+    margin-top: 4vw;
+    margin-bottom: 2vw;
+  }
+
+  /* Adjust heading text */
+  .total-page .heading .word {
+    font-size: 20vw;
+    line-height: 18vw;
+    text-align: center;
+    margin-bottom: 4vw;
+  }
+
+  /* Remove animations and transitions for mobile */
+  .container,
+  .press,
+  .lid,
+  .stamp {
+    display: none;
+  }
+
+  hr {
+    display: none;
+  }
+
+  /* Page Two Adjustments */
+  #page-two {
+    padding: 4vw;
+    overflow: hidden;
+  }
+
+  .help-text {
+    font-family: "Bebas Neue", sans-serif;
+    font-size: 5vw;
+    text-align: center;
+    font-size: 14vw;
+    color: #ffffff;
+    margin-bottom: 3vw;
+    margin-top: 5vw;
+    color: #f93434;
+  }
+
+  .three-flex-items {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .flex-col {
+    height: 25vh;
+    width: 97%;
+    margin-bottom: 3vw;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    background-color: #1e1d1d;
+    padding: 0 5vw;
+    box-shadow: 0 1px 5px #00000099;
+    gap: 1vw;
+  }
+
+  .flex-col h5 {
+    font-family: "Roboto", sans-serif;
+    font-size: 3.7vw;
+    color: #a1a0a0;
+    margin-bottom: 1.5vw;
+  }
+
+  .flex-col h4 {
+    font-family: "Bebas Neue", sans-serif;
+    font-size: 7vw;
+    font-weight: 400;
+    color: #ffffff;
+    margin-bottom: 1.5vw;
+    text-transform: uppercase;
+  }
+
+  .flex-col p {
+    font-family: "Moderustic";
+    font-size: 4vw;
+    line-height: 4.2vw;
+    color: #d9d7d7;
+    text-align: center;
+  }
+
+  /* Page Three Adjustments */
+  #page-three {
+    padding: 3vw;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  #page-three .image {
+    width: 99%;
+    height: auto;
+    object-fit: cover;
+    border-radius: 4px;
+    box-shadow: none;
+    margin-bottom: 2vw;
+  }
+
+  .founder-details {
+    width: 99%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 2vw;
+    border: 2px solid #e1b544;
+    background-color: transparent;
+    height: 30vh;
+  }
+
+  .founder-name {
+    font-family: "Bebas Neue", sans-serif;
+    font-size: 11vw;
+    color: #ffffff;
+    /* margin-bottom: 1.5vw; */
+  }
+
+  .founder-details .title {
+    font-family: "Bebas Neue", sans-serif;
+    font-size: 6vw;
+    text-transform: uppercase;
+    color: #ffffff;
+    margin-bottom: 1.5vw;
+  }
+
+  .some-words {
+    font-family: "Moderustic", sans-serif;
+    font-size: 3.5vw;
+    text-align: center;
+    line-height: 4.5vw;
+    color: #e7e5e5;
+  }
+}

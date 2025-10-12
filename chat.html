@@ -1,0 +1,1441 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MCQ Chat Platform</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      /* Add Inter font from Google Fonts */
+      @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+
+      /* Base styling */
+      body {
+        font-family: "Inter", sans-serif;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        background-color: #020617; /* Deeper navy blue */
+      }
+
+      /* Custom scrollbar */
+      ::-webkit-scrollbar {
+        width: 6px;
+      }
+      ::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 3px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: rgba(255, 255, 255, 0.2);
+      }
+
+      /* Typing indicator */
+      .typing-dot {
+        width: 6px;
+        height: 6px;
+        background-color: #94a3b8; /* Lighter gray */
+        border-radius: 50%;
+      }
+      @keyframes bounce-typing {
+        0%,
+        100% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-6px);
+        }
+      }
+      .animate-bounce-typing-1 {
+        animation: bounce-typing 1.4s infinite ease-in-out;
+      }
+      .animate-bounce-typing-2 {
+        animation: bounce-typing 1.4s infinite ease-in-out 0.2s;
+      }
+      .animate-bounce-typing-3 {
+        animation: bounce-typing 1.4s infinite ease-in-out 0.4s;
+      }
+
+      /* Mobile view transition */
+      #chat-window-container.is-chat-open {
+        transform: translateX(0%);
+      }
+
+      /* Glassmorphism effect for panels */
+      .glass-panel {
+        background: rgba(255, 255, 255, 0.03);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+      }
+
+      /* New message animation */
+      @keyframes fade-in-up {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .message-animate {
+        animation: fade-in-up 0.3s ease-out forwards;
+      }
+
+      /* Popover animation */
+      @keyframes popover-anim {
+        from {
+          opacity: 0;
+          transform: scale(0.95);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+      .animate-popover {
+        animation: popover-anim 0.1s ease-out forwards;
+      }
+    </style>
+  </head>
+  <body class="bg-slate-950 text-slate-300">
+    <!-- Background Gradient -->
+    <div
+      class="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-slate-950 via-slate-950 to-blue-950/50 -z-10"
+    ></div>
+
+    <!-- Authentication Screen -->
+    <div
+      id="auth-screen"
+      class="flex items-center justify-center min-h-screen p-4"
+    >
+      <div
+        class="w-full max-w-md p-8 space-y-6 glass-panel rounded-2xl shadow-2xl"
+      >
+        <div class="text-center">
+          <h1 class="text-3xl font-bold text-white">MCQ Messenger</h1>
+          <p id="auth-title" class="text-slate-400 mt-2">
+            Sign in to your account
+          </p>
+        </div>
+        <form id="auth-form" class="space-y-6">
+          <p id="auth-error" class="text-sm text-center text-red-400 h-4"></p>
+          <input
+            type="email"
+            id="email"
+            placeholder="Email"
+            required
+            class="w-full px-4 py-3 text-white bg-slate-900/50 border border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
+          />
+          <input
+            type="password"
+            id="password"
+            placeholder="Password"
+            required
+            class="w-full px-4 py-3 text-white bg-slate-900/50 border border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
+          />
+          <button
+            type="submit"
+            id="auth-button"
+            class="w-full px-4 py-3 font-semibold text-white bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-900 focus:ring-blue-500 disabled:opacity-50 transition-all shadow-lg hover:shadow-blue-500/30"
+          >
+            Log In
+          </button>
+        </form>
+        <p class="text-sm text-center text-slate-400">
+          <span id="auth-toggle-text">Don't have an account?</span>
+          <button
+            id="auth-toggle-button"
+            class="ml-1 font-semibold text-blue-400 hover:text-blue-300"
+          >
+            Sign Up
+          </button>
+        </p>
+      </div>
+    </div>
+
+    <!-- Main Chat Platform -->
+    <div id="chat-platform" class="hidden h-screen overflow-hidden">
+      <div class="relative w-full h-full md:flex">
+        <!-- Left Panel: User List -->
+        <aside
+          id="user-list-container"
+          class="w-full h-full md:w-1/3 lg:w-1/4 glass-panel flex flex-col transition-transform duration-300 ease-in-out md:border-r md:border-slate-800"
+        >
+          <header
+            class="p-4 border-b border-slate-800 flex justify-between items-center flex-shrink-0"
+          >
+            <h1 class="text-xl font-bold text-white">Chats</h1>
+            <button
+              id="logout-button"
+              class="p-2 rounded-full text-slate-400 hover:bg-slate-700/50 hover:text-white transition"
+              title="Log Out"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-5 w-5"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M3 3a1 1 0 00-1 1v12a1 1 0 102 0V5h10a1 1 0 100-2H3zm12.293 4.293a1 1 0 011.414 0l3 3a1 1 0 010 1.414l-3 3a1 1 0 01-1.414-1.414L17.586 12H10a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z"
+                  clip-rule="evenodd"
+                />
+              </svg>
+            </button>
+          </header>
+          <div id="user-list" class="flex-1 overflow-y-auto"></div>
+          <footer
+            id="current-user-info"
+            class="p-4 border-t border-slate-800 flex-shrink-0"
+          ></footer>
+        </aside>
+        <!-- Right Panel: Chat Window Container -->
+        <div
+          id="chat-window-container"
+          class="absolute top-0 left-0 w-full h-full bg-slate-950 transform translate-x-full transition-transform duration-300 ease-in-out md:relative md:w-2/3 lg:w-3/4 md:translate-x-0"
+        >
+          <main id="chat-window" class="w-full h-full flex flex-col"></main>
+        </div>
+      </div>
+    </div>
+
+    <!-- MCQ Creator Modal -->
+    <div
+      id="mcq-modal"
+      class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50"
+    >
+      <div
+        class="bg-slate-800/80 border border-slate-700 rounded-xl shadow-xl w-full max-w-lg p-6 space-y-6"
+      >
+        <div class="flex justify-between items-center">
+          <h3 class="text-xl font-bold text-white">Create a New Poll</h3>
+          <button
+            id="cancel-mcq-button"
+            class="p-2 rounded-full text-slate-400 hover:bg-slate-700/50 hover:text-white transition"
+          >
+            <svg
+              class="h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M6 18L18 6M6 6l12 12"
+              ></path>
+            </svg>
+          </button>
+        </div>
+        <form id="mcq-form" class="space-y-4">
+          <div>
+            <label
+              for="mcq-question"
+              class="block text-sm font-medium text-slate-300 mb-2"
+              >Question</label
+            >
+            <textarea
+              id="mcq-question"
+              required
+              rows="3"
+              placeholder="e.g., What should we work on next?"
+              class="w-full p-3 bg-slate-700/50 rounded-md focus:ring-2 focus:ring-blue-500 outline-none border border-slate-600 resize-none"
+            ></textarea>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-slate-300 mb-2"
+              >Options (Mark the correct answer)</label
+            >
+            <div id="mcq-options-container" class="space-y-3"></div>
+          </div>
+          <div class="pt-2">
+            <button
+              type="button"
+              id="add-option-button"
+              class="w-full px-4 py-2 text-sm font-semibold rounded-md bg-slate-700/50 hover:bg-slate-600/50 border border-slate-600 transition"
+            >
+              + Add Option
+            </button>
+          </div>
+          <div class="flex justify-end items-center pt-4">
+            <button
+              type="submit"
+              class="w-full md:w-auto px-6 py-3 font-semibold text-white bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-900 focus:ring-blue-500 transition-all shadow-lg hover:shadow-blue-500/30"
+            >
+              Create Poll
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div
+      id="confirmation-modal"
+      class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50"
+    >
+      <div
+        class="bg-slate-800/80 border border-slate-700 rounded-xl shadow-xl w-full max-w-sm p-6 space-y-4 text-center"
+      >
+        <h3 id="confirmation-title" class="text-lg font-bold text-white">
+          Are you sure?
+        </h3>
+        <p id="confirmation-message" class="text-slate-300">
+          This action cannot be undone.
+        </p>
+        <div class="flex justify-center gap-4 pt-2">
+          <button
+            id="confirmation-cancel-button"
+            class="px-6 py-2 rounded-md bg-slate-600 hover:bg-slate-500 transition"
+          >
+            Cancel
+          </button>
+          <button
+            id="confirmation-confirm-button"
+            class="px-6 py-2 rounded-md bg-red-600 hover:bg-red-700 transition"
+          >
+            Confirm
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Message Action Popover -->
+    <div id="message-action-popover" class="hidden absolute z-20">
+      <div
+        class="bg-slate-800 rounded-lg shadow-xl border border-slate-700 flex items-center"
+      >
+        <button
+          data-action="edit"
+          class="flex items-center gap-2 p-3 text-sm hover:bg-slate-700/50 rounded-l-lg"
+        >
+          <svg
+            class="h-4 w-4"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L14.732 3.732z"
+            ></path>
+          </svg>
+          <span>Edit</span>
+        </button>
+        <div class="w-px h-6 bg-slate-700"></div>
+        <!-- Divider -->
+        <button
+          data-action="delete"
+          class="flex items-center gap-2 p-3 text-sm text-red-400 hover:bg-slate-700/50 rounded-r-lg"
+        >
+          <svg
+            class="h-4 w-4"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+            ></path>
+          </svg>
+          <span>Delete</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+      import {
+        getAuth,
+        onAuthStateChanged,
+        createUserWithEmailAndPassword,
+        signInWithEmailAndPassword,
+        signOut,
+      } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+      import {
+        getFirestore,
+        collection,
+        query,
+        where,
+        onSnapshot,
+        addDoc,
+        serverTimestamp,
+        doc,
+        setDoc,
+        getDoc,
+        updateDoc,
+        writeBatch,
+        getDocs,
+      } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+      // --- Firebase Configuration ---
+      const localFirebaseConfig = {
+        apiKey: "AIzaSyCPWe_VrV_Rq9HcKruC5uoC9jNFkwpzNcU",
+        authDomain: "aurora-e-commerce.firebaseapp.com",
+        projectId: "aurora-e-commerce",
+        storageBucket: "aurora-e-commerce.appspot.com",
+        messagingSenderId: "177216689386",
+        appId: "1:177216689386:web:04f567db96218da3323393",
+        measurementId: "G-0Q9ZFHSFS1",
+      };
+      const firebaseConfig =
+        typeof __firebase_config !== "undefined"
+          ? JSON.parse(__firebase_config)
+          : localFirebaseConfig;
+
+      // --- Initialize Firebase ---
+      const app = initializeApp(firebaseConfig);
+      const auth = getAuth(app);
+      const db = getFirestore(app);
+
+      // --- State Management ---
+      let currentUser = null;
+      let selectedUser = null;
+      let chatRoomId = null;
+      let unsubscribeUsers = null;
+      let unsubscribeMessages = null;
+      let unsubscribeTyping = null;
+      let typingTimeout = null;
+      let unreadMessages = {};
+
+      // --- DOM Elements ---
+      const authScreen = document.getElementById("auth-screen");
+      const chatPlatform = document.getElementById("chat-platform");
+      const authForm = document.getElementById("auth-form");
+      const authError = document.getElementById("auth-error");
+      const authTitle = document.getElementById("auth-title");
+      const authButton = document.getElementById("auth-button");
+      const authToggleText = document.getElementById("auth-toggle-text");
+      const authToggleButton = document.getElementById("auth-toggle-button");
+      const userList = document.getElementById("user-list");
+      const chatWindow = document.getElementById("chat-window");
+      const chatWindowContainer = document.getElementById(
+        "chat-window-container"
+      );
+      const currentUserInfo = document.getElementById("current-user-info");
+      const logoutButton = document.getElementById("logout-button");
+      const mcqModal = document.getElementById("mcq-modal");
+      const mcqForm = document.getElementById("mcq-form");
+      const mcqOptionsContainer = document.getElementById(
+        "mcq-options-container"
+      );
+      const confirmationModal = document.getElementById("confirmation-modal");
+      const messageActionPopover = document.getElementById(
+        "message-action-popover"
+      );
+
+      // --- Authentication Logic ---
+      let isLogin = true;
+
+      authToggleButton.addEventListener("click", () => {
+        isLogin = !isLogin;
+        authForm.reset();
+        authError.textContent = "";
+        authTitle.textContent = isLogin
+          ? "Sign in to your account"
+          : "Create a new account";
+        authButton.textContent = isLogin ? "Log In" : "Sign Up";
+        authToggleText.textContent = isLogin
+          ? "Don't have an account?"
+          : "Already have an account?";
+        authToggleButton.textContent = isLogin ? "Sign Up" : "Log In";
+      });
+
+      authForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const email = e.target.email.value;
+        const password = e.target.password.value;
+        authError.textContent = "";
+        authButton.disabled = true;
+
+        try {
+          if (isLogin) {
+            await signInWithEmailAndPassword(auth, email, password);
+          } else {
+            const userCredential = await createUserWithEmailAndPassword(
+              auth,
+              email,
+              password
+            );
+            await setDoc(doc(db, "users", userCredential.user.uid), {
+              uid: userCredential.user.uid,
+              email: userCredential.user.email,
+              displayName: email.split("@")[0],
+              isTypingIn: null,
+            });
+          }
+        } catch (error) {
+          authError.textContent = error.message.replace("Firebase: ", "");
+        } finally {
+          authButton.disabled = false;
+        }
+      });
+
+      logoutButton.addEventListener("click", () => {
+        if (currentUser) {
+          updateDoc(doc(db, "users", currentUser.uid), { isTypingIn: null });
+        }
+        signOut(auth);
+      });
+
+      onAuthStateChanged(auth, async (user) => {
+        if (user) {
+          const userDocRef = doc(db, "users", user.uid);
+          const userDocSnap = await getDoc(userDocRef);
+
+          if (!userDocSnap.exists()) {
+            await setDoc(userDocRef, {
+              uid: user.uid,
+              email: user.email,
+              displayName: user.email.split("@")[0],
+              isTypingIn: null,
+            });
+          }
+
+          currentUser = user;
+          authScreen.classList.add("hidden");
+          chatPlatform.classList.remove("hidden");
+          initializeAppUI();
+        } else {
+          currentUser = null;
+          authScreen.classList.remove("hidden");
+          chatPlatform.classList.add("hidden");
+          cleanupListeners();
+          chatWindowContainer.classList.remove("is-chat-open");
+        }
+      });
+
+      // --- UI Initialization and Rendering ---
+      function initializeAppUI() {
+        renderCurrentUserInfo();
+        renderWelcomeScreen();
+        listenForUsers();
+        document.addEventListener("click", hideActionPopoverOnClickOutside);
+      }
+
+      function renderCurrentUserInfo() {
+        currentUserInfo.innerHTML = `
+                <div class="flex items-center gap-3">
+                    <div class="relative">
+                        <div class="w-9 h-9 rounded-full bg-slate-700 flex items-center justify-center font-bold text-white flex-shrink-0">${currentUser.email
+                          .charAt(0)
+                          .toUpperCase()}</div>
+                        <span class="absolute bottom-0 right-0 block h-2.5 w-2.5 rounded-full bg-green-500 ring-2 ring-slate-800"></span>
+                    </div>
+                    <p class="truncate text-sm font-medium" title="${
+                      currentUser.email
+                    }">${currentUser.email}</p>
+                </div>
+            `;
+      }
+
+      function listenForUsers() {
+        if (unsubscribeUsers) unsubscribeUsers();
+        const q = query(
+          collection(db, "users"),
+          where("uid", "!=", currentUser.uid)
+        );
+        unsubscribeUsers = onSnapshot(q, (snapshot) => {
+          const users = snapshot.docs.map((d) => ({ id: d.id, ...d.data() }));
+          renderUserList(users);
+        });
+      }
+
+      function renderUserList(users) {
+        if (users.length === 0) {
+          userList.innerHTML = `<p class="text-center text-slate-400 p-4">No other users have joined yet.</p>`;
+          return;
+        }
+        userList.innerHTML = users
+          .map((user) => {
+            const unreadCount = unreadMessages[user.id] || 0;
+            return `
+                <div class="p-3 m-2 flex items-center cursor-pointer rounded-lg ${
+                  selectedUser?.id === user.id
+                    ? "bg-blue-500/20"
+                    : "hover:bg-slate-700/50 transition"
+                }" data-userid="${user.id}">
+                    <div class="relative mr-3">
+                        <div class="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center font-bold text-white flex-shrink-0">
+                            ${user.displayName?.charAt(0).toUpperCase()}
+                        </div>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <p class="font-semibold text-white truncate">${
+                          user.displayName
+                        }</p>
+                        <p class="text-sm text-slate-400 truncate">${
+                          user.email
+                        }</p>
+                    </div>
+                    ${
+                      unreadCount > 0
+                        ? `<div class="ml-2 w-6 h-6 bg-blue-500 text-white text-xs font-bold rounded-full flex items-center justify-center flex-shrink-0">${unreadCount}</div>`
+                        : ""
+                    }
+                </div>
+            `;
+          })
+          .join("");
+
+        userList.querySelectorAll("[data-userid]").forEach((el) => {
+          el.addEventListener("click", () => {
+            const clickedUserId = el.dataset.userid;
+            if (selectedUser?.id === clickedUserId) return;
+
+            selectedUser = users.find((u) => u.id === clickedUserId);
+            unreadMessages[selectedUser.id] = 0;
+            renderUserList(users); // Re-render to remove badge immediately
+            startChat();
+          });
+        });
+      }
+
+      function renderWelcomeScreen() {
+        chatWindow.innerHTML = `
+                <div class="flex-1 flex flex-col items-center justify-center text-center p-4">
+                    <svg class="w-24 h-24 text-slate-700" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" /></svg>
+                    <h2 class="text-2xl font-semibold text-white mt-4">Welcome to MCQ Messenger</h2>
+                    <p class="mt-2 text-slate-400">Select a user from the left to start a conversation.</p>
+                </div>
+            `;
+      }
+
+      async function startChat() {
+        if (!currentUser || !selectedUser) return;
+
+        chatWindowContainer.classList.add("is-chat-open");
+
+        const sortedIds = [currentUser.uid, selectedUser.uid].sort();
+        chatRoomId = sortedIds.join("_");
+
+        const chatRoomRef = doc(db, "chatRooms", chatRoomId);
+        const chatRoomSnap = await getDoc(chatRoomRef);
+        if (!chatRoomSnap.exists()) {
+          await setDoc(chatRoomRef, {
+            participants: sortedIds,
+            createdAt: serverTimestamp(),
+          });
+        }
+
+        renderChatWindow();
+        listenForMessages();
+        listenForTyping();
+        markMessagesAsSeen();
+      }
+
+      function goBackToUserList() {
+        chatWindowContainer.classList.remove("is-chat-open");
+        if (currentUser) updateTypingStatus(false);
+        selectedUser = null;
+        cleanupListeners(false);
+        listenForUsers(); // re-render user list
+        renderWelcomeScreen();
+      }
+
+      function renderChatWindow() {
+        chatWindow.innerHTML = `
+                <header class="p-4 glass-panel border-b border-slate-800 flex items-center flex-shrink-0">
+                    <button id="back-to-users" class="p-2 rounded-full text-slate-400 hover:bg-slate-700/50 mr-3 md:hidden">
+                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>
+                    </button>
+                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-500 to-green-500 flex items-center justify-center font-bold text-white mr-3">
+                        ${selectedUser.displayName?.charAt(0).toUpperCase()}
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-semibold text-white">${
+                          selectedUser.displayName
+                        }</h2>
+                        <p class="text-sm text-slate-400">Online</p>
+                    </div>
+                </header>
+                <main id="message-list" class="flex-1 overflow-y-auto p-6 space-y-4"></main>
+                <footer class="p-4 glass-panel border-t border-slate-800 flex-shrink-0">
+                    <form id="message-form" class="flex items-center gap-3">
+                        <button type="button" id="open-mcq-creator" class="p-3 rounded-full bg-slate-700/50 hover:bg-slate-600/50 text-slate-400 hover:text-white transition flex-shrink-0" title="Create MCQ">
+                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" /></svg>
+                        </button>
+                        <input type="text" id="message-input" placeholder="Type a message..." autocomplete="off" class="w-full px-4 py-3 text-white bg-slate-700/50 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition border border-slate-700">
+                        <button type="submit" class="p-3 rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:opacity-90 transition text-white flex-shrink-0" title="Send">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor"><path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" /></svg>
+                        </button>
+                    </form>
+                </footer>
+            `;
+
+        document
+          .getElementById("message-form")
+          .addEventListener("submit", handleSendMessage);
+        document
+          .getElementById("message-input")
+          .addEventListener("input", handleTyping);
+        document
+          .getElementById("open-mcq-creator")
+          .addEventListener("click", openMCQCreator);
+        document
+          .getElementById("back-to-users")
+          .addEventListener("click", goBackToUserList);
+        chatWindow.addEventListener("click", handleMessageTap);
+      }
+
+      // --- Message and Chat Logic ---
+      function listenForMessages() {
+        if (unsubscribeMessages) unsubscribeMessages();
+        const messagesRef = collection(db, "chatRooms", chatRoomId, "messages");
+        const q = query(messagesRef);
+
+        unsubscribeMessages = onSnapshot(q, (snapshot) => {
+          const messages = snapshot.docs
+            .map((doc) => ({ id: doc.id, ...doc.data() }))
+            .sort(
+              (a, b) =>
+                (a.timestamp?.toMillis() || 0) - (b.timestamp?.toMillis() || 0)
+            );
+
+          const batch = writeBatch(db);
+          let batchHasWrites = false;
+          let newMessagesFromOtherUser = false; // Flag to check if we need to mark messages as seen.
+
+          snapshot.docChanges().forEach((change) => {
+            const msg = change.doc.data();
+            const msgRef = change.doc.ref;
+
+            if (change.type === "added") {
+              if (msg.senderId !== currentUser.uid) {
+                newMessagesFromOtherUser = true; // A new message arrived, so we should check seen status.
+                // If the message is from someone else and their chat isn't open
+                if (msg.senderId !== selectedUser?.id) {
+                  unreadMessages[msg.senderId] =
+                    (unreadMessages[msg.senderId] || 0) + 1;
+                  listenForUsers(); // Re-render user list to show badge
+                }
+                // Mark as delivered if received
+                if (msg.status === "sent") {
+                  batch.update(msgRef, { status: "delivered" });
+                  batchHasWrites = true;
+                }
+              }
+            }
+          });
+
+          if (batchHasWrites) {
+            batch.commit();
+          }
+
+          // Only call markMessagesAsSeen if a new message was added by the other user.
+          // This prevents a poll vote (a 'modified' event) from triggering a second re-render.
+          if (newMessagesFromOtherUser) {
+            markMessagesAsSeen();
+          }
+
+          renderMessages(messages);
+        });
+      }
+
+      function renderMessages(messages) {
+        const messageList = document.getElementById("message-list");
+        if (!messageList) return;
+        const shouldScroll =
+          messageList.scrollTop + messageList.clientHeight >=
+          messageList.scrollHeight - 100;
+
+        messageList.innerHTML = messages
+          .map((msg) => {
+            const isSender = msg.senderId === currentUser.uid;
+            if (msg.type === "mcq") {
+              return renderMCQMessage(msg, isSender);
+            }
+            return renderTextMessage(msg, isSender);
+          })
+          .join("");
+
+        messageList.querySelectorAll(".mcq-option").forEach((button) => {
+          button.addEventListener("click", handleMCQAnswer);
+        });
+
+        if (shouldScroll) {
+          messageList.scrollTop = messageList.scrollHeight;
+        }
+      }
+
+      function renderTextMessage(message, isSender) {
+        const time = message.timestamp
+          ? new Date(message.timestamp.toDate()).toLocaleTimeString([], {
+              hour: "numeric",
+              minute: "numeric",
+              hour12: true,
+            })
+          : "";
+        const isDeleted = message.deleted;
+
+        const messageContentHTML = isDeleted
+          ? `<p class="italic text-slate-400">This message was deleted</p>`
+          : `<p class="break-words message-text">${message.text}</p>`;
+
+        const senderClass = isSender && !isDeleted ? "cursor-pointer" : "";
+
+        return `
+                <div class="message-container" data-message-id="${
+                  message.id
+                }" data-is-sender="${isSender}">
+                    <div class="flex items-end gap-2 ${
+                      isSender ? "justify-end" : "justify-start"
+                    }">
+                        ${
+                          !isSender
+                            ? `<div class="w-8 h-8 rounded-full bg-gradient-to-br from-rose-500 to-pink-500 flex items-center justify-center font-bold text-white flex-shrink-0">${
+                                message.senderName?.charAt(0).toUpperCase() ||
+                                "U"
+                              }</div>`
+                            : ""
+                        }
+                        
+                        <div class="max-w-md lg:max-w-xl px-4 py-3 rounded-2xl relative shadow-md ${senderClass} ${
+          isSender
+            ? "bg-indigo-600 rounded-br-none text-white"
+            : "bg-slate-700/50 rounded-bl-none"
+        }">
+                            ${messageContentHTML}
+                            <div class="text-xs ${
+                              isSender ? "text-indigo-200" : "text-slate-400"
+                            } mt-1 text-right flex items-center justify-end gap-1">
+                                ${
+                                  message.editedAt
+                                    ? `<span>(edited)</span>`
+                                    : ""
+                                }
+                                <span>${time}</span>
+                                ${
+                                  isSender
+                                    ? getMessageStatusIcon(message.status)
+                                    : ""
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+      }
+
+      async function handleSendMessage(e) {
+        e.preventDefault();
+        const input = document.getElementById("message-input");
+        const text = input.value.trim();
+        if (text === "") return;
+
+        input.value = "";
+        if (typingTimeout) clearTimeout(typingTimeout);
+        await Promise.all([
+          addDoc(collection(db, "chatRooms", chatRoomId, "messages"), {
+            text: text,
+            senderId: currentUser.uid,
+            senderName: currentUser.email.split("@")[0],
+            timestamp: serverTimestamp(),
+            type: "text",
+            status: "sent", // Sent, delivered, seen
+          }),
+          updateTypingStatus(false),
+        ]);
+      }
+
+      // --- Typing Indicator Logic ---
+      function listenForTyping() {
+        if (unsubscribeTyping) unsubscribeTyping();
+        const userDocRef = doc(db, "users", selectedUser.uid);
+        unsubscribeTyping = onSnapshot(userDocRef, (doc) => {
+          const userData = doc.data();
+          const isTyping = userData?.isTypingIn === chatRoomId;
+          renderTypingIndicator(isTyping);
+        });
+      }
+
+      function handleTyping() {
+        if (typingTimeout) {
+          clearTimeout(typingTimeout);
+        } else {
+          updateTypingStatus(true);
+        }
+        typingTimeout = setTimeout(() => {
+          updateTypingStatus(false);
+          typingTimeout = null;
+        }, 1500);
+      }
+
+      async function updateTypingStatus(isTyping) {
+        if (!currentUser) return;
+        const userDocRef = doc(db, "users", currentUser.uid);
+        await updateDoc(userDocRef, {
+          isTypingIn: isTyping ? chatRoomId : null,
+        });
+      }
+
+      function renderTypingIndicator(isTyping) {
+        const messageList = document.getElementById("message-list");
+        if (!messageList) return;
+
+        let typingIndicator = messageList.querySelector("#typing-indicator");
+
+        if (isTyping && !typingIndicator) {
+          typingIndicator = document.createElement("div");
+          typingIndicator.id = "typing-indicator";
+          typingIndicator.innerHTML = `
+                    <div class="flex items-end gap-2 justify-start">
+                        <div class="w-8 h-8 rounded-full bg-gradient-to-br from-rose-500 to-pink-500 flex items-center justify-center font-bold text-white flex-shrink-0">${
+                          selectedUser.displayName?.charAt(0).toUpperCase() ||
+                          "U"
+                        }</div>
+                        <div class="max-w-md lg:max-w-xl px-4 py-3 rounded-2xl bg-slate-700/50 rounded-bl-none">
+                            <div class="flex items-center space-x-1.5">
+                                <div class="typing-dot animate-bounce-typing-1"></div>
+                                <div class="typing-dot animate-bounce-typing-2"></div>
+                                <div class="typing-dot animate-bounce-typing-3"></div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+          messageList.appendChild(typingIndicator);
+          messageList.scrollTop = messageList.scrollHeight;
+        } else if (!isTyping && typingIndicator) {
+          typingIndicator.remove();
+        }
+      }
+
+      // --- MCQ Logic ---
+      function openMCQCreator() {
+        mcqModal.classList.remove("hidden");
+        mcqForm.reset();
+        mcqOptionsContainer.innerHTML = "";
+        addMCQOptionInput();
+        addMCQOptionInput();
+        mcqOptionsContainer.querySelector('input[type="radio"]').checked = true;
+        updateRemoveButtonsState();
+      }
+
+      document
+        .getElementById("add-option-button")
+        .addEventListener("click", addMCQOptionInput);
+      document
+        .getElementById("cancel-mcq-button")
+        .addEventListener("click", () => mcqModal.classList.add("hidden"));
+
+      function addMCQOptionInput() {
+        const optionIndex = mcqOptionsContainer.children.length;
+        const div = document.createElement("div");
+        div.className = "flex items-center gap-3 mcq-option-row";
+        div.innerHTML = `
+                <label class="flex items-center justify-center h-10 w-10 cursor-pointer flex-shrink-0">
+                    <input type="radio" name="correct-answer" value="${optionIndex}" required class="peer hidden">
+                    <span class="flex items-center justify-center w-6 h-6 rounded-full border-2 border-slate-500 peer-checked:border-blue-500 peer-checked:bg-blue-500 transition-all">
+                       <svg class="w-3 h-3 text-white opacity-0 peer-checked:opacity-100" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="4" d="M5 13l4 4L19 7"></path></svg>
+                    </span>
+                </label>
+                <input type="text" placeholder="Option ${
+                  optionIndex + 1
+                }" required class="w-full p-2 bg-slate-700/50 rounded-md focus:ring-2 focus:ring-blue-500 outline-none border border-slate-600">
+                <button type="button" class="remove-option-button p-2 text-slate-400 hover:text-white hover:bg-slate-700/50 rounded-full flex-shrink-0">
+                     <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            `;
+        mcqOptionsContainer.appendChild(div);
+        div
+          .querySelector(".remove-option-button")
+          .addEventListener("click", removeMCQOption);
+        updateRemoveButtonsState();
+      }
+
+      function removeMCQOption(e) {
+        const button = e.currentTarget;
+        button.closest(".mcq-option-row").remove();
+        reindexMCQOptions();
+      }
+
+      function reindexMCQOptions() {
+        const optionRows = mcqOptionsContainer.querySelectorAll(
+          ".mcq-option-row"
+        );
+        optionRows.forEach((row, index) => {
+          row.querySelector('input[type="radio"]').value = index;
+          row.querySelector('input[type="text"]').placeholder = `Option ${
+            index + 1
+          }`;
+        });
+
+        if (
+          optionRows.length > 0 &&
+          !mcqOptionsContainer.querySelector('input[type="radio"]:checked')
+        ) {
+          optionRows[0].querySelector('input[type="radio"]').checked = true;
+        }
+        updateRemoveButtonsState();
+      }
+
+      function updateRemoveButtonsState() {
+        const optionRows = mcqOptionsContainer.querySelectorAll(
+          ".mcq-option-row"
+        );
+        const shouldShowRemove = optionRows.length > 2;
+        optionRows.forEach((row) => {
+          row
+            .querySelector(".remove-option-button")
+            .classList.toggle("hidden", !shouldShowRemove);
+        });
+      }
+
+      mcqForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const question = e.target["mcq-question"].value;
+        const options = Array.from(
+          e.target.querySelectorAll('#mcq-options-container input[type="text"]')
+        ).map((input) => input.value);
+        const correctAnswerEl = e.target["correct-answer"];
+
+        if (!correctAnswerEl || correctAnswerEl.value === "") {
+          console.error("Please select a correct answer.");
+          return;
+        }
+        const correctAnswerIndex = parseInt(correctAnswerEl.value);
+
+        if (options.some((opt) => opt.trim() === "")) {
+          console.error("All options must be filled out.");
+          return;
+        }
+
+        const mcqData = {
+          question,
+          options,
+          correctAnswerIndex,
+          responses: {},
+        };
+
+        await addDoc(collection(db, "chatRooms", chatRoomId, "messages"), {
+          senderId: currentUser.uid,
+          senderName: currentUser.email.split("@")[0],
+          timestamp: serverTimestamp(),
+          type: "mcq",
+          mcqData: mcqData,
+          status: "sent",
+        });
+
+        mcqModal.classList.add("hidden");
+      });
+
+      function renderMCQMessage(message, isSender) {
+        const { mcqData, id: messageId } = message;
+
+        // --- State Calculation ---
+        const myVote = mcqData.responses?.[currentUser.uid];
+        const hasVoted = myVote !== undefined;
+        const responses = mcqData.responses || {};
+        const totalVotes = Object.keys(responses).length;
+
+        // Calculate votes for each option
+        const voteCounts = mcqData.options.map((_, index) => {
+          return Object.values(responses).filter((vote) => vote === index)
+            .length;
+        });
+
+        // --- Determine if results should be shown ---
+        const showResults = isSender || hasVoted;
+
+        // --- Generate HTML for each option ---
+        const optionsHTML = mcqData.options
+          .map((option, index) => {
+            const isCorrect = index === mcqData.correctAnswerIndex;
+            const isMyChoice = myVote === index;
+            const votesForThisOption = voteCounts[index];
+            const percentage =
+              totalVotes > 0
+                ? Math.round((votesForThisOption / totalVotes) * 100)
+                : 0;
+
+            let optionClasses =
+              "mcq-option relative text-left w-full p-3 rounded-lg transition-all duration-200 border flex justify-between items-center overflow-hidden";
+            let resultBarHTML = "";
+
+            if (showResults) {
+              // --- Determine styling for correct/incorrect answers ---
+              if (isCorrect) {
+                optionClasses +=
+                  " bg-green-500/10 border-green-500/80 text-white font-semibold";
+              } else if (isMyChoice && !isCorrect) {
+                optionClasses += " bg-red-500/10 border-red-500/80 text-white";
+              } else {
+                optionClasses += " border-slate-600";
+              }
+
+              // --- Create the result bar ---
+              const resultBarColor = isCorrect
+                ? "bg-green-500/20"
+                : "bg-slate-500/20";
+              resultBarHTML = `
+                        <div class="absolute top-0 left-0 h-full rounded-lg ${resultBarColor}" style="width: ${percentage}%;"></div>
+                        <span class="z-10">${option}</span>
+                        <div class="z-10 flex items-center gap-2">
+                             ${
+                               isMyChoice
+                                 ? `<svg class="h-5 w-5 text-blue-300" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>`
+                                 : ""
+                             }
+                            <span class="font-semibold text-sm text-slate-300">${percentage}%</span>
+                        </div>
+                    `;
+            } else {
+              // --- Styling for when poll is active ---
+              optionClasses +=
+                " border-slate-600 hover:bg-slate-600/50 hover:border-slate-500 cursor-pointer";
+              resultBarHTML = `<span class="z-10">${option}</span>`; // Just the text
+            }
+
+            return `
+                    <button class="${optionClasses}" data-msg-id="${messageId}" data-option-index="${index}" ${
+              showResults ? "disabled" : ""
+            }>
+                        ${resultBarHTML}
+                    </button>
+                `;
+          })
+          .join("");
+
+        // --- Final Message Bubble HTML ---
+        return `
+                <div class="message-container group" data-message-id="${
+                  message.id
+                }" data-is-sender="${isSender}">
+                    <div class="flex items-end gap-2 ${
+                      isSender ? "justify-end" : "justify-start"
+                    }">
+                        ${
+                          !isSender
+                            ? `<div class="w-8 h-8 rounded-full bg-gradient-to-br from-rose-500 to-pink-500 flex items-center justify-center font-bold text-white flex-shrink-0">${
+                                message.senderName?.charAt(0).toUpperCase() ||
+                                "U"
+                              }</div>`
+                            : ""
+                        }
+                        <div class="max-w-md lg:max-w-xl p-4 rounded-xl w-full shadow-md ${
+                          isSender
+                            ? "bg-indigo-950/70 border border-indigo-800 rounded-br-none"
+                            : "bg-slate-700/50 rounded-bl-none"
+                        }">
+                            <p class="font-bold mb-3 text-lg text-white">${
+                              mcqData.question
+                            }</p>
+                            <div class="space-y-2">${optionsHTML}</div>
+                            <div class="mt-3 text-xs text-slate-400 flex justify-between items-center">
+                                <span>Poll by ${
+                                  isSender ? "You" : message.senderName
+                                }</span>
+                                <div class="flex items-center gap-1">
+                                    <span>${totalVotes} vote(s)</span>
+                                    ${
+                                      isSender
+                                        ? getMessageStatusIcon(message.status)
+                                        : ""
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+      }
+
+      async function handleMCQAnswer(e) {
+        const button = e.currentTarget;
+        const messageId = button.dataset.msgId;
+        const optionIndex = parseInt(button.dataset.optionIndex);
+
+        const messageRef = doc(
+          db,
+          "chatRooms",
+          chatRoomId,
+          "messages",
+          messageId
+        );
+
+        await updateDoc(messageRef, {
+          [`mcqData.responses.${currentUser.uid}`]: optionIndex,
+        });
+      }
+
+      // --- Message Status Logic ---
+      async function markMessagesAsSeen() {
+        if (!chatRoomId || !selectedUser || !document.hasFocus()) return;
+
+        const messagesRef = collection(db, "chatRooms", chatRoomId, "messages");
+        // This query was causing an error because it requires a composite index.
+        // const q = query(messagesRef, where("senderId", "==", selectedUser.uid), where("status", "!=", "seen"));
+
+        // SIMPLIFIED QUERY: We now only query by senderId, which works without a custom index.
+        const q = query(messagesRef, where("senderId", "==", selectedUser.uid));
+
+        const querySnapshot = await getDocs(q);
+        if (querySnapshot.empty) return;
+
+        const batch = writeBatch(db);
+        let hasUnseenMessages = false;
+
+        querySnapshot.forEach((doc) => {
+          // We add the second condition (filtering by status) here on the client-side.
+          if (doc.data().status !== "seen") {
+            batch.update(doc.ref, { status: "seen" });
+            hasUnseenMessages = true;
+          }
+        });
+
+        if (hasUnseenMessages) {
+          await batch.commit();
+        }
+      }
+
+      window.addEventListener("focus", markMessagesAsSeen);
+
+      function getMessageStatusIcon(status) {
+        const sentIcon = `<svg class="h-5 w-5" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M16.6663 5L7.49967 14.1667L3.33301 10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+        const deliveredIcon = `<svg class="h-5 w-5" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M16.6663 5L7.49967 14.1667L3.33301 10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M12.5 5L7.5 10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+        const seenIcon = `<svg class="h-5 w-5 text-current" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M16.6663 5L7.49967 14.1667L3.33301 10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M12.5 5L7.5 10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+
+        if (status === "seen")
+          return `<span title="Seen" class="text-blue-400">${seenIcon}</span>`;
+        if (status === "delivered")
+          return `<span title="Delivered">${deliveredIcon}</span>`;
+        return `<span title="Sent">${sentIcon}</span>`;
+      }
+
+      // --- Message Actions (Popover, Edit, Delete) ---
+      function handleMessageTap(e) {
+        const messageBubble = e.target.closest(
+          '.message-container[data-is-sender="true"] > div > div'
+        );
+        if (messageBubble) {
+          const container = messageBubble.closest(".message-container");
+          const messageId = container.dataset.messageId;
+          if (!messageId) return;
+
+          // Toggle behavior
+          if (
+            !messageActionPopover.classList.contains("hidden") &&
+            messageActionPopover.dataset.messageId === messageId
+          ) {
+            hideActionPopover();
+          } else {
+            showActionPopover(container, messageBubble);
+          }
+        }
+      }
+
+      function showActionPopover(containerEl, bubbleEl) {
+        hideActionPopover(); // Hide any existing popover
+        const messageId = containerEl.dataset.messageId;
+        messageActionPopover.dataset.messageId = messageId;
+        messageActionPopover.classList.add("animate-popover");
+
+        const rect = bubbleEl.getBoundingClientRect();
+
+        messageActionPopover.style.opacity = "0";
+        messageActionPopover.classList.remove("hidden");
+        const popoverWidth = messageActionPopover.offsetWidth;
+        const popoverHeight = messageActionPopover.offsetHeight;
+
+        let top = rect.top - popoverHeight - 8; // 8px margin above
+        if (top < 10) {
+          // If it would go off-screen at the top, place it below
+          top = rect.bottom + 8;
+        }
+
+        let left = rect.right - popoverWidth; // Align to the right of the bubble
+        if (left < 10) {
+          // If it goes off-screen left, align to the left
+          left = rect.left;
+        }
+
+        messageActionPopover.style.top = `${top}px`;
+        messageActionPopover.style.left = `${left}px`;
+        messageActionPopover.style.opacity = "1";
+      }
+
+      function hideActionPopover() {
+        if (!messageActionPopover.classList.contains("hidden")) {
+          messageActionPopover.classList.add("hidden");
+          messageActionPopover.classList.remove("animate-popover");
+          delete messageActionPopover.dataset.messageId;
+        }
+      }
+
+      function hideActionPopoverOnClickOutside(e) {
+        if (messageActionPopover.classList.contains("hidden")) return;
+
+        const isClickInsidePopover = messageActionPopover.contains(e.target);
+        const isClickOnAnyMessageBubble = e.target.closest(
+          '.message-container[data-is-sender="true"] > div > div'
+        );
+
+        if (!isClickInsidePopover && !isClickOnAnyMessageBubble) {
+          hideActionPopover();
+        }
+      }
+
+      messageActionPopover.addEventListener("click", (e) => {
+        const button = e.target.closest("button[data-action]");
+        if (!button) return;
+
+        const action = button.dataset.action;
+        const messageId = messageActionPopover.dataset.messageId;
+        const container = document.querySelector(
+          `.message-container[data-message-id="${messageId}"]`
+        );
+
+        if (!container) return;
+
+        if (action === "edit") {
+          // Prevent editing MCQs and deleted messages for simplicity
+          if (
+            container.querySelector(".mcq-option") ||
+            container.querySelector(".italic")
+          )
+            return;
+          toggleEditState(container, true);
+        } else if (action === "delete") {
+          showConfirmationModal(
+            "Delete Message",
+            "Are you sure you want to delete this message?",
+            () => deleteMessage(messageId)
+          );
+        }
+        hideActionPopover();
+      });
+
+      function toggleEditState(container, isEditing) {
+        const messageTextEl = container.querySelector(".message-text");
+        const existingEditForm = container.querySelector(".edit-form");
+        if (isEditing) {
+          if (existingEditForm) return;
+          const originalText = messageTextEl.textContent;
+          messageTextEl.classList.add("hidden");
+
+          const editFormHTML = `
+                    <div class="edit-form space-y-2">
+                        <textarea class="w-full p-2 text-sm bg-slate-900/80 rounded-md focus:ring-2 focus:ring-blue-500 outline-none border border-slate-600">${originalText}</textarea>
+                        <div class="flex justify-end gap-2">
+                            <button data-action="cancel-edit" class="text-xs px-2 py-1 rounded hover:bg-slate-700">Cancel</button>
+                            <button data-action="save-edit" class="text-xs px-2 py-1 rounded bg-blue-600 hover:bg-blue-700">Save</button>
+                        </div>
+                    </div>
+                `;
+          messageTextEl.insertAdjacentHTML("afterend", editFormHTML);
+          container.querySelector("textarea").focus();
+        } else {
+          if (existingEditForm) existingEditForm.remove();
+          messageTextEl.classList.remove("hidden");
+        }
+      }
+
+      chatWindow.addEventListener("click", async (e) => {
+        const button = e.target.closest("button[data-action]");
+        if (!button) return;
+
+        const action = button.dataset.action;
+        const container = button.closest(".message-container");
+        if (!container) return;
+
+        const messageId = container.dataset.messageId;
+
+        if (action === "cancel-edit") {
+          toggleEditState(container, false);
+        } else if (action === "save-edit") {
+          const textarea = container.querySelector("textarea");
+          const newText = textarea.value.trim();
+          if (newText) {
+            const messageRef = doc(
+              db,
+              "chatRooms",
+              chatRoomId,
+              "messages",
+              messageId
+            );
+            await updateDoc(messageRef, {
+              text: newText,
+              editedAt: serverTimestamp(),
+            });
+          }
+          // onSnapshot will handle re-render, so just need to toggle the view
+          toggleEditState(container, false);
+        }
+      });
+
+      async function deleteMessage(messageId) {
+        const messageRef = doc(
+          db,
+          "chatRooms",
+          chatRoomId,
+          "messages",
+          messageId
+        );
+        await updateDoc(messageRef, {
+          deleted: true,
+          editedAt: serverTimestamp(), // Mark when it was deleted
+        });
+      }
+
+      // --- Confirmation Modal Logic ---
+      function showConfirmationModal(title, message, onConfirm) {
+        document.getElementById("confirmation-title").textContent = title;
+        document.getElementById("confirmation-message").textContent = message;
+        confirmationModal.classList.remove("hidden");
+
+        const confirmButton = document.getElementById(
+          "confirmation-confirm-button"
+        );
+        const cancelButton = document.getElementById(
+          "confirmation-cancel-button"
+        );
+
+        const confirmHandler = () => {
+          onConfirm();
+          hide();
+        };
+
+        const hide = () => {
+          confirmationModal.classList.add("hidden");
+          confirmButton.removeEventListener("click", confirmHandler);
+          cancelButton.removeEventListener("click", hide);
+        };
+
+        confirmButton.addEventListener("click", confirmHandler, { once: true });
+        cancelButton.addEventListener("click", hide, { once: true });
+      }
+
+      // --- Cleanup ---
+      function cleanupListeners(fullCleanup = true) {
+        if (unsubscribeMessages) unsubscribeMessages();
+        if (unsubscribeTyping) unsubscribeTyping();
+        unsubscribeMessages = null;
+        unsubscribeTyping = null;
+
+        if (fullCleanup) {
+          if (unsubscribeUsers) unsubscribeUsers();
+          unsubscribeUsers = null;
+          selectedUser = null;
+          chatRoomId = null;
+          document.removeEventListener(
+            "click",
+            hideActionPopoverOnClickOutside
+          );
+        }
+      }
+    </script>
+  </body>
+</html>

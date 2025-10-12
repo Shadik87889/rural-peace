@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Enhanced Social Media Post</title>
+    <link rel="stylesheet" href="daily-update.css" />
+  </head>
+  <body>
+    <div class="newsfeed">
+      <!-- Post Composer -->
+      <div class="post-composer">
+        <textarea
+          id="postContent"
+          placeholder="What's on your mind?"
+        ></textarea>
+        <label for="postImage" class="upload-label">Upload Image</label>
+        <input type="file" id="postImage" accept="image/*" hidden />
+        <button id="postButton">Post</button>
+      </div>
+
+      <!-- Posts Container -->
+      <div id="postsContainer"></div>
+    </div>
+    <script src="daily-update.js"></script>
+  </body>
+</html>

@@ -1,0 +1,137 @@
+#section-three {
+  min-height: 100vh;
+  width: 100%;
+  background-color: #131212;
+  padding: 16vw;
+  display: flex;
+  flex-direction: column;
+  gap: 15vw;
+}
+.text .one {
+  font-size: 19vw;
+}
+.text {
+  line-height: 26vw;
+}
+.text .two {
+  font-size: 23vw;
+}
+.one-page {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 100%;
+  width: 100%;
+}
+.one-page .img-part {
+  height: 35vw;
+  width: 25vw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #1e1d1d;
+  border-radius: 1vw;
+  box-shadow: 0 1px 5px #00000099;
+}
+.one-page .img-part img {
+  height: 75%;
+  width: 75%;
+  object-fit: cover;
+  border-radius: 1vw;
+}
+.issues-details {
+  color: #fff;
+  width: 25vw;
+}
+.issues-details h3 {
+  font-family: "Impact";
+  text-transform: uppercase;
+  font-size: 4vw;
+  color: #f93434;
+}
+.issues-details p {
+  font-size: 1.3vw;
+  font-family: "Futura";
+  margin-top: 2vw;
+}
+#footer {
+  border-top: 0.5px solid rgb(207, 205, 205);
+}
+@media (max-width: 768px) {
+  .img-sect {
+    height: 70vh;
+  }
+  .text {
+    line-height: 38vw;
+  }
+  .text .one {
+    font-family: "Bebas Neue", sans-serif;
+    color: #ffffff;
+    font-size: 35vw;
+    font-weight: 900;
+  }
+
+  .text .two {
+    font-family: "Bebas Neue", sans-serif;
+    color: #f93434;
+    font-size: 50vw;
+    margin-top: -3vw;
+    font-weight: 900;
+    margin-bottom: 0;
+  }
+  #section-three {
+    min-height: 100vh;
+    width: 100%;
+    background-color: #131212;
+    padding: 16vw;
+    display: flex;
+    flex-direction: column;
+    gap: 15vw;
+  }
+  .one-page {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+  }
+  .one-page .img-part {
+    height: 50vh;
+    width: 85vw;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #1e1d1d;
+    border-radius: 1vw;
+    box-shadow: 0 1px 5px #00000099;
+  }
+  .one-page .img-part img {
+    height: 85%;
+    width: 80%;
+    object-fit: cover;
+    border-radius: 1vw;
+  }
+
+  /*text design*/
+
+  .issues-details {
+    color: #fff;
+    width: 100%;
+    margin-top: 4vw;
+  }
+  .issues-details h3 {
+    font-family: "Bebas Neue";
+    text-transform: uppercase;
+    font-size: 20vw;
+    color: #f93434;
+  }
+  .issues-details p {
+    font-size: 5vw;
+    font-family: "Roboto";
+    margin-top: 2vw;
+  }
+  .issues-details .editable-text-one {
+    font-size: 18.96vw;
+  }
+}

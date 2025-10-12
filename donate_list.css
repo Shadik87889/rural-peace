@@ -1,0 +1,125 @@
+.donar-list {
+  padding: 8vw 6vw;
+}
+.donar-list .title {
+  color: #f93434;
+  font-family: "Impact";
+  font-size: 8vw;
+  margin-bottom: 0.5vw;
+  text-transform: uppercase;
+}
+.list {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 2px;
+  padding: 4vw;
+  border: 3px solid #333030;
+}
+.list .list-one {
+  padding: 2vw;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #1e1d1d;
+  box-shadow: 0 1px 10px #00000099;
+  text-decoration: none;
+  transition: 0.4s;
+}
+.list .list-one:hover {
+  background-color: #2e2b2b;
+}
+.donar-img {
+  height: 10vw;
+  width: 10vw;
+  overflow: hidden;
+  border-radius: 50%;
+}
+.donar-img img {
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+}
+.donar-name-address {
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+  flex-direction: column;
+}
+.donar-name {
+  color: #f93434;
+  color: #fff;
+  font-family: "Impact";
+  text-transform: uppercase;
+  font-size: 4vw;
+  margin-bottom: 0.1vw;
+}
+.donar-address {
+  color: #f93434;
+  text-transform: uppercase;
+  font-family: "Futura";
+  font-size: 1.4vw;
+}
+.no-donors-message {
+  color: #fff;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 4vw;
+}
+
+@media (max-width: 768px) {
+  .nav-bar {
+    margin-top: 2vw;
+  }
+  .donar-list {
+    padding: 10vw 6vw;
+  }
+  .donar-list .title {
+    font-family: "Bebas Neue";
+    font-size: 12vw;
+    text-align: center;
+    margin-top: 8vw;
+  }
+  .list {
+    gap: 2px;
+    padding: 4vw;
+  }
+  .list .list-one {
+    padding: 4vw;
+    width: 100%;
+    height: auto;
+    gap: 2vw;
+    flex-direction: column;
+  }
+  .donar-img {
+    height: 30vw;
+    width: 30vw;
+  }
+  .donar-img img {
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+  }
+  .donar-name-address {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+  }
+  .donar-name {
+    color: #f93434;
+    color: #fff;
+    font-family: "Bebas Neue";
+    text-transform: uppercase;
+    font-size: 6vw;
+    letter-spacing: 0.3vw;
+  }
+  .donar-address {
+    color: #f93434;
+    color: #fff;
+    text-transform: uppercase;
+    font-family: "Moderustic";
+    font-size: 2.4vw;
+  }
+}

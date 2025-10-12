@@ -1,0 +1,85 @@
+/* Reset some default styles */
+body,
+html {
+  margin: 0;
+  padding: 0;
+  font-family: "Arial", sans-serif;
+  background-color: #f4f7f9;
+  color: #333;
+}
+
+.container {
+  max-width: 600px;
+  margin: 50px auto;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.header {
+  background-color: #007bff;
+  padding: 20px;
+  text-align: center;
+  color: #fff;
+}
+
+.header h1 {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 600;
+}
+
+.main-content {
+  padding: 20px;
+}
+
+.greeting {
+  font-size: 18px;
+  line-height: 1.6;
+  color: #555;
+}
+
+.highlight {
+  font-size: 16px;
+  color: #007bff;
+  font-weight: bold;
+  margin-top: 20px;
+}
+
+.footer {
+  background-color: #f8f9fa;
+  padding: 15px;
+  text-align: center;
+  border-top: 1px solid #eee;
+}
+
+.footer p {
+  margin: 5px 0;
+  font-size: 14px;
+  color: #666;
+}
+
+.disclaimer {
+  font-size: 12px;
+  color: #888;
+  margin-top: 10px;
+  font-style: italic;
+}
+
+/* Make the email fully responsive */
+@media only screen and (max-width: 600px) {
+  .container {
+    width: 100%;
+    margin: 20px auto;
+  }
+
+  .header h1 {
+    font-size: 24px;
+  }
+
+  .greeting,
+  .highlight {
+    font-size: 16px;
+  }
+}

@@ -1,0 +1,832 @@
+const express = require("express");
+const cors = require("cors");
+const nodemailer = require("nodemailer");
+const bodyParser = require("body-parser");
+const fs = require("fs");
+const path = require("path");
+const multer = require("multer");
+const passport = require("passport");
+const mongoose = require("mongoose");
+const MongoStore = require("connect-mongo");
+const GoogleStrategy = require("passport-google-oauth20").Strategy;
+const session = require("express-session");
+// const FileStore = require("session-file-store")(session);
+const { v4: uuidv4 } = require("uuid");
+
+const app = express();
+const PORT = process.env.PORT || 3003; // or another port
+// Connect to MongoDB
+mongoose.connect(
+  "mongodb+srv://mdshadikhossain830:KpFtEcCbYGNyi0yY@cluster0.zkb4h.mongodb.net/?retryWrites=true&w=majority",
+  {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  }
+);
+
+// MongoDB Schemas
+const SubscriberSchema = new mongoose.Schema({
+  email: { type: String, unique: true },
+});
+const NewsletterSchema = new mongoose.Schema({
+  id: String,
+  title: String,
+  content: String,
+  thumbnail: String,
+  postTime: String,
+  clicks: Number,
+});
+const DonorSchema = new mongoose.Schema({
+  id: String,
+  name: String,
+  email: String,
+  phone: String,
+  address: String,
+  bloodGroup: String,
+  age: Number,
+  gender: String,
+  secretCode: String,
+});
+const PostSchema = new mongoose.Schema({
+  postId: String,
+  globalReactCount: Number,
+  reactions: [String],
+  comments: [{ text: String, replies: [String] }],
+});
+
+const Subscriber = mongoose.model("Subscriber", SubscriberSchema);
+const Newsletter = mongoose.model("Newsletter", NewsletterSchema);
+const Donor = mongoose.model("Donor", DonorSchema);
+const Post = mongoose.model("Post", PostSchema);
+
+// Enable CORS and JSON parsing
+app.use(cors());
+app.use(express.json());
+app.use(express.static("uploads"));
+app.use(express.static(__dirname));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+
+// Redirect to home
+app.get("/", (req, res) => {
+  res.redirect("/home");
+});
+
+// Define page routes
+const pages = [
+  "Home",
+  "about",
+  "contact",
+  "Programs",
+  "NewsletterForm",
+  "Donate",
+  "Blood-donation",
+  "Social-issues",
+  "Help-people",
+  "Sound-environment",
+  "Update-donor-account",
+  "Delete-donor-account",
+  "Newsletter-subscription",
+  "Newsletter-unsubscription",
+  "Blood-donor-list",
+  "Blood-donor-profile",
+  "Newsletter-details",
+  "Be-a-blood-donor",
+];
+
+pages.forEach((page) => {
+  app.get(`/${page}`, (req, res) => {
+    res.sendFile(path.join(__dirname, `${page}.html`));
+  });
+});
+
+// Session configuration using MongoDB
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET || "your-session-secret-here",
+    resave: false,
+    saveUninitialized: false,
+    store: MongoStore.create({
+      mongoUrl:
+        "mongodb+srv://mdshadikhossain830:KpFtEcCbYGNyi0yY@cluster0.zkb4h.mongodb.net/?retryWrites=true&w=majority", // Your MongoDB connection string
+      collectionName: "sessions", // Name of the collection for storing sessions
+      ttl: 30 * 24 * 60 * 60, // Session expiry in seconds (30 days here)
+      autoRemove: "native", // Automatically remove expired sessions
+    }),
+    cookie: {
+      maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+    },
+  })
+);
+
+app.use(passport.initialize());
+app.use(passport.session());
+// Configure Nodemailer
+const transporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: "mdshadikhossain830@gmail.com",
+    pass: "sxpxqunxwwzbzufq", // Use your actual email password
+  },
+});
+let submissions = [];
+
+// Handle form submission
+app.post("/submit", (req, res) => {
+  const { name, email, phone, address, text } = req.body;
+  const submissionTime = new Date().toDateString(); // Get the current date
+  const submission = { name, email, phone, address, text, submissionTime };
+
+  submissions.push(submission);
+
+  const submissionList = submissions
+    .map(
+      (sub, index) => `
+      Submission ${index + 1}:
+        Name: ${sub.name}
+        Email: ${sub.email}
+        Phone: ${sub.phone}
+        Address: ${sub.address}
+        Message: ${sub.text}
+        Submitted On: ${sub.submissionTime}
+    `
+    )
+    .join("\n\n");
+
+  const newSubmissionMailOptions = {
+    from: email,
+    to: "mdshadikhossain830@gmail.com", // Your email
+    subject: `New message from ${name}`,
+    text: `New submission received:\nName: ${name}\nEmail: ${email}\nPhone: ${phone}\nAddress: ${address}\nMessage: ${text}\nSubmitted On: ${submissionTime}`,
+  };
+
+  const allSubmissionsMailOptions = {
+    from: "no-reply@yourdomain.com",
+    to: "org.ruralpeace@gmail.com", // Change to your valid email
+    subject: `Updated List of All Submissions`,
+    text: `Current submissions:\n${submissionList}`,
+  };
+
+  transporter.sendMail(newSubmissionMailOptions, (error) => {
+    if (error) {
+      console.error("Error sending email:", error);
+      return res.status(500).send(error.toString());
+    }
+
+    transporter.sendMail(allSubmissionsMailOptions, (error) => {
+      if (error) {
+        console.error("Error sending all submissions email:", error);
+        return res.status(500).send(error.toString());
+      }
+      res.status(200).send("Message sent successfully!");
+    });
+  });
+});
+
+// Google OAuth setup
+passport.use(
+  new GoogleStrategy(
+    {
+      clientID:
+        "955939794905-ifo9qq0ugcpnsh7v2rajeohd57u55act.apps.googleusercontent.com",
+      clientSecret: "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", // Use your actual secret
+      callbackURL: "https://rural-peace.onrender.com/auth/google/callback",
+    },
+    (accessToken, refreshToken, profile, done) => {
+      return done(null, profile);
+    }
+  )
+);
+
+passport.serializeUser((user, done) => {
+  done(null, user);
+});
+
+passport.deserializeUser((user, done) => {
+  done(null, user);
+});
+
+// Google authentication routes
+app.get(
+  "/auth/google",
+  passport.authenticate("google", {
+    scope: ["profile", "email"],
+    prompt: "select_account",
+  })
+);
+
+app.get(
+  "/auth/google/callback",
+  passport.authenticate("google", { failureRedirect: "/" }),
+  (req, res) => {
+    res.redirect("/newsletters.html");
+  }
+);
+
+app.get("/logout", (req, res) => {
+  req.session.destroy((err) => {
+    if (err) {
+      console.error("Session destruction error:", err);
+      return res.status(500).send("Error logging out");
+    }
+    res.clearCookie("connect.sid");
+    res.redirect("/home");
+  });
+});
+
+// API route to fetch logged-in user's data
+app.get("/api/user", (req, res) => {
+  if (req.isAuthenticated()) {
+    res.json({
+      loggedIn: true,
+      user: req.user,
+    });
+  } else {
+    res.json({
+      loggedIn: false,
+      user: null,
+    });
+  }
+});
+
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).send("Something went wrong!");
+});
+// File upload configuration
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    const dir = "uploads/";
+    if (!fs.existsSync(dir)) fs.mkdirSync(dir);
+    cb(null, dir);
+  },
+  filename: (req, file, cb) =>
+    cb(null, Date.now() + path.extname(file.originalname)),
+});
+const upload = multer({ storage });
+
+// Function to send notification email to all subscribers
+const notifySubscribers = (newsletter) => {
+  const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: "mdshadikhossain830@gmail.com",
+      pass: "sxpxqunxwwzbzufq",
+    },
+  });
+
+  const mailOptions = {
+    from: "mdshadikhossain830@gmail.com",
+    bcc: subscribers.join(","),
+    subject: "New Newsletter Published: " + newsletter.title,
+
+    html: `
+      <div style="padding: 20px; font-family: 'Helvetica Neue', Arial, sans-serif; max-width: 700px;
+      margin: 0 auto; background-color: #f9f9f9; border-radius: 12px; border: 1px solid #e0e0e0; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);">
+  
+        <!-- Header with Logo -->
+        <div style="text-align: center; padding: 40px; background-color: #ffffff; border-radius: 12px 12px 0 0; border-bottom: 1px solid #e0e0e0;">
+          <img src="https://i.imgur.com/pp6RPBO.jpeg" alt="Company Logo" style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 3px solid #4CAF50;">
+        </div>
+  
+        <!-- Newsletter Title -->
+        <div style="text-align: center;text-transform: uppercase; padding: 30px 20px; background-color: #ffffff;">
+          <h1 style="color: #333333; font-size: 30px; font-weight: bold; margin: 0; line-height: 1.2;">
+            ${newsletter.title}
+          </h1>
+          <div style="height: 4px; width: 80px; background-color: #4CAF50; margin: 15px auto;"></div>
+        </div>
+  
+        <hr style="width: 70%; border: 1px solid #e0e0e0; margin: 20px auto;">
+  
+        <!-- Content -->
+        <p style="font-size: 16px; line-height: 1.6; color: #666666; margin-bottom: 30px; text-align: center; padding: 0 30px;">
+          ${newsletter.content}
+        </p>
+  
+        <!-- Thumbnail Image -->
+        <div style="text-align: center; margin-bottom: 30px;">
+          <img src="${
+            newsletter.thumbnail
+          }" alt="Newsletter Thumbnail" style="width: 100%; max-width: 600px; height: auto; border-radius: 12px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);">
+        </div>
+  
+        <!-- Call-to-Action Button -->
+        <div style="text-align: center; margin: 40px 0;">
+          <a href="https://rural-peace.onrender.com/newsletters.html?utm_source=newsletter&utm_medium=email&utm_campaign=october_newsletter" 
+             style="background-color: #4CAF50; color: white; padding: 12px 30px; border-radius: 30px; font-size: 18px; text-decoration: none; display: inline-block; transition: background 0.3s ease;">
+             Read More
+          </a>
+        </div>
+  
+        <!-- Publication Date -->
+        <p style="text-align: center; color: #888888; font-size: 14px; margin-bottom: 10px;">
+          Published on: ${new Date(newsletter.postTime).toLocaleDateString()}
+        </p>
+  
+        <!-- Social Media Links -->
+        <div style="text-align: center; margin: 40px 0;">
+          <a href="https://facebook.com/yourpage" style="margin-right: 15px;">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/c/cd/Facebook_logo_%28square%29.png" alt="Facebook" style="width: 36px;">
+          </a>
+          <a href="https://twitter.com/yourpage" style="margin-right: 15px;">
+            <img src="https://img.freepik.com/free-vector/new-2023-twitter-logo-x-icon-design_1017-45418.jpg?size=338&ext=jpg&ga=GA1.1.1819120589.1728604800&semt=ais_hybrid-rr-similar" alt="Twitter" style="width: 36px;">
+          </a>
+          <a href="https://linkedin.com/yourpage">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/c/ca/LinkedIn_logo_initials.png" alt="LinkedIn" style="width: 36px;">
+          </a>
+        </div>
+  
+        <!-- Footer -->
+        <footer style="font-size: 12px; color: #888888; text-align: center; padding: 20px 0; background-color: #ffffff; border-top: 1px solid #e0e0e0; border-radius: 0 0 12px 12px;">
+          <p style="margin-bottom: 5px;">You are receiving this email because you subscribed to our newsletter</p>
+          <p>Contact us: <a href="mailto:org.ruralpeace@gmail.com" style="color: #4CAF50; text-decoration: none;">org.ruralpleace@gmail.com</a></p>
+          <a href="https://rural-peace.onrender.com/Newsletter-unsubscription">Unsubscribe</a>
+          <p>&copy; ${new Date().getFullYear()} Rural Peace. All rights reserved.</p>
+        </footer>
+  
+      </div>
+  
+      <!-- Mobile Responsiveness -->
+      <style>
+        @media only screen and (max-width: 600px) {
+          div {
+            padding: 0 15px !important;
+          }
+          img {
+            max-width: 100% !important;
+          }
+          h1 {
+            font-size: 18px !important;
+          }
+          p {
+            font-size: 14px !important;
+          }
+          a {
+            font-size: 14px !important;
+          }
+        }
+      </style>
+    `,
+  };
+
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      console.error("Error sending notification email:", error);
+    } else {
+      console.log("Notification email sent: " + info.response);
+    }
+  });
+};
+// Subscription and Newsletter Routes
+app.post("/subscribe", async (req, res) => {
+  const { email } = req.body;
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
+    return res.status(400).json({ message: "Invalid email format" });
+
+  try {
+    const existingSubscriber = await Subscriber.findOne({ email });
+    if (existingSubscriber)
+      return res.status(400).json({ message: "Email already subscribed" });
+
+    await new Subscriber({ email }).save();
+    const templatePath = path.join(__dirname, "newsLetterTemplate.html");
+    const htmlTemplate = fs.readFileSync(templatePath, "utf8");
+
+    transporter.sendMail(
+      {
+        from: "mdshadikhossain830@gmail.com",
+        to: email,
+        subject: "Subscription Confirmed!",
+        html: htmlTemplate,
+      },
+      (error) => {
+        if (error)
+          return res.status(500).json({ message: "Failed to send email." });
+        res.status(200).json({ message: "Subscription successful!" });
+      }
+    );
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+app.post("/unsubscribe", async (req, res) => {
+  const { email } = req.body;
+  try {
+    const result = await Subscriber.deleteOne({ email });
+    if (result.deletedCount === 0)
+      return res.status(400).json({ message: "Email not found" });
+
+    transporter.sendMail(
+      {
+        from: "mdshadikhossain830@gmail.com",
+        to: email,
+        subject: "Unsubscription Confirmation",
+        html: `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #eaeaea; border-radius: 5px; background-color: #f9f9f9;">
+        <h2 style="color: #333; text-align: center;">Unsubscription Confirmation</h2>
+        <p style="color: #555;">Dear Subscriber,</p>
+        <p style="color: #555;">We're sorry to see you go! You have been successfully unsubscribed from our newsletter.</p>
+        
+        <p style="color: #555;">If you have any feedback or suggestions, please don't hesitate to reach out. Your input is invaluable to us!</p>
+        
+        <p style="color: #555;">If this was a mistake and you'd like to rejoin our community, you can easily <a href="https://rural-peace.onrender.com/Newsletter-subscription" style="color: #1a73e8; text-decoration: none; font-weight: bold;">resubscribe here</a>.</p>
+        
+        <p style="color: #555;">Thank you for your time and support!</p>
+        
+        <p style="color: #555; margin-top: 40px;">Best regards,<br>Rural Peace ORG.</p>
+        
+        <footer style="text-align: center; margin-top: 20px; font-size: 12px; color: #aaa;">
+          <p>© ${new Date().getFullYear()} Your Company Name. All rights reserved.</p>
+        </footer>
+      </div>
+    `,
+      },
+      (error) => {
+        if (error)
+          return res.status(500).json({ message: "Failed to send email." });
+        res
+          .status(200)
+          .json({ message: "You have been unsubscribed successfully!" });
+      }
+    );
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+// POST route to create a new newsletter
+// Endpoint to upload images
+app.post("/upload-endpoint", upload.single("file"), (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ error: "No file uploaded" });
+  }
+  const fileUrl = `/${req.file.path}`;
+  res.json({ url: fileUrl });
+});
+
+// Endpoint to upload thumbnails
+app.post(
+  "/upload-thumbnail-endpoint",
+  upload.single("thumbnail"),
+  (req, res) => {
+    if (!req.file) {
+      return res.status(400).json({ error: "No thumbnail uploaded" });
+    }
+    const thumbnailUrl = `/${req.file.path}`;
+    res.json({ url: thumbnailUrl });
+  }
+);
+
+// Endpoint to create a newsletter
+app.post("/create-newsletter", async (req, res) => {
+  const { title, content, thumbnail } = req.body;
+  try {
+    const newNewsletter = await new Newsletter({
+      id: uuidv4(),
+      title,
+      content,
+      thumbnail,
+      postTime: new Date().toISOString(),
+      clicks: 0,
+    }).save();
+
+    const subscriberEmails = (await Subscriber.find({})).map(
+      (sub) => sub.email
+    );
+    transporter.sendMail(
+      {
+        from: "mdshadikhossain830@gmail.com",
+        bcc: subscriberEmails.join(","),
+        subject: "New Newsletter Published: " + title,
+        html: `<div style="padding: 20px; font-family: 'Helvetica Neue', Arial, sans-serif; max-width: 700px;
+        margin: 0 auto; background-color: #f9f9f9; border-radius: 12px; border: 1px solid #e0e0e0; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);">
+    
+          <!-- Header with Logo -->
+          <div style="text-align: center; padding: 40px; background-color: #ffffff; border-radius: 12px 12px 0 0; border-bottom: 1px solid #e0e0e0;">
+            <img src="https://i.imgur.com/pp6RPBO.jpeg" alt="Company Logo" style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 3px solid #4CAF50;">
+          </div>
+    
+          <!-- Newsletter Title -->
+          <div style="text-align: center;text-transform: uppercase; padding: 30px 20px; background-color: #ffffff;">
+            <h1 style="color: #333333; font-size: 30px; font-weight: bold; margin: 0; line-height: 1.2;">
+              ${Newsletter.title}
+            </h1>
+            <div style="height: 4px; width: 80px; background-color: #4CAF50; margin: 15px auto;"></div>
+          </div>
+    
+          <hr style="width: 70%; border: 1px solid #e0e0e0; margin: 20px auto;">
+    
+          <!-- Content -->
+          <p style="font-size: 16px; line-height: 1.6; color: #666666; margin-bottom: 30px; text-align: center; padding: 0 30px;">
+            ${Newsletter.content}
+          </p>
+    
+          <!-- Call-to-Action Button -->
+          <div style="text-align: center; margin: 40px 0;">
+            <a href="https://rural-peace.onrender.com/newsletters.html?utm_source=newsletter&utm_medium=email&utm_campaign=october_newsletter" 
+               style="background-color: #4CAF50; color: white; padding: 12px 30px; border-radius: 30px; font-size: 18px; text-decoration: none; display: inline-block; transition: background 0.3s ease;">
+               Read More
+            </a>
+          </div>
+    
+          <!-- Publication Date -->
+          <p style="text-align: center; color: #888888; font-size: 14px; margin-bottom: 10px;">
+            Published on: ${new Date(Newsletter.postTime).toLocaleDateString()}
+          </p>
+    
+          <!-- Social Media Links -->
+          <div style="text-align: center; margin: 40px 0;">
+            <a href="https://facebook.com/yourpage" style="margin-right: 15px;">
+              <img src="https://upload.wikimedia.org/wikipedia/commons/c/cd/Facebook_logo_%28square%29.png" alt="Facebook" style="width: 36px;">
+            </a>
+            <a href="https://twitter.com/yourpage" style="margin-right: 15px;">
+              <img src="https://img.freepik.com/free-vector/new-2023-twitter-logo-x-icon-design_1017-45418.jpg?size=338&ext=jpg&ga=GA1.1.1819120589.1728604800&semt=ais_hybrid-rr-similar" alt="Twitter" style="width: 36px;">
+            </a>
+            <a href="https://linkedin.com/yourpage">
+              <img src="https://upload.wikimedia.org/wikipedia/commons/c/ca/LinkedIn_logo_initials.png" alt="LinkedIn" style="width: 36px;">
+            </a>
+          </div>
+    
+          <!-- Footer -->
+          <footer style="font-size: 12px; color: #888888; text-align: center; padding: 20px 0; background-color: #ffffff; border-top: 1px solid #e0e0e0; border-radius: 0 0 12px 12px;">
+            <p style="margin-bottom: 5px;">You are receiving this email because you subscribed to our newsletter</p>
+            <p>Contact us: <a href="mailto:org.ruralpeace@gmail.com" style="color: #4CAF50; text-decoration: none;">org.ruralpleace@gmail.com</a></p>
+            <a href="https://rural-peace.onrender.com/Newsletter-unsubscription">Unsubscribe</a>
+            <p>&copy; ${new Date().getFullYear()} Rural Peace. All rights reserved.</p>
+          </footer>
+    
+        </div>
+    
+        <!-- Mobile Responsiveness -->
+        <style>
+          @media only screen and (max-width: 600px) {
+            div {
+              padding: 0 15px !important;
+            }
+            img {
+              max-width: 100% !important;
+            }
+            h1 {
+              font-size: 18px !important;
+            }
+            p {
+              font-size: 14px !important;
+            }
+            a {
+              font-size: 14px !important;
+            }
+          }
+        </style>
+      `,
+      },
+      (error) => {
+        if (error) console.error("Error sending notification email:", error);
+        else console.log("Notification email sent successfully!");
+      }
+    );
+
+    res.status(201).json({ message: "Newsletter created successfully!" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+// PUT route to update clicks
+app.put("/newsletters/:id", async (req, res) => {
+  const { id } = req.params;
+  const { clicks } = req.body;
+
+  try {
+    const newsletter = await Newsletter.findOne({ id });
+    if (newsletter) {
+      newsletter.clicks = clicks;
+      await newsletter.save(); // Save updated clicks to the database
+      res.status(200).json({ message: "Clicks updated successfully!" });
+    } else {
+      res.status(404).json({ message: "Newsletter not found" });
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+// DELETE route to delete a newsletter
+app.delete("/newsletters/:id", async (req, res) => {
+  const { id } = req.params;
+
+  // Check if the user is authenticated
+  if (!req.isAuthenticated()) {
+    return res
+      .status(403)
+      .json({ message: "You must be logged in to delete a newsletter." });
+  }
+
+  try {
+    const newsletter = await Newsletter.findOne({ id });
+
+    // Check if the newsletter exists
+    if (newsletter) {
+      // You can now use req.user to get the authenticated user
+      const currentUserEmail = req.user._json.email;
+      const allowedEmails = [
+        "mdshadikhossain830@gmail.com",
+        "org.ruralpeace@gmail.com",
+      ];
+
+      if (allowedEmails.includes(currentUserEmail)) {
+        await Newsletter.deleteOne({ id }); // Delete the newsletter from the database
+        res.status(200).json({ message: "Newsletter deleted successfully!" });
+      } else {
+        res.status(403).json({
+          message: "You are not authorized to delete this newsletter.",
+        });
+      }
+    } else {
+      res.status(404).json({ message: "Newsletter not found." });
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+// Comments, Reactions, and Global Counts
+app.post("/api/react", async (req, res) => {
+  const { postId, email, hasReacted } = req.body;
+  let post = await Post.findOne({ postId });
+  if (!post)
+    post = await new Post({
+      postId,
+      globalReactCount: 0,
+      reactions: [],
+      comments: [],
+    }).save();
+
+  const reactions = post.reactions;
+  if (hasReacted && !reactions.includes(email)) reactions.push(email);
+  else reactions.splice(reactions.indexOf(email), 1);
+
+  post.globalReactCount = reactions.length;
+  await post.save();
+  res.status(200).send();
+});
+
+app.post("/api/comments", async (req, res) => {
+  const { postId, comment } = req.body;
+  let post = await Post.findOne({ postId });
+  if (!post)
+    post = await new Post({
+      postId,
+      globalReactCount: 0,
+      reactions: [],
+      comments: [],
+    }).save();
+  post.comments.push({ text: comment, replies: [] });
+  await post.save();
+  res.status(200).send();
+});
+// Donor Registration & Management
+app.post("/donorForm", async (req, res) => {
+  const {
+    name,
+    email,
+    phone,
+    address,
+    bloodGroup,
+    age,
+    gender,
+    secretCode,
+  } = req.body;
+  try {
+    const dob = new Date(age);
+    const calculatedAge = new Date().getFullYear() - dob.getFullYear();
+
+    const existingDonor = await Donor.findOne({ email });
+    if (existingDonor)
+      return res.status(400).json({ message: "Email already registered" });
+
+    const newDonor = await new Donor({
+      id: uuidv4(),
+      name,
+      email,
+      phone,
+      address,
+      bloodGroup,
+      age: calculatedAge,
+      gender,
+      secretCode,
+    }).save();
+
+    transporter.sendMail(
+      {
+        from: "mdshadikhossain830@gmail.com",
+        to: email,
+        subject: "Thank You for Registering as a Donor!",
+        html: `
+  <div style="font-family: 'Helvetica', sans-serif; color: #333; background-color: #f4f4f9; padding: 20px; border-radius: 10px; max-width: 600px; margin: 0 auto;">
+    
+    <!-- Header Section -->
+    <div style="background-color: #007bff; padding: 30px; border-radius: 10px 10px 0 0;">
+      <h1 style="color: #fff; text-align: center; font-size: 36px; margin: 0;">
+        Thank You, ${name}!
+      </h1>
+    </div>
+    
+    <!-- Body Content -->
+    <div style="padding: 20px; background-color: white; border-radius: 0 0 10px 10px;">
+      
+      <p style="font-size: 18px; line-height: 1.8; color: #555; text-align: center;">
+        <strong>Your generosity is deeply appreciated!</strong> 
+      </p>
+      
+      <p style="font-size: 18px; line-height: 1.8; color: #555;">
+        We are <em>thrilled</em> to welcome you as a donor to our cause. Your commitment to helping us make a difference truly means the world. Your details have been successfully saved, and we're excited to show you how your support is making an impact.
+      </p>
+
+      <!-- Call to Action Button -->
+      <div style="text-align: center; margin-top: 30px;">
+        <a href="https://rural-peace.onrender.com/Home" style="text-decoration: none; background-color: #ff4757; color: white; padding: 15px 30px; font-size: 18px; border-radius: 50px; box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);">
+          Visit Our Website
+        </a>
+      </div>
+
+      <!-- Additional Message -->
+      <p style="font-size: 18px; line-height: 1.8; color: #555; text-align: center; margin-top: 30px;">
+        You are part of something truly <strong>special</strong>! Together, we will make lasting, meaningful change.
+      </p>
+    </div>
+
+    <!-- Footer Section -->
+    <div style="margin-top: 30px; padding: 20px; text-align: center; background-color: #f9f9fb; border-radius: 10px;">
+      <p style="font-size: 16px; color: #777;">
+        Warm Regards,<br>
+        <strong>RURAL PEACE ORG.</strong><br>
+        <em>Making the world a better place, together 🌍</em>
+      </p>
+    </div>
+
+  </div>
+  `,
+      },
+      (error) => {
+        if (error)
+          return res
+            .status(500)
+            .json({ message: "Failed to send confirmation email" });
+        res.status(200).json({ message: "Donor registered successfully!" });
+      }
+    );
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+app.get("/donors", async (req, res) => {
+  const donors = await Donor.find({});
+  res.status(200).json(donors);
+});
+
+app.get("/donor/:email/:secretCode", async (req, res) => {
+  const { email, secretCode } = req.params;
+  const donor = await Donor.findOne({ email, secretCode });
+  if (!donor) return res.status(404).json({ message: "Donor not found" });
+  res.status(200).json(donor);
+});
+
+app.put("/updateDonor", async (req, res) => {
+  const { email, secretCode, updateData } = req.body;
+  const donor = await Donor.findOneAndUpdate(
+    { email, secretCode },
+    updateData,
+    { new: true }
+  );
+  if (!donor) return res.status(404).json({ message: "Donor not found" });
+  res.status(200).json({ message: "Donor updated successfully" });
+});
+
+app.delete("/deleteDonor", async (req, res) => {
+  const { email, secretCode } = req.body;
+  const donor = await Donor.findOneAndDelete({ email, secretCode });
+  if (!donor) return res.status(404).json({ message: "Donor not found" });
+  res.status(200).json({ message: "Donor deleted successfully" });
+});
+
+app.listen(PORT, () => {
+  console.log(`Server is running on port: http://localhost:${PORT}/home`);
+});
+// Graceful shutdown
+process.on("SIGINT", () => {
+  server.close(() => {
+    console.log("Server closed gracefully");
+    process.exit(0);
+  });
+});
+
+//almost

@@ -1,0 +1,148 @@
+/* Base Styles */
+body {
+  font-family: "Poppins", sans-serif;
+  background: linear-gradient(135deg, #e3f2fd, #90caf9);
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 100vh;
+  padding-top: 30px;
+}
+
+.newsfeed {
+  width: 90%;
+  max-width: 700px;
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  padding: 20px;
+}
+
+/* Post Composer Styles */
+.post-composer {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  border-bottom: 2px solid rgba(0, 0, 0, 0.1);
+  padding-bottom: 20px;
+  margin-bottom: 20px;
+}
+
+#postContent {
+  width: 100%;
+  height: 100px;
+  resize: none;
+  padding: 15px;
+  border: none;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.5);
+  box-shadow: inset 0 3px 6px rgba(0, 0, 0, 0.1);
+  font-size: 16px;
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+#postContent:focus {
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 4px 10px rgba(0, 119, 255, 0.2);
+}
+
+label.upload-label {
+  font-size: 14px;
+  color: #0077ff;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+#postButton {
+  background: linear-gradient(135deg, #42a5f5, #0077ff);
+  color: white;
+  border: none;
+  padding: 15px;
+  border-radius: 12px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.3s;
+}
+
+#postButton:hover {
+  transform: scale(1.05);
+  box-shadow: 0 5px 15px rgba(0, 119, 255, 0.3);
+}
+
+/* Post Styles */
+.post {
+  background: rgba(255, 255, 255, 0.85);
+  border-radius: 16px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+  padding: 20px;
+  overflow: hidden;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.post:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.post-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.post-header img {
+  width: 40px; /* Small and round */
+  height: 40px;
+  border-radius: 50%;
+  border: 2px solid #0077ff;
+}
+
+.post-header h4 {
+  margin: 0;
+  font-size: 16px;
+  color: #333;
+}
+
+.post-content {
+  margin-bottom: 20px;
+  font-size: 16px;
+  color: #444;
+  line-height: 1.6;
+}
+
+.post img {
+  width: 100%;
+  border-radius: 12px;
+  margin-top: 15px;
+}
+
+/* Reactions (Moved Below Post Image) */
+.reactions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 15px;
+  gap: 10px;
+}
+
+.reactions button {
+  flex: 1;
+  background: rgba(240, 240, 240, 0.7);
+  border: none;
+  padding: 12px;
+  border-radius: 12px;
+  font-size: 14px;
+  color: #555;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.reactions button:hover {
+  background: rgba(200, 230, 255, 0.8);
+  box-shadow: 0 3px 6px rgba(0, 119, 255, 0.2);
+}

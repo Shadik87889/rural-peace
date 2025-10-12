@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>A Magical Wish for Fahmida</title>
+
+    <!-- Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Google Fonts for a magical feel -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Poppins:wght@300;400;600&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Animate.css for cool animations -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
+    />
+
+    <style>
+      /* Custom styles to enhance the magical theme */
+      body {
+        font-family: "Poppins", sans-serif;
+      }
+
+      /* Speed up animations for a smoother feel */
+      .animate__animated {
+        --animate-duration: 0.7s;
+      }
+
+      .font-magic {
+        font-family: "Cinzel Decorative", cursive;
+      }
+
+      /* Gradient background that animates */
+      .magic-background {
+        background: linear-gradient(-45deg, #1a0033, #3c004d, #2e1a47, #5c2c85);
+        background-size: 400% 400%;
+        animation: gradient-flow 15s ease infinite;
+      }
+
+      @keyframes gradient-flow {
+        0% {
+          background-position: 0% 50%;
+        }
+        50% {
+          background-position: 100% 50%;
+        }
+        100% {
+          background-position: 0% 50%;
+        }
+      }
+
+      /* Custom button styling for a glowing effect */
+      .magic-button {
+        transition: all 0.3s ease;
+        box-shadow: 0 0 15px rgba(255, 255, 255, 0.3),
+          0 0 25px rgba(236, 72, 153, 0.3);
+        animation: pulse-glow 2s infinite ease-in-out;
+      }
+
+      @keyframes pulse-glow {
+        0%,
+        100% {
+          box-shadow: 0 0 15px rgba(255, 255, 255, 0.3),
+            0 0 25px rgba(236, 72, 153, 0.3);
+        }
+        50% {
+          box-shadow: 0 0 25px rgba(255, 255, 255, 0.5),
+            0 0 40px rgba(236, 72, 153, 0.5);
+        }
+      }
+
+      .magic-button:hover {
+        transform: translateY(-3px) scale(1.05);
+        animation-play-state: paused;
+      }
+
+      /* Styling for the memory stars */
+      .memory-star {
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+      }
+      .memory-star:not(.revealed):hover {
+        transform: scale(1.1);
+        border-color: rgba(255, 223, 100, 0.8);
+        box-shadow: 0 0 25px rgba(255, 223, 100, 0.6);
+      }
+      .memory-star.revealed {
+        background-color: rgba(253, 224, 71, 0.3);
+        border-color: rgba(253, 224, 71, 0.8);
+        transform: scale(1.05);
+        cursor: default;
+      }
+
+      /* Styling for the collected stars display */
+      .star-icon {
+        font-size: 2rem;
+        color: #4a5568;
+        transition: color 0.5s ease;
+      }
+      .star-icon.collected {
+        color: #fde047; /* yellow-300 */
+        text-shadow: 0 0 10px #fde047;
+        animation: star-appear 0.5s ease-out;
+      }
+      @keyframes star-appear {
+        0% {
+          transform: scale(0.5);
+          opacity: 0;
+        }
+        100% {
+          transform: scale(1);
+          opacity: 1;
+        }
+      }
+
+      /* Hide scrollbars for a cleaner look */
+      ::-webkit-scrollbar {
+        display: none;
+      }
+      html {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
+    </style>
+  </head>
+  <body class="magic-background text-white overflow-hidden">
+    <!-- Canvas for background particle effects -->
+    <canvas
+      id="magic-canvas"
+      class="fixed top-0 left-0 w-full h-full z-0"
+    ></canvas>
+
+    <!-- Main container for all screens -->
+    <main
+      id="container"
+      class="relative z-10 flex items-center justify-center min-h-screen p-4"
+    >
+      <!-- Screen 1: The Invitation -->
+      <div id="screen-1" class="text-center animate__animated animate__zoomIn">
+        <h1 class="font-magic text-3xl md:text-5xl mb-4">For My Fahmida</h1>
+        <p class="mb-8 text-lg md:text-xl text-gray-300">
+          A special surprise for you.
+        </p>
+        <button
+          onclick="showScreen(2)"
+          class="magic-button bg-pink-600 hover:bg-pink-500 font-bold text-lg rounded-full py-3 px-8"
+        >
+          Touch to Start
+        </button>
+      </div>
+
+      <!-- Screen 2: The Star Gate -->
+      <div id="screen-2" class="hidden text-center max-w-lg mx-auto">
+        <h2 class="font-magic text-2xl md:text-4xl mb-6">A Little Question</h2>
+        <p class="mb-8 text-md md:text-lg text-gray-300">
+          সব তারার চেয়ে উজ্জ্বল কি?
+        </p>
+        <div class="flex flex-col space-y-4">
+          <button
+            onclick="wrongAnswer(this)"
+            class="magic-button bg-purple-700 hover:bg-purple-600 rounded-lg py-3 px-6"
+          >
+            The Moon
+          </button>
+          <button
+            onclick="showScreen(3)"
+            class="magic-button bg-purple-700 hover:bg-purple-600 rounded-lg py-3 px-6"
+          >
+            Our Love
+          </button>
+          <button
+            onclick="wrongAnswer(this)"
+            class="magic-button bg-purple-700 hover:bg-purple-600 rounded-lg py-3 px-6"
+          >
+            The Sun
+          </button>
+        </div>
+      </div>
+
+      <!-- Screen 3: The Garden of Stars -->
+      <div id="screen-3" class="hidden text-center max-w-2xl mx-auto w-full">
+        <h2 class="font-magic text-2xl md:text-4xl mb-2">Garden of Memories</h2>
+        <p class="mb-8 text-md md:text-lg text-gray-300">
+          শুভ স্মৃতির জন্য তারাগুলো স্পর্শ কর।
+        </p>
+        <div
+          id="memory-stars"
+          class="grid grid-cols-3 gap-4 md:gap-6 mb-8 max-w-md mx-auto"
+        >
+          <div
+            class="memory-star rounded-full aspect-square flex flex-col items-center justify-center p-2 text-center"
+            onclick="revealMemory(0, 'Your Smile', 'Your smile is beautiful. It is like light to me.')"
+          >
+            <span class="text-md md:text-xl font-bold">Star I</span>
+          </div>
+          <div
+            class="memory-star rounded-full aspect-square flex flex-col items-center justify-center p-2 text-center"
+            onclick="revealMemory(1, 'Your Good Heart', 'You have a good heart. This makes me love you more.')"
+          >
+            <span class="text-md md:text-xl font-bold">Star II</span>
+          </div>
+          <div
+            class="memory-star rounded-full aspect-square flex flex-col items-center justify-center p-2 text-center"
+            onclick="revealMemory(2, 'Your Laugh', 'I love your laugh. It is the best sound.')"
+          >
+            <span class="text-md md:text-xl font-bold">Star III</span>
+          </div>
+        </div>
+        <p
+          id="memory-text"
+          class="h-16 text-center text-lg text-yellow-300 transition-opacity duration-500 opacity-0"
+        ></p>
+        <div id="collected-stars" class="flex justify-center space-x-4 mt-4">
+          <span id="star-icon-0" class="star-icon">★</span>
+          <span id="star-icon-1" class="star-icon">★</span>
+          <span id="star-icon-2" class="star-icon">★</span>
+        </div>
+      </div>
+
+      <!-- Screen 4: The Final Gate -->
+      <div id="screen-4" class="hidden text-center max-w-lg mx-auto">
+        <h2 class="font-magic text-2xl md:text-4xl mb-6">
+          You Found The Stars!
+        </h2>
+        <p class="mb-8 text-md md:text-lg text-gray-300">
+          You have all three memory stars. Now, see your surprise.
+        </p>
+        <button
+          onclick="showScreen(5)"
+          class="magic-button bg-yellow-400 hover:bg-yellow-300 text-gray-900 font-bold text-lg rounded-full py-3 px-8"
+        >
+          Unlock the Magic
+        </button>
+      </div>
+
+      <!-- Screen 5: The Final Message -->
+      <div id="screen-5" class="hidden text-center">
+        <div class="animate__animated animate__zoomIn">
+          <h1
+            class="font-magic text-4xl md:text-7xl lg:text-8xl text-yellow-300"
+            style="text-shadow: 0 0 15px #fde047, 0 0 25px #fde047;"
+          >
+            Happy Birthday
+          </h1>
+          <h2
+            class="font-magic text-5xl md:text-8xl lg:text-9xl mt-4"
+            style="text-shadow: 0 0 20px #ec4899, 0 0 35px #ec4899;"
+          >
+            Fahmida!
+          </h2>
+        </div>
+        <div
+          class="animate__animated animate__fadeInUp animate__delay-1s mt-8 max-w-2xl mx-auto"
+        >
+          <p class="text-lg md:text-xl text-gray-200">
+            Happy birthday, my dear Fahmida! You make me happy. You are my
+            everything. I wish you a life full of joy and light.
+          </p>
+          <p class="text-lg md:text-xl text-gray-200 mt-4">
+            I love you more than all the stars. Forever.
+          </p>
+        </div>
+        <button
+          onclick="showScreen(1)"
+          class="magic-button bg-transparent border-2 border-white hover:bg-white hover:text-black font-bold text-md rounded-full py-2 px-6 mt-12 animate__animated animate__fadeInUp animate__delay-2s"
+        >
+          Play Again?
+        </button>
+      </div>
+    </main>
+
+    <script>
+      // --- Particle background effect ---
+      const canvas = document.getElementById("magic-canvas");
+      const ctx = canvas.getContext("2d");
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+
+      let particlesArray;
+
+      const particleCount = 100;
+
+      class Particle {
+        constructor(x, y, directionX, directionY, size, color) {
+          this.x = x;
+          this.y = y;
+          this.directionX = directionX;
+          this.directionY = directionY;
+          this.size = size;
+          this.color = color;
+        }
+        draw() {
+          ctx.beginPath();
+          ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2, false);
+          ctx.fillStyle = this.color;
+          ctx.fill();
+        }
+        update() {
+          if (this.x > canvas.width || this.x < 0) {
+            this.directionX = -this.directionX;
+          }
+          if (this.y > canvas.height || this.y < 0) {
+            this.directionY = -this.directionY;
+          }
+          this.x += this.directionX;
+          this.y += this.directionY;
+          this.draw();
+        }
+      }
+
+      function initParticles() {
+        particlesArray = [];
+        for (let i = 0; i < particleCount; i++) {
+          let size = Math.random() * 2 + 1;
+          let x = Math.random() * (innerWidth - size * 2 - size * 2) + size * 2;
+          let y =
+            Math.random() * (innerHeight - size * 2 - size * 2) + size * 2;
+          let directionX = Math.random() * 0.4 - 0.2;
+          let directionY = Math.random() * 0.4 - 0.2;
+          let color = "rgba(255, 255, 255, 0.6)";
+          particlesArray.push(
+            new Particle(x, y, directionX, directionY, size, color)
+          );
+        }
+      }
+
+      function animateParticles() {
+        requestAnimationFrame(animateParticles);
+        ctx.clearRect(0, 0, innerWidth, innerHeight);
+        for (let i = 0; i < particlesArray.length; i++) {
+          particlesArray[i].update();
+        }
+      }
+
+      window.addEventListener("resize", () => {
+        canvas.width = innerWidth;
+        canvas.height = innerHeight;
+        initParticles();
+      });
+
+      initParticles();
+      animateParticles();
+
+      // --- Screen navigation logic ---
+      let currentScreen = 1;
+
+      function showScreen(screenNumber) {
+        const oldScreen = document.getElementById(`screen-${currentScreen}`);
+        const newScreen = document.getElementById(`screen-${screenNumber}`);
+
+        // First, hide any previous animation classes to avoid conflicts
+        oldScreen.className = oldScreen.className.replace(/ animate__\w+/g, "");
+        newScreen.className = newScreen.className.replace(/ animate__\w+/g, "");
+
+        if (oldScreen) {
+          // Use a magical zoom out animation for the old screen
+          oldScreen.classList.add("animate__animated", "animate__zoomOut");
+
+          // After the old screen animates out, hide it and show the new one
+          setTimeout(() => {
+            oldScreen.classList.add("hidden");
+
+            newScreen.classList.remove("hidden");
+            // Use a magical zoom in animation for the new screen
+            newScreen.classList.add("animate__animated", "animate__zoomIn");
+          }, 500); // Wait 500ms before starting the new animation
+        }
+
+        currentScreen = screenNumber;
+
+        if (screenNumber === 5) {
+          setTimeout(triggerConfetti, 800);
+        }
+        if (screenNumber === 1) {
+          resetMemories();
+        }
+      }
+
+      function wrongAnswer(button) {
+        button.classList.add("animate__animated", "animate__shakeX");
+        button.style.backgroundColor = "#991b1b";
+        setTimeout(() => {
+          button.classList.remove("animate__animated", "animate__shakeX");
+          button.style.backgroundColor = "";
+        }, 1000);
+      }
+
+      // --- Memories Screen Logic ---
+      let revealedMemories = [false, false, false];
+
+      function revealMemory(index, title, text) {
+        if (revealedMemories[index]) return;
+
+        revealedMemories[index] = true;
+        const stars = document.querySelectorAll(".memory-star");
+        const star = stars[index];
+        const memoryTextEl = document.getElementById("memory-text");
+        const starIcon = document.getElementById(`star-icon-${index}`);
+
+        star.classList.add("revealed");
+        star.innerHTML = `<span class="font-bold text-lg">${title}</span>`;
+
+        memoryTextEl.style.opacity = "0";
+        setTimeout(() => {
+          memoryTextEl.textContent = text;
+          memoryTextEl.style.opacity = "1";
+        }, 300);
+
+        starIcon.classList.add("collected");
+
+        if (revealedMemories.every((v) => v === true)) {
+          setTimeout(() => showScreen(4), 2000);
+        }
+      }
+
+      function resetMemories() {
+        revealedMemories = [false, false, false];
+        const stars = document.querySelectorAll(".memory-star");
+        const starIcons = document.querySelectorAll(".star-icon");
+
+        stars[0].classList.remove("revealed");
+        stars[0].innerHTML = `<span class="text-md md:text-xl font-bold">Star I</span>`;
+        stars[1].classList.remove("revealed");
+        stars[1].innerHTML = `<span class="text-md md:text-xl font-bold">Star II</span>`;
+        stars[2].classList.remove("revealed");
+        stars[2].innerHTML = `<span class="text-md md:text-xl font-bold">Star III</span>`;
+
+        starIcons.forEach((icon) => icon.classList.remove("collected"));
+        document.getElementById("memory-text").textContent = "";
+      }
+
+      // --- Confetti effect for the final screen ---
+      function triggerConfetti() {
+        const confettiCount = 200;
+        for (let i = 0; i < confettiCount; i++) {
+          const confetti = document.createElement("div");
+          confetti.classList.add("confetti");
+          confetti.style.left = Math.random() * 100 + "vw";
+          confetti.style.top = -20 + "px";
+          confetti.style.animationDelay = Math.random() * 3 + "s";
+          confetti.style.backgroundColor = `hsl(${
+            Math.random() * 360
+          }, 100%, 70%)`;
+          confetti.style.transform = `rotate(${Math.random() * 360}deg)`;
+          document.body.appendChild(confetti);
+        }
+      }
+    </script>
+
+    <!-- This is a separate style block for the confetti to keep it organized -->
+    <style>
+      .confetti {
+        position: absolute;
+        width: 10px;
+        height: 20px;
+        opacity: 0;
+        animation: fall 5s linear infinite;
+        z-index: 100;
+      }
+      @keyframes fall {
+        0% {
+          transform: translateY(-20px) rotate(0deg);
+          opacity: 1;
+        }
+        100% {
+          transform: translateY(100vh) rotate(720deg);
+          opacity: 0;
+        }
+      }
+    </style>
+  </body>
+</html>
