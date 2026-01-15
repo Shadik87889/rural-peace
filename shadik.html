@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Shadik Hossain | Visionary</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.4/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.4/ScrollTrigger.min.js"></script>
+    <script src="https://unpkg.com/@studio-freight/lenis@1.0.33/dist/lenis.min.js"></script>
+
+    <!-- Premium Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;800&family=Playfair+Display:ital,wght@0,400;0,600;0,800;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              display: ["Cinzel", "serif"],
+              serif: ["Playfair Display", "serif"],
+              sans: ["Plus Jakarta Sans", "sans-serif"],
+            },
+            colors: {
+              dark: "#0a0a0a",
+              charcoal: "#1c1c1c",
+              platinum: "#E5E4E2",
+              gold: "#C5A059",
+              accent: "#D4AF37",
+            },
+          },
+        },
+      };
+    </script>
+
+    <style>
+      body {
+        background-color: #e5e4e2;
+        color: #0a0a0a;
+        overflow-x: hidden;
+      }
+
+      /* Smooth Scrollbar */
+      ::-webkit-scrollbar {
+        width: 6px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #e5e4e2;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #0a0a0a;
+      }
+
+      /* Typography */
+      .mega-text {
+        font-size: clamp(4rem, 15vw, 16rem);
+        line-height: 0.8;
+        letter-spacing: -0.04em;
+      }
+
+      .section-title {
+        font-size: clamp(2.5rem, 6vw, 6rem);
+        line-height: 0.9;
+      }
+
+      /* Image Masking */
+      .reveal-img {
+        clip-path: polygon(0 0, 100% 0, 100% 0, 0 0);
+        transition: clip-path 1.5s cubic-bezier(0.77, 0, 0.175, 1);
+      }
+      .reveal-img.active {
+        clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+      }
+
+      /* Grain Texture */
+      .noise-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 50;
+        opacity: 0.05;
+        background: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
+      }
+
+      /* Hero Image Container */
+      .hero-img-container {
+        position: relative;
+        z-index: 10;
+      }
+      /* Text Behind Image Effect */
+      .text-behind {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 100%;
+        text-align: center;
+        z-index: 1; /* Behind image */
+        pointer-events: none;
+        white-space: nowrap;
+      }
+      .text-front {
+        z-index: 20; /* In front of image */
+        mix-blend-mode: exclusion;
+        color: white;
+      }
+    </style>
+  </head>
+  <body class="selection:bg-gold selection:text-white">
+    <div class="noise-overlay"></div>
+
+    <!-- Preloader -->
+    <div
+      id="preloader"
+      class="fixed inset-0 bg-dark z-[100] flex items-center justify-center text-platinum"
+    >
+      <div class="text-center">
+        <div class="overflow-hidden">
+          <h1
+            class="font-display text-4xl md:text-6xl tracking-widest translate-y-full preload-text"
+          >
+            SHADIK
+          </h1>
+        </div>
+        <div class="overflow-hidden mt-2">
+          <p
+            class="font-sans text-gold text-sm tracking-[0.3em] uppercase translate-y-full preload-text"
+          >
+            Portfolio 2026
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav
+      class="fixed w-full z-40 px-8 py-6 flex justify-between items-center mix-blend-difference text-white"
+    >
+      <a href="#" class="font-display font-bold text-xl tracking-widest"
+        >S.H.</a
+      >
+      <div
+        class="hidden md:flex gap-8 text-xs font-bold tracking-[0.2em] uppercase"
+      >
+        <a href="#about" class="hover:text-gold transition-colors"
+          >The Scholar</a
+        >
+        <a href="#work" class="hover:text-gold transition-colors"
+          >The Engineer</a
+        >
+        <a href="#impact" class="hover:text-gold transition-colors"
+          >The Humanist</a
+        >
+      </div>
+    </nav>
+
+    <main>
+      <!-- HERO SECTION -->
+      <section
+        class="relative h-screen w-full flex items-center justify-center overflow-hidden bg-platinum"
+      >
+        <!-- Huge Background Text (Depth Effect) -->
+        <div
+          class="absolute inset-0 flex items-center justify-center overflow-hidden"
+        >
+          <h1
+            class="font-display mega-text text-charcoal opacity-10 leading-none select-none text-center"
+          >
+            VISION<br />ARY
+          </h1>
+        </div>
+
+        <div
+          class="container mx-auto px-6 relative z-10 grid grid-cols-1 md:grid-cols-12 h-full items-center"
+        >
+          <!-- Left Text -->
+          <div
+            class="md:col-span-4 flex flex-col justify-center order-2 md:order-1 mt-8 md:mt-0 relative z-20"
+          >
+            <div class="overflow-hidden">
+              <p
+                class="font-sans text-gold font-bold tracking-[0.2em] text-xs uppercase mb-4 hero-anim translate-y-full"
+              >
+                Engineering The Future
+              </p>
+            </div>
+            <div class="overflow-hidden">
+              <h2
+                class="font-serif text-5xl md:text-7xl text-dark leading-tight hero-anim translate-y-full"
+              >
+                I am <br /><span class="italic text-charcoal/60"
+                  >Shadik Hossain.</span
+                >
+              </h2>
+            </div>
+            <div class="mt-8 overflow-hidden">
+              <p
+                class="font-sans text-charcoal/80 max-w-sm leading-relaxed hero-anim translate-y-full"
+              >
+                A GPA 5.0 Scholar and Full-Stack Engineer. I don't just build
+                software; I architect ecosystems for rural Bangladesh.
+              </p>
+            </div>
+          </div>
+
+          <!-- Center Image (The Hero) -->
+          <div
+            class="md:col-span-4 h-[60vh] md:h-[80vh] relative order-1 md:order-2 flex items-end justify-center"
+          >
+            <!-- Placeholder for User Image -->
+            <!-- Ideally a cutout PNG with transparent background -->
+            <div class="relative w-full h-full">
+              <div
+                class="absolute bottom-0 left-1/2 -translate-x-1/2 w-full h-full flex items-end justify-center"
+              >
+                <img
+                  src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=1000&auto=format&fit=crop"
+                  alt="Shadik Hossain"
+                  class="h-full w-auto object-cover object-center grayscale hover:grayscale-0 transition-all duration-1000 ease-out mask-image-b"
+                  style="
+                    mask-image: linear-gradient(
+                      to top,
+                      black 80%,
+                      transparent 100%
+                    );
+                    -webkit-mask-image: linear-gradient(
+                      to top,
+                      black 80%,
+                      transparent 100%
+                    );
+                  "
+                />
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Stats -->
+          <div
+            class="md:col-span-4 flex flex-col justify-center items-end order-3 relative z-20 text-right hidden md:flex"
+          >
+            <div
+              class="border-l border-dark/20 pl-6 py-2 mb-8 hero-anim opacity-0"
+            >
+              <h3 class="font-display text-4xl text-dark">5.0</h3>
+              <p
+                class="font-sans text-xs tracking-widest uppercase text-charcoal/60"
+              >
+                GPA (SSC & HSC)
+              </p>
+            </div>
+            <div class="border-l border-dark/20 pl-6 py-2 hero-anim opacity-0">
+              <h3 class="font-display text-4xl text-dark">03</h3>
+              <p
+                class="font-sans text-xs tracking-widest uppercase text-charcoal/60"
+              >
+                Published Books
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Scroll Indicator -->
+        <div
+          class="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 mix-blend-difference text-white z-20"
+        >
+          <span class="text-[10px] tracking-[0.3em] uppercase">Scroll</span>
+          <div class="w-[1px] h-12 bg-white"></div>
+        </div>
+      </section>
+
+      <!-- SECTION: THE ORIGIN (Dark Mode Switch) -->
+      <section
+        id="about"
+        class="bg-charcoal text-platinum py-32 px-6 rounded-t-[3rem] -mt-12 relative z-30"
+      >
+        <div class="container mx-auto">
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-20">
+            <div>
+              <span
+                class="text-gold font-sans text-xs tracking-widest uppercase mb-4 block"
+                >The Foundation</span
+              >
+              <h2 class="font-serif section-title mb-8">
+                Excellence is not an act, but a
+                <span class="italic text-gray-500">habit.</span>
+              </h2>
+              <p class="font-sans text-lg text-gray-400 leading-relaxed mb-12">
+                My academic journey is defined by a relentless pursuit of
+                perfection. Securing a double **GPA 5.0** in both SSC and HSC
+                wasn't just about grades; it was about proving that discipline
+                scales.
+              </p>
+
+              <!-- List -->
+              <div class="space-y-8">
+                <div class="flex items-start gap-4 group">
+                  <span
+                    class="font-display text-4xl text-charcoal text-stroke-gold transition-colors group-hover:text-gold"
+                    >01</span
+                  >
+                  <div>
+                    <h4 class="font-serif text-2xl mb-2">The Scholar</h4>
+                    <p class="text-sm text-gray-500 font-sans">
+                      Top 1% National Merit. Consistent academic rigor applied
+                      to complex problem solving.
+                    </p>
+                  </div>
+                </div>
+                <div class="flex items-start gap-4 group">
+                  <span
+                    class="font-display text-4xl text-charcoal text-stroke-gold transition-colors group-hover:text-gold"
+                    >02</span
+                  >
+                  <div>
+                    <h4 class="font-serif text-2xl mb-2">The Author</h4>
+                    <p class="text-sm text-gray-500 font-sans">
+                      Author of 3 books including <em>"The Experience"</em>.
+                      Documenting reality to understand it.
+                    </p>
+                  </div>
+                </div>
+                <div class="flex items-start gap-4 group">
+                  <span
+                    class="font-display text-4xl text-charcoal text-stroke-gold transition-colors group-hover:text-gold"
+                    >03</span
+                  >
+                  <div>
+                    <h4 class="font-serif text-2xl mb-2">The Journalist</h4>
+                    <p class="text-sm text-gray-500 font-sans">
+                      Founder of <em>The Daily Origin</em>. Leading a team to
+                      bridge the information gap.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Visual Side -->
+            <div
+              class="relative h-full min-h-[500px] w-full bg-dark overflow-hidden rounded-lg group"
+            >
+              <img
+                src="https://images.unsplash.com/photo-1457369804613-52c61a468e7d?q=80&w=2070&auto=format&fit=crop"
+                class="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform duration-700"
+                alt="Books"
+              />
+              <div class="absolute bottom-8 left-8">
+                <p class="font-display text-6xl text-white">5.0</p>
+                <p
+                  class="font-sans text-xs tracking-widest uppercase text-gold"
+                >
+                  Academic Distinction
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION: THE WORK (Horizontal Scroll) -->
+      <section id="work" class="bg-platinum py-32 overflow-hidden">
+        <div class="container mx-auto px-6 mb-16">
+          <h2 class="font-serif section-title text-dark">
+            SoftShillo <span class="italic text-gray-400">Ecosystem</span>
+          </h2>
+        </div>
+
+        <!-- Carousel Container -->
+        <div
+          class="flex overflow-x-auto gap-8 px-6 pb-12 snap-x snap-mandatory hide-scroll"
+        >
+          <!-- Card 1 -->
+          <div
+            class="min-w-[85vw] md:min-w-[40vw] bg-white p-8 md:p-12 rounded-2xl shadow-xl snap-center group hover:bg-dark hover:text-white transition-colors duration-500 border border-gray-200"
+          >
+            <div class="flex justify-between items-start mb-12">
+              <span
+                class="text-gold font-bold text-xs tracking-widest uppercase border border-gold px-2 py-1 rounded-full"
+                >Fintech</span
+              >
+              <span
+                class="font-display text-4xl text-gray-200 group-hover:text-white/20"
+                >01</span
+              >
+            </div>
+            <h3 class="font-serif text-4xl mb-4">CashShilpo</h3>
+            <p
+              class="font-sans text-gray-500 group-hover:text-gray-400 mb-8 leading-relaxed"
+            >
+              An offline-first POS system engineered for rural connectivity.
+              Empowering merchants to track sales without internet reliance.
+            </p>
+            <div
+              class="h-[200px] w-full bg-gray-100 rounded-lg overflow-hidden relative"
+            >
+              <div
+                class="absolute inset-0 flex items-center justify-center font-display text-2xl text-gray-300"
+              >
+                UI Preview
+              </div>
+            </div>
+          </div>
+
+          <!-- Card 2 -->
+          <div
+            class="min-w-[85vw] md:min-w-[40vw] bg-white p-8 md:p-12 rounded-2xl shadow-xl snap-center group hover:bg-dark hover:text-white transition-colors duration-500 border border-gray-200"
+          >
+            <div class="flex justify-between items-start mb-12">
+              <span
+                class="text-gold font-bold text-xs tracking-widest uppercase border border-gold px-2 py-1 rounded-full"
+                >GovTech</span
+              >
+              <span
+                class="font-display text-4xl text-gray-200 group-hover:text-white/20"
+                >02</span
+              >
+            </div>
+            <h3 class="font-serif text-4xl mb-4">GramShilpo</h3>
+            <p
+              class="font-sans text-gray-500 group-hover:text-gray-400 mb-8 leading-relaxed"
+            >
+              Village governance OS. Digitizing citizen records and resource
+              allocation to bring transparency to rural councils.
+            </p>
+            <div
+              class="h-[200px] w-full bg-gray-100 rounded-lg overflow-hidden relative"
+            >
+              <div
+                class="absolute inset-0 flex items-center justify-center font-display text-2xl text-gray-300"
+              >
+                UI Preview
+              </div>
+            </div>
+          </div>
+
+          <!-- Card 3 -->
+          <div
+            class="min-w-[85vw] md:min-w-[40vw] bg-white p-8 md:p-12 rounded-2xl shadow-xl snap-center group hover:bg-dark hover:text-white transition-colors duration-500 border border-gray-200"
+          >
+            <div class="flex justify-between items-start mb-12">
+              <span
+                class="text-gold font-bold text-xs tracking-widest uppercase border border-gold px-2 py-1 rounded-full"
+                >EdTech</span
+              >
+              <span
+                class="font-display text-4xl text-gray-200 group-hover:text-white/20"
+                >03</span
+              >
+            </div>
+            <h3 class="font-serif text-4xl mb-4">TypeShilpo</h3>
+            <p
+              class="font-sans text-gray-500 group-hover:text-gray-400 mb-8 leading-relaxed"
+            >
+              Gamified typing architecture improving digital literacy through
+              competitive real-time leaderboards.
+            </p>
+            <div
+              class="h-[200px] w-full bg-gray-100 rounded-lg overflow-hidden relative"
+            >
+              <div
+                class="absolute inset-0 flex items-center justify-center font-display text-2xl text-gray-300"
+              >
+                UI Preview
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION: THE IMPACT (Parallax) -->
+      <section
+        id="impact"
+        class="relative py-32 bg-dark text-white overflow-hidden"
+      >
+        <!-- Background Blob -->
+        <div
+          class="absolute top-0 right-0 w-[600px] h-[600px] bg-blue-900/20 rounded-full blur-[100px] pointer-events-none"
+        ></div>
+
+        <div class="container mx-auto px-6 relative z-10 text-center">
+          <h2
+            class="font-display text-[12vw] leading-none text-transparent bg-clip-text bg-gradient-to-b from-white to-transparent opacity-80 mb-8"
+          >
+            RURAL<br />PEACE
+          </h2>
+          <div class="max-w-3xl mx-auto">
+            <p class="font-serif text-2xl md:text-3xl leading-relaxed mb-12">
+              "I engineer distribution channels, not just software.
+              <span class="text-gold italic">Rural Peace</span> ensures aid
+              reaches the most remote villages with zero leakage."
+            </p>
+            <a
+              href="#"
+              class="inline-block border border-white/20 px-12 py-4 hover:bg-white hover:text-dark transition-all duration-300 font-sans text-xs tracking-[0.2em] uppercase"
+            >
+              View The Mission
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <!-- FOOTER -->
+      <footer class="bg-charcoal text-platinum pt-32 pb-12 px-6">
+        <div class="container mx-auto">
+          <div
+            class="grid grid-cols-1 md:grid-cols-2 gap-12 mb-24 border-b border-white/10 pb-12"
+          >
+            <div>
+              <p
+                class="font-sans text-xs tracking-widest uppercase text-gold mb-6"
+              >
+                Invest in the future
+              </p>
+              <h2 class="font-serif text-5xl md:text-7xl">Let's Build.</h2>
+            </div>
+            <div class="flex flex-col justify-end items-start md:items-end">
+              <a
+                href="mailto:shadikworld@gmail.com"
+                class="font-display text-2xl md:text-4xl hover:text-gold transition-colors"
+              >
+                shadikworld@gmail.com
+              </a>
+            </div>
+          </div>
+          <div
+            class="flex flex-col md:flex-row justify-between text-[10px] tracking-[0.2em] uppercase text-gray-500"
+          >
+            <p>&copy; 2026 Shadik Hossain</p>
+            <div class="flex gap-6 mt-4 md:mt-0">
+              <a href="#" class="hover:text-white">LinkedIn</a>
+              <a href="#" class="hover:text-white">Github</a>
+              <a href="#" class="hover:text-white">Twitter</a>
+            </div>
+          </div>
+        </div>
+      </footer>
+    </main>
+
+    <script>
+      // Initialize Lenis Smooth Scroll
+      const lenis = new Lenis({
+        duration: 1.2,
+        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+        smooth: true,
+      });
+      function raf(time) {
+        lenis.raf(time);
+        requestAnimationFrame(raf);
+      }
+      requestAnimationFrame(raf);
+
+      // GSAP Animations
+      gsap.registerPlugin(ScrollTrigger);
+
+      // Preloader
+      const tl = gsap.timeline();
+      tl.to(".preload-text", {
+        y: 0,
+        duration: 1,
+        stagger: 0.1,
+        ease: "power4.out",
+      })
+        .to(".preload-text", {
+          y: "-100%",
+          duration: 0.8,
+          delay: 0.5,
+          ease: "power2.in",
+        })
+        .to("#preloader", {
+          yPercent: -100,
+          duration: 1,
+          ease: "expo.inOut",
+        })
+        .to(
+          ".hero-anim",
+          {
+            y: 0,
+            opacity: 1,
+            duration: 1,
+            stagger: 0.1,
+            ease: "power3.out",
+          },
+          "-=0.5"
+        );
+
+      // Reveal Images on Scroll
+      // Not used explicitly but ready for expansion
+
+      // Parallax Effect for Hero Title
+      gsap.to(".mega-text", {
+        yPercent: 30,
+        scrollTrigger: {
+          trigger: "body",
+          start: "top top",
+          end: "bottom top",
+          scrub: 1,
+        },
+      });
+    </script>
+  </body>
+</html>
